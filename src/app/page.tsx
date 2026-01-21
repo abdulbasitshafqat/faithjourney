@@ -1,11 +1,22 @@
+"use client";
+
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Clock, Compass, Moon } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { getVerseOfTheDay } from "@/lib/api/quran";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
+  const { data: verse, isLoading } = useQuery({
+    queryKey: ["verseOfTheDay"],
+    queryFn: getVerseOfTheDay,
+    staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
       <Header />
@@ -24,10 +35,10 @@ export default function Home() {
               privacy-focused environment designed for the modern believer.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto" asChild>
                 <Link href="/quran">Read Quran</Link>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" asChild>
                 <Link href="/prayer-times">Check Prayer Times</Link>
               </Button>
             </div>
@@ -46,77 +57,116 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Quran Feature */}
-              <Card className="bg-card border-none shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <BookOpen className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="font-serif">Holy Quran</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Read with clear Uthmani script, translations, and listen to beautiful recitations.
-                  </CardDescription>
-                </CardContent>
-              </Card>
+              <Link href="/quran">
+                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                      <BookOpen className="h-6 w-6" />
+                    </div>
+                    <CardTitle className="font-serif">Holy Quran</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Read with clear Uthmani script, translations, and listen to beautiful recitations.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
 
               {/* Prayer Times Feature */}
-              <Card className="bg-card border-none shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <Clock className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="font-serif">Prayer Times</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Accurate timings based on your location with customizable calculation methods.
-                  </CardDescription>
-                </CardContent>
-              </Card>
+              <Link href="/prayer-times">
+                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                    <CardTitle className="font-serif">Prayer Times</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Accurate timings based on your location with customizable calculation methods.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
 
               {/* Qibla Feature */}
-              <Card className="bg-card border-none shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <Compass className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="font-serif">Qibla Compass</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Find the Qibla direction instantly from anywhere in the world.
-                  </CardDescription>
-                </CardContent>
-              </Card>
+              <Link href="/qibla">
+                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                      <Compass className="h-6 w-6" />
+                    </div>
+                    <CardTitle className="font-serif">Qibla Compass</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Find the Qibla direction instantly from anywhere in the world.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
 
               {/* Spiritual Tools Feature */}
-              <Card className="bg-card border-none shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <Moon className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="font-serif">Spiritual Tools</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Digital Tasbih, Zakat Calculator, and daily Duas to enrich your spiritual life.
-                  </CardDescription>
-                </CardContent>
-              </Card>
+              <Link href="/tasbih">
+                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                      <Moon className="h-6 w-6" />
+                    </div>
+                    <CardTitle className="font-serif">Spiritual Tools</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Digital Tasbih, Zakat Calculator, and daily Duas to enrich your spiritual life.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Daily Verse/Dua Section (Placeholder) */}
+        {/* Daily Verse Section */}
         <section className="py-20">
           <div className="container mx-auto px-4 text-center">
-            <div className="max-w-3xl mx-auto bg-primary/5 rounded-2xl p-8 md:p-12">
-              <h3 className="text-2xl font-serif font-bold text-primary mb-6">Verse of the Day</h3>
-              <blockquote className="text-xl md:text-2xl font-serif italic text-foreground/80 mb-6">
-                "Indeed, with hardship [will be] ease."
-              </blockquote>
-              <cite className="text-sm text-muted-foreground not-italic">- Surah Ash-Sharh [94:6]</cite>
+            <div className="max-w-3xl mx-auto bg-primary/5 rounded-2xl p-8 md:p-12 relative overflow-hidden">
+              {/* Decorative background element */}
+              <div className="absolute top-0 right-0 p-8 opacity-5">
+                <BookOpen className="w-32 h-32" />
+              </div>
+
+              <h3 className="text-2xl font-serif font-bold text-primary mb-6 relative z-10">Verse of the Day</h3>
+
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-3/4 mx-auto" />
+                  <Skeleton className="h-6 w-1/2 mx-auto" />
+                  <Skeleton className="h-4 w-1/4 mx-auto" />
+                </div>
+              ) : verse ? (
+                <div className="relative z-10">
+                  <blockquote className="text-xl md:text-3xl font-arabic leading-loose text-primary mb-6" dir="rtl">
+                    {verse.text_uthmani}
+                  </blockquote>
+                  <p className="text-lg text-foreground/80 italic mb-6 font-serif">
+                    "{verse.english_translation}"
+                  </p>
+                  <cite className="text-sm text-muted-foreground not-italic font-medium">
+                    - Surah {verse.surah_name} [{verse.verse_key}]
+                  </cite>
+
+                  <div className="mt-8">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/quran/${verse.verse_key.split(':')[0]}`}>Read Full Surah</Link>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-muted-foreground">
+                  Unable to load verse of the day.
+                </div>
+              )}
             </div>
           </div>
         </section>
