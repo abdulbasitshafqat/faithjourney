@@ -3,6 +3,7 @@ import { Playfair_Display, Amiri, Lora } from "next/font/google";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { FontSizeProvider } from "@/components/providers/FontSizeProvider";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -49,6 +50,7 @@ export default function RootLayout({
           <ReactQueryProvider>
             <FontSizeProvider>
               {children}
+              <ScrollToTop />
             </FontSizeProvider>
           </ReactQueryProvider>
         </ThemeProvider>
