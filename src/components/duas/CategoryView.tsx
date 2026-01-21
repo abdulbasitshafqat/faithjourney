@@ -1,12 +1,12 @@
 
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SettingsPanel } from "@/components/ui/settings-panel";
+import { GlobalSettings } from "@/components/ui/global-settings";
 import { duasData, duaCategories } from "@/lib/data/duas";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -80,7 +80,7 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
 
     return (
         <div className={`min-h-screen flex flex-col ${THEME.bg} font-sans transition-colors duration-300`}>
-            <Navbar />
+            <Header />
 
             <main className="flex-grow container mx-auto px-4 py-24">
                 {/* Header Navigation */}
@@ -95,7 +95,7 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
                     </div>
 
                     <div className="bg-[#113026] p-2 rounded-xl shadow-lg border border-[#1F4D3E]">
-                        <SettingsPanel fontSize={fontSize} setFontSize={setFontSize} />
+                        <GlobalSettings />
                     </div>
                 </div>
 
