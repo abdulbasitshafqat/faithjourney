@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Share2 } from "lucide-react";
@@ -19,7 +19,7 @@ export default function ArticlePage() {
     if (!article) {
         return (
             <div className="min-h-screen flex flex-col bg-background font-sans">
-                <Navbar />
+                <Header />
                 <main className="flex-grow container mx-auto px-4 py-24 text-center">
                     <h1 className="text-3xl font-serif text-primary mb-4">Article Not Found</h1>
                     <Button onClick={() => router.push("/knowledge")}>Back to Knowledge</Button>
@@ -30,7 +30,7 @@ export default function ArticlePage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background font-sans">
-            <Navbar />
+            <Header />
 
             <main className="flex-grow">
                 <article className="container mx-auto px-4 py-16 max-w-4xl">

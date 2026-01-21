@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { duaCategories } from "@/lib/data/duas";
 import Link from "next/link";
@@ -31,7 +31,7 @@ const getIcon = (key: string) => {
 export default function DuasLandingPage() {
     return (
         <div className={`min-h-screen flex flex-col ${THEME.bg} font-sans transition-colors duration-300`}>
-            <Navbar />
+            <Header />
 
             <main className="flex-grow container mx-auto px-4 py-24">
                 {/* Hero Section */}

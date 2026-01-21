@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { articles } from "@/lib/data/knowledge";
 export default function KnowledgePage() {
     return (
         <div className="min-h-screen flex flex-col bg-background font-sans">
-            <Navbar />
+            <Header />
 
             <main className="flex-grow">
                 {/* Hero Section */}

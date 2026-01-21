@@ -146,8 +146,62 @@ export default function BookmarksPage() {
                     <TabsContent value="dua">
                         {duaBookmarks.length > 0 ? (
                             <div className="space-y-6">
-                                {/* Similar list for Duas if metadata structure is known */}
-                                <p className="text-center text-slate-400 py-12">Dua bookmarks view coming soon.</p>
+                                {duaBookmarks.map((bookmark) => (
+                                    <div key={bookmark.id} className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50/50 hover:shadow-md transition-shadow">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded mb-2 inline-block">
+                                                    {bookmark.metadata.title}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => handleRemove(bookmark.item_id, 'dua')}
+                                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                                title="Remove Bookmark"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <div className="text-right">
+                                                <p className="font-arabic text-xl md:text-2xl leading-loose text-slate-800">
+                                                    {bookmark.metadata.arabicText}
+                                                </p>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <p className="text-slate-600">
+                                                    {bookmark.metadata.englishText}
+                                                </p>
+                                                {bookmark.metadata.urduText && (
+                                                    <p className="text-slate-600 text-right font-arabic" dir="rtl">
+                                                        {bookmark.metadata.urduText}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="pt-2 border-t border-slate-50 flex justify-between items-center">
+                                                <span className="text-xs text-slate-400">
+                                                    Reference: {bookmark.metadata.reference}
+                                                </span>
+                                                {/* 
+                                                  Ideally we would link back to the specific dua, but our routing is by category.
+                                                  We can link to the category page.
+                                                  We don't have the category key in metadata easily unless we map titles to keys or store key.
+                                                  For now, we can link to the general duas page or just remove the link.
+                                                  Let's add a general link to the dua section.
+                                                */}
+                                                <Link
+                                                    href="/duas"
+                                                    className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+                                                >
+                                                    View All <ArrowRight size={16} className="ml-1" />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         ) : (
                             <EmptyState type="Duas" href="/duas" />

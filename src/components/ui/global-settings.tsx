@@ -5,12 +5,10 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-interface SettingsPanelProps {
-    fontSize: number;
-    setFontSize: (size: number) => void;
-}
+import { useFontSize } from "@/components/providers/FontSizeProvider";
 
-export function SettingsPanel({ fontSize, setFontSize }: SettingsPanelProps) {
+export function GlobalSettings() {
+    const { fontSize, setFontSize } = useFontSize();
     const { setTheme, theme } = useTheme();
     const [mounted, setMounted] = useState(false);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,7 +49,7 @@ export default function ZakatPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background font-sans">
-            <Navbar />
+            <Header />
 
             <main className="flex-grow container mx-auto px-4 py-24">
                 <div className="text-center mb-12">

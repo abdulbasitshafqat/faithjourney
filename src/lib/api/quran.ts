@@ -42,7 +42,7 @@ export async function getSurahDetails(id: number): Promise<Surah> {
     return data.chapter;
 }
 
-export async function getAyahs(surahId: number, translations: string = "20,234"): Promise<Ayah[]> {
+export async function getAyahs(surahId: number, translations: string = "20,234,57"): Promise<Ayah[]> {
     // 20: Sahih International (English)
     // 234: Fatah Muhammad Jalandhari (Urdu)
     const res = await fetch(

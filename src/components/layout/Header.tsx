@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { GlobalSettings } from "@/components/ui/global-settings";
+// Force HMR update
 
-export function Navbar() {
+export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [user, setUser] = useState<any>(null);
 
@@ -52,7 +54,7 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-2">
                     <span className="text-2xl font-serif font-bold text-primary">
-                        FaithJourney
+                        FaithJourney Pro <span className="text-xs bg-primary/10 px-2 py-0.5 rounded-full ml-2">v2.0</span>
                     </span>
                 </Link>
 
@@ -110,9 +112,10 @@ export function Navbar() {
                             </Button>
                         </Link>
                     )}
+                    <GlobalSettings />
                     <Link href="/settings">
-                        <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                            Settings
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
+                            More
                         </Button>
                     </Link>
                 </div>
@@ -161,9 +164,12 @@ export function Navbar() {
                                     )}
                                     <Link href="/settings">
                                         <Button className="w-full bg-primary text-primary-foreground">
-                                            Settings
+                                            More Settings
                                         </Button>
                                     </Link>
+                                    <div className="pt-4 flex justify-center">
+                                        <GlobalSettings />
+                                    </div>
                                 </div>
                             </div>
                         </SheetContent>

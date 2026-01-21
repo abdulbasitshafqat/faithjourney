@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { getSurahDetails, getAyahs, getSurahAudio } from "@/lib/api/quran";
@@ -11,6 +11,8 @@ import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { useFontSize } from "@/components/providers/FontSizeProvider";
 
 export default function SurahPage() {
     const params = useParams();
@@ -45,6 +47,18 @@ export default function SurahPage() {
         }
     }, [isPlaying]);
 
+    const { fontSize } = useFontSize();
+    const [jumpAyah, setJumpAyah] = useState("");
+
+    const handleJump = (e: React.FormEvent) => {
+        e.preventDefault();
+        const element = document.getElementById(`ayah-${jumpAyah}`);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            setJumpAyah("");
+        }
+    };
+
     const togglePlay = () => {
         setIsPlaying(!isPlaying);
     };
@@ -56,7 +70,7 @@ export default function SurahPage() {
     if (isSurahLoading || isAyahsLoading) {
         return (
             <div className="min-h-screen flex flex-col bg-background font-sans">
-                <Navbar />
+                <Header />
                 <main className="flex-grow container mx-auto px-4 py-24">
                     <Skeleton className="h-12 w-1/2 mx-auto mb-8" />
                     <div className="space-y-4">
@@ -72,8 +86,8 @@ export default function SurahPage() {
     if (!surah || !ayahs) return null;
 
     return (
-        <div className="min-h-screen flex flex-col bg-background font-sans">
-            <Navbar />
+        <div className="min-h-screen flex flex-col bg-background font-sans pt-16">
+            <Header />
 
             {/* Sticky Header for Audio Player & Navigation */}
             <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-md border-b border-border/50 py-4">
@@ -101,6 +115,19 @@ export default function SurahPage() {
                         </Button>
                     </div>
 
+                    {/* Fast Jump */}
+                    <form onSubmit={handleJump} className="flex items-center space-x-2">
+                        <span className="text-sm font-medium whitespace-nowrap hidden md:inline">Quick Jump:</span>
+                        <Input
+                            type="number"
+                            placeholder="Ayah..."
+                            className="w-20 h-8 text-sm"
+                            value={jumpAyah}
+                            onChange={(e) => setJumpAyah(e.target.value)}
+                            min={1}
+                        />
+                    </form>
+
                     {audioUrl && (
                         <div className="flex items-center space-x-2">
                             <audio
@@ -127,9 +154,10 @@ export default function SurahPage() {
 
             <main className="flex-grow container mx-auto px-4 py-8">
                 {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
-                {id !== 1 && id !== 9 && (
-                    <div className="text-center mb-12 font-arabic text-3xl md:text-4xl text-primary leading-loose">
-                        بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+                {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
+                {Number(surah.id) !== 1 && Number(surah.id) !== 9 && surah.name_simple !== "Al-Fatihah" && (
+                    <div key="bismillah-header" className="mb-12 mt-8 text-center font-arabic text-4xl md:text-5xl text-primary leading-[3] py-2">
+                        ﷽
                     </div>
                 )}
 
@@ -140,7 +168,7 @@ export default function SurahPage() {
                         const urduTranslation = ayah.translations?.find(t => t.resource_id === 234)?.text;
 
                         return (
-                            <Card key={ayah.id} className="border-none shadow-sm bg-card/50 hover:bg-card transition-colors">
+                            <Card key={ayah.id} id={`ayah-${ayah.verse_key.split(":")[1]}`} className="border-none shadow-sm bg-card/50 hover:bg-card transition-colors">
                                 <CardContent className="p-6">
                                     <div className="flex flex-col space-y-8">
                                         {/* Arabic Text */}
@@ -148,13 +176,26 @@ export default function SurahPage() {
                                             <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-xs text-primary font-medium shrink-0 mt-1 font-sans">
                                                 {ayah.verse_key.split(":")[1]}
                                             </div>
-                                            <p className="font-arabic text-3xl md:text-5xl text-right leading-[2.2] text-primary w-full pl-4">
+                                            <p
+                                                className="font-arabic text-right leading-[2.2] text-primary w-full pl-4"
+                                                style={{ fontSize: `${fontSize}px` }}
+                                            >
                                                 {ayah.text_uthmani}
                                             </p>
                                         </div>
 
                                         {/* Translations Container */}
                                         <div className="grid gap-6 pt-6 border-t border-border/50">
+                                            {/* Transliteration */}
+                                            {ayah.translations?.find(t => t.resource_id === 57)?.text && (
+                                                <div className="text-left bg-muted/30 p-4 rounded-lg border border-border/10">
+                                                    <p className="text-sm font-bold text-primary/70 uppercase tracking-widest mb-1">Transliteration</p>
+                                                    <p className="text-base md:text-lg text-foreground/80 italic font-serif leading-relaxed">
+                                                        {ayah.translations?.find(t => t.resource_id === 57)?.text.replace(/<sup.*?<\/sup>/g, "")}
+                                                    </p>
+                                                </div>
+                                            )}
+
                                             {/* Urdu Translation */}
                                             {urduTranslation && (
                                                 <div className="text-right" dir="rtl">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Amiri, Lora } from "next/font/google";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { FontSizeProvider } from "@/components/providers/FontSizeProvider";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${playfair.variable} ${lora.variable} ${amiri.variable} font-serif antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
@@ -45,7 +47,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            {children}
+            <FontSizeProvider>
+              {children}
+            </FontSizeProvider>
           </ReactQueryProvider>
         </ThemeProvider>
       </body>
