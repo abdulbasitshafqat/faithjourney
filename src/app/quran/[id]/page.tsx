@@ -126,10 +126,12 @@ export default function SurahPage() {
             </div>
 
             <main className="flex-grow container mx-auto px-4 py-8">
-                {/* Bismillah */}
-                <div className="text-center mb-12 font-arabic text-3xl md:text-4xl text-primary leading-loose">
-                    بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-                </div>
+                {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
+                {id !== 1 && id !== 9 && (
+                    <div className="text-center mb-12 font-arabic text-3xl md:text-4xl text-primary leading-loose">
+                        بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+                    </div>
+                )}
 
                 <div className="space-y-6 max-w-4xl mx-auto">
                     {ayahs.map((ayah) => {
