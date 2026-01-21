@@ -8,7 +8,7 @@ export function Footer() {
                     {/* Brand */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-serif font-bold text-primary">
-                            FaithJourney
+                            Faith Journey
                         </h3>
                         <p className="text-muted-foreground text-sm leading-relaxed">
                             Your comprehensive digital companion for spiritual growth, prayer, and knowledge.
@@ -83,7 +83,7 @@ export function Footer() {
                 </div>
 
                 <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} FaithJourney.pro. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Faith Journey. All rights reserved.</p>
                 </div>
             </div>
         </footer>

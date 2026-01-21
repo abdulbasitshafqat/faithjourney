@@ -4,11 +4,12 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Clock, Compass, Moon } from "lucide-react";
+import { BookOpen, Clock, Compass, Moon, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getVerseOfTheDay } from "@/lib/api/quran";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const { data: verse, isLoading } = useQuery({
@@ -35,13 +36,17 @@ export default function Home() {
               privacy-focused environment designed for the modern believer.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto" asChild>
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto shadow-lg shadow-primary/20" asChild>
                 <Link href="/quran">Read Quran</Link>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto" asChild>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto backdrop-blur-sm" asChild>
                 <Link href="/prayer-times">Check Prayer Times</Link>
               </Button>
             </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block opacity-50">
+            <ChevronDown className="h-6 w-6 text-primary" />
           </div>
         </section>
 
@@ -58,68 +63,84 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Quran Feature */}
               <Link href="/quran">
-                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                <Card className="group bg-card border-none shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer h-full relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <BookOpen className="h-6 w-6" />
                     </div>
                     <CardTitle className="font-serif">Holy Quran</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>
+                    <CardDescription className="mb-4">
                       Read with clear Uthmani script, translations, and listen to beautiful recitations.
                     </CardDescription>
+                    <div className="text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Open Reader
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
 
               {/* Prayer Times Feature */}
               <Link href="/prayer-times">
-                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                <Card className="group bg-card border-none shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer h-full relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Clock className="h-6 w-6" />
                     </div>
                     <CardTitle className="font-serif">Prayer Times</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>
+                    <CardDescription className="mb-4">
                       Accurate timings based on your location with customizable calculation methods.
                     </CardDescription>
+                    <div className="text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Check Times
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
 
               {/* Qibla Feature */}
               <Link href="/qibla">
-                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                <Card className="group bg-card border-none shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer h-full relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Compass className="h-6 w-6" />
                     </div>
                     <CardTitle className="font-serif">Qibla Compass</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>
+                    <CardDescription className="mb-4">
                       Find the Qibla direction instantly from anywhere in the world.
                     </CardDescription>
+                    <div className="text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Open Compass
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
 
               {/* Spiritual Tools Feature */}
               <Link href="/tasbih">
-                <Card className="bg-card border-none shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer h-full">
+                <Card className="group bg-card border-none shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer h-full relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Moon className="h-6 w-6" />
                     </div>
                     <CardTitle className="font-serif">Spiritual Tools</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>
+                    <CardDescription className="mb-4">
                       Digital Tasbih, Zakat Calculator, and daily Duas to enrich your spiritual life.
                     </CardDescription>
+                    <div className="text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Explore Tools
+                    </div>
                   </CardContent>
                 </Card>
               </Link>

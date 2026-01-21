@@ -26,8 +26,8 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
-  title: "FaithJourney.pro",
-  description: "A comprehensive, premium, and aesthetically serene Islamic web application.",
+  title: "Faith Journey",
+  description: "A comprehensive, premium, and aesthetically serene Islamic web application for your spiritual growth.",
 };
 
 export default function RootLayout({

@@ -154,6 +154,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
+    background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    background-attachment: fixed;
   }
 }
