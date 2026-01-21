@@ -49,7 +49,8 @@ export function Compass() {
     };
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
-        let compass = event.webkitCompassHeading || Math.abs(event.alpha! - 360);
+        const anyEvent = event as any;
+        let compass = anyEvent.webkitCompassHeading || Math.abs(event.alpha! - 360);
         setHeading(compass);
     };
 
