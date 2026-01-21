@@ -54,7 +54,7 @@ export function Header() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-2">
                     <span className="text-2xl font-serif font-bold text-primary">
-                        FaithJourney Pro <span className="text-xs bg-primary/10 px-2 py-0.5 rounded-full ml-2">v2.0</span>
+                        FaithJourney
                     </span>
                 </Link>
 
