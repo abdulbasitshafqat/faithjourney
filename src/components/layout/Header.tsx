@@ -80,6 +80,7 @@ export function Header() {
                         { name: "Hadith", href: "/hadith" },
                         { name: "Duas", href: "/duas" },
                         { name: "Prayer Times", href: "/prayer-times" },
+                        { name: "Guide", href: "/guide/salah" },
                         { name: "Tasbih", href: "/tasbih" },
                         { name: "Knowledge", href: "/knowledge" },
                     ].map((link) => (
@@ -154,6 +155,7 @@ export function Header() {
                                         { name: "Hadith", href: "/hadith" },
                                         { name: "Prayer Times", href: "/prayer-times" },
                                         { name: "Duas & Azkar", href: "/duas" },
+                                        { name: "Guide", href: "/guide/salah" },
                                         { name: "Tasbih", href: "/tasbih" },
                                         { name: "Names of Allah", href: "/names" },
                                         { name: "Knowledge", href: "/knowledge" },
