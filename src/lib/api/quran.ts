@@ -88,9 +88,9 @@ export async function getAyahs(surahId: number, translations: string = "20,234,5
 
 export async function getSurahAudio(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<string> {
     // 7: Mishary Rashid Alafasy (Arabic)
-    // 158: Shamshad Ali Khan (Urdu) - Verified
+    // 67: Sudais & Shuraim (Urdu Translation) - Verified URL: sudais_and_shuraim_with_urdu
 
-    const targetReciterId = language === 'ur' ? 158 : reciterId;
+    const targetReciterId = language === 'ur' ? 67 : reciterId;
 
     const res = await fetch(`${BASE_URL}/chapter_recitations/${targetReciterId}/${surahId}`);
     if (!res.ok) throw new Error("Failed to fetch Audio");
@@ -100,11 +100,11 @@ export async function getSurahAudio(surahId: number, reciterId: number = 7, lang
 
 export async function getSurahRecitation(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<SurahAudioData> {
     // 7: Mishary Rashid Alafasy (Arabic)
-    // 158: Shamshad Ali Khan (Urdu) - Verified
+    // 67: Sudais & Shuraim (Urdu Translation) - Verified URL: sudais_and_shuraim_with_urdu
 
     // Timestamps are only available for Arabic recitations typically, or specific ones. 
     // Urdu might not have timestamps. We should handle that.
-    const targetReciterId = language === 'ur' ? 158 : reciterId;
+    const targetReciterId = language === 'ur' ? 67 : reciterId;
     const segmentsParam = language === 'ar' ? '?segments=true' : '';
 
     const res = await fetch(`${BASE_URL}/chapter_recitations/${targetReciterId}/${surahId}${segmentsParam}`);
