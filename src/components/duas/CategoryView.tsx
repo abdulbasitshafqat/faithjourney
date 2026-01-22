@@ -66,6 +66,7 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
             }
         };
         checkStatus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [categoryKey]);
 
     const handleBookmark = async (dua: Dua) => {

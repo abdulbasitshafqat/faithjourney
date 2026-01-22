@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { getBookmarks, Bookmark, toggleBookmark } from '@/lib/api/bookmarks';
 import { supabase } from '@/lib/supabase';
-import { Bookmark as BookmarkIcon, Trash2, ArrowRight, BookOpen } from 'lucide-react';
+import { Bookmark as BookmarkIcon, Trash2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -105,10 +105,10 @@ export default function BookmarksPage() {
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
                                                 <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded mb-2 inline-block">
-                                                    {bookmark.metadata.bookName}
+                                                    {(bookmark.metadata as any).bookName}
                                                 </span>
                                                 <h3 className="text-lg font-bold text-slate-800">
-                                                    {bookmark.metadata.chapterName}
+                                                    {(bookmark.metadata as any).chapterName}
                                                 </h3>
                                             </div>
                                             <button
@@ -121,15 +121,15 @@ export default function BookmarksPage() {
                                         </div>
 
                                         <p className="text-slate-600 line-clamp-3 mb-6 italic">
-                                            "{bookmark.metadata.englishText}"
+                                            "{(bookmark.metadata as any).englishText}"
                                         </p>
 
                                         <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                                             <span className="text-sm text-slate-400">
-                                                Hadith #{bookmark.metadata.hadithnumber}
+                                                Hadith #{(bookmark.metadata as any).hadithnumber}
                                             </span>
                                             <Link
-                                                href={`/hadith/${bookmark.metadata.bookName.toLowerCase().replace('sahih ', '').replace('sunan ', '')}/${bookmark.metadata.hadithnumber}`}
+                                                href={`/hadith/${(bookmark.metadata as any).bookName.toLowerCase().replace('sahih ', '').replace('sunan ', '')}/${(bookmark.metadata as any).hadithnumber}`}
                                                 className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium text-sm"
                                             >
                                                 View Original <ArrowRight size={16} className="ml-1" />
@@ -151,7 +151,7 @@ export default function BookmarksPage() {
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
                                                 <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded mb-2 inline-block">
-                                                    {bookmark.metadata.title}
+                                                    {(bookmark.metadata as any).title}
                                                 </span>
                                             </div>
                                             <button
@@ -166,24 +166,24 @@ export default function BookmarksPage() {
                                         <div className="space-y-4">
                                             <div className="text-right">
                                                 <p className="font-arabic text-xl md:text-2xl leading-loose text-slate-800">
-                                                    {bookmark.metadata.arabicText}
+                                                    {(bookmark.metadata as any).arabicText}
                                                 </p>
                                             </div>
 
                                             <div className="space-y-2">
                                                 <p className="text-slate-600">
-                                                    {bookmark.metadata.englishText}
+                                                    {(bookmark.metadata as any).englishText}
                                                 </p>
-                                                {bookmark.metadata.urduText && (
+                                                {(bookmark.metadata as any).urduText && (
                                                     <p className="text-slate-600 text-right font-arabic" dir="rtl">
-                                                        {bookmark.metadata.urduText}
+                                                        {(bookmark.metadata as any).urduText}
                                                     </p>
                                                 )}
                                             </div>
 
                                             <div className="pt-2 border-t border-slate-50 flex justify-between items-center">
                                                 <span className="text-xs text-slate-400">
-                                                    Reference: {bookmark.metadata.reference}
+                                                    Reference: {(bookmark.metadata as any).reference}
                                                 </span>
                                                 {/* 
                                                   Ideally we would link back to the specific dua, but our routing is by category.
