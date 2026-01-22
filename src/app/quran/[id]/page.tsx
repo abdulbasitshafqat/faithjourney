@@ -65,8 +65,21 @@ export default function SurahPage() {
         setIsPlaying(!isPlaying);
     };
 
+    const [activeAyahId, setActiveAyahId] = useState<number | null>(null);
+
+    // Auto-scroll to active ayah
+    useEffect(() => {
+        if (activeAyahId) {
+            const element = document.getElementById(`ayah-${activeAyahId}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [activeAyahId]);
+
     const handleAudioEnded = () => {
         setIsPlaying(false);
+        setActiveAyahId(null);
     };
 
     if (isSurahLoading || isAyahsLoading) {
@@ -184,8 +197,15 @@ export default function SurahPage() {
                         const englishTranslation = ayah.translations?.find(t => t.resource_id === 20)?.text;
                         const urduTranslation = ayah.translations?.find(t => t.resource_id === 234)?.text;
 
+                        const isActive = activeAyahId === ayah.id || (activeAyahId === null && false); // Placeholder logic until timestamp sync is added
+
                         return (
-                            <Card key={ayah.id} id={`ayah-${ayah.verse_key.split(":")[1]}`} className="border-none shadow-sm bg-card/50 hover:bg-card transition-colors">
+                            <Card
+                                key={ayah.id}
+                                id={`ayah-${ayah.verse_key.split(":")[1]}`}
+                                className={`border-none shadow-sm transition-all duration-500 ${isActive ? 'bg-primary/10 ring-2 ring-primary scale-[1.02]' : 'bg-card/50 hover:bg-card'}`}
+                                onClick={() => setActiveAyahId(ayah.id)} // Allow manual selection for now
+                            >
                                 <CardContent className="p-6">
                                     <div className="flex flex-col space-y-8">
                                         {/* Arabic Text */}
