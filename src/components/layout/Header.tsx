@@ -133,74 +133,80 @@ export function Header() {
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <Menu className="h-6 w-6" />
+                            <Button variant="ghost" size="icon" className="h-12 w-12 hover:bg-primary/5">
+                                <Menu className="h-8 w-8 text-primary" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right">
-                            <SheetHeader className="text-left border-b pb-4">
-                                <SheetTitle className="font-serif text-2xl text-primary">Faith Journey</SheetTitle>
+                        <SheetContent side="right" className="w-[300px] sm:w-[350px] border-l-primary/10 bg-background/95 backdrop-blur-xl">
+                            <SheetHeader className="text-left border-b border-primary/10 pb-6 mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                        <Moon className="h-6 w-6 text-primary rotate-[-15deg]" />
+                                    </div>
+                                    <SheetTitle className="font-serif text-2xl text-primary tracking-tight">Faith Journey</SheetTitle>
+                                </div>
                             </SheetHeader>
-                            <div className="flex flex-col space-y-6 mt-8">
-                                <Link href="/quran" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname === "/quran" ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Quran
-                                </Link>
-                                <Link href="/hadith" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname === "/hadith" ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Hadith
-                                </Link>
-                                <Link href="/prayer-times" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname === "/prayer-times" ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Prayer Times
-                                </Link>
-                                <Link href="/duas" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname.startsWith("/duas") ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Duas & Azkar
-                                </Link>
-                                <Link href="/tasbih" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname.startsWith("/tasbih") ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Tasbih
-                                </Link>
-                                <Link href="/knowledge" className={cn(
-                                    "text-lg font-medium transition-colors",
-                                    pathname.startsWith("/knowledge") ? "text-primary" : "text-foreground/70"
-                                )}>
-                                    Knowledge
-                                </Link>
-                                {user && (
-                                    <Link href="/bookmarks" className="text-lg font-medium text-primary flex items-center">
-                                        <Bookmark className="mr-2 h-5 w-5" /> My Bookmarks
-                                    </Link>
-                                )}
-                                <div className="pt-4 border-t flex flex-col gap-2">
-                                    {user ? (
-                                        <Button variant="outline" className="w-full" onClick={handleSignOut}>
-                                            Sign Out
-                                        </Button>
-                                    ) : (
-                                        <Link href="/auth">
-                                            <Button variant="outline" className="w-full">
-                                                Sign In
-                                            </Button>
+
+                            <div className="flex flex-col h-full">
+                                <div className="flex flex-col gap-2">
+                                    {[
+                                        { name: "Quran", href: "/quran" },
+                                        { name: "Hadith", href: "/hadith" },
+                                        { name: "Prayer Times", href: "/prayer-times" },
+                                        { name: "Duas & Azkar", href: "/duas" },
+                                        { name: "Tasbih", href: "/tasbih" },
+                                        { name: "Names of Allah", href: "/names" },
+                                        { name: "Knowledge", href: "/knowledge" },
+                                    ].map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className={cn(
+                                                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 group",
+                                                pathname.startsWith(link.href)
+                                                    ? "bg-primary/10 text-primary"
+                                                    : "hover:bg-muted text-foreground/80 hover:text-primary"
+                                            )}
+                                        >
+                                            <span className="text-lg font-medium font-serif">{link.name}</span>
+                                            {pathname.startsWith(link.href) && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                            )}
+                                        </Link>
+                                    ))}
+
+                                    {user && (
+                                        <Link href="/bookmarks" className="flex items-center justify-between p-3 rounded-xl hover:bg-muted text-primary transition-all duration-200 mt-2 border border-primary/10">
+                                            <span className="text-lg font-medium font-serif flex items-center gap-2">
+                                                <Bookmark className="h-4 w-4" /> My Bookmarks
+                                            </span>
                                         </Link>
                                     )}
-                                    <Link href="/settings">
-                                        <Button className="w-full bg-primary text-primary-foreground">
-                                            More Settings
-                                        </Button>
-                                    </Link>
-                                    <div className="pt-4 flex justify-center">
+                                </div>
+
+                                <div className="mt-auto pb-8 pt-6 border-t border-primary/10 flex flex-col gap-4">
+                                    <div className="flex flex-col gap-3">
+                                        {user ? (
+                                            <Button variant="outline" className="w-full h-11 rounded-xl border-primary/20 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 justify-start px-4" onClick={handleSignOut}>
+                                                Sign Out
+                                            </Button>
+                                        ) : (
+                                            <Link href="/auth">
+                                                <Button variant="outline" className="w-full h-11 rounded-xl border-primary/20 justify-start px-4 font-serif">
+                                                    Sign In
+                                                </Button>
+                                            </Link>
+                                        )}
+                                        <Link href="/settings">
+                                            <Button className="w-full h-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 justify-between px-4 font-serif group">
+                                                More Settings
+                                                <span className="bg-white/20 p-1 rounded-md group-hover:bg-white/30 transition-colors">
+                                                    <Menu className="h-4 w-4" />
+                                                </span>
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                    <div className="flex justify-center bg-muted/30 p-4 rounded-2xl">
                                         <GlobalSettings />
                                     </div>
                                 </div>
