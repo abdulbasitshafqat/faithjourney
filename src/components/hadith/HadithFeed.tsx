@@ -6,6 +6,7 @@ import { Share2, Bookmark, Copy, Check, Loader2 } from 'lucide-react';
 import { Hadith } from '@/lib/api/hadith';
 import { toggleBookmark, checkBookmarksBatch } from '@/lib/api/bookmarks';
 import { supabase } from '@/lib/supabase';
+import { cn } from '@/lib/utils';
 
 interface HadithFeedProps {
     hadiths: {
@@ -98,14 +99,20 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
     return (
         <div className="space-y-6">
             {/* Controls */}
-            <div className="flex justify-end items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                <span className="text-sm font-medium mr-3 text-slate-600">Urdu Translation</span>
+            <div className="flex justify-end items-center mb-6 bg-card/50 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-primary/10">
+                <span className="text-sm font-medium mr-3 text-muted-foreground">Urdu Translation</span>
                 <button
                     onClick={() => setShowUrdu(!showUrdu)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${showUrdu ? 'bg-emerald-600' : 'bg-slate-200'}`}
+                    className={cn(
+                        "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                        showUrdu ? "bg-primary" : "bg-muted"
+                    )}
                 >
                     <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${showUrdu ? 'translate-x-6' : 'translate-x-1'}`}
+                        className={cn(
+                            "inline-block h-4 w-4 transform rounded-full bg-background transition-transform shadow-sm",
+                            showUrdu ? "translate-x-6" : "translate-x-1"
+                        )}
                     />
                 </button>
             </div>
@@ -120,49 +127,49 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
                     <div
                         key={index}
                         id={`hadith-${item.english.hadithnumber}`}
-                        className="bg-white rounded-2xl shadow-sm border border-emerald-50/50 overflow-hidden hover:shadow-md transition-shadow"
+                        className="bg-card/40 backdrop-blur-md rounded-2xl shadow-xl border border-primary/10 overflow-hidden hover:shadow-2xl transition-all duration-300 group"
                     >
                         {/* Header: Number & Grade */}
-                        <div className="bg-emerald-50/30 px-6 py-3 flex justify-between items-center border-b border-emerald-50">
-                            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-sm font-bold">
-                                #{item.english.hadithnumber}
+                        <div className="bg-primary/5 px-6 py-4 flex justify-between items-center border-b border-primary/10">
+                            <span className="inline-flex items-center justify-center px-4 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+                                Hadith #{item.english.hadithnumber}
                             </span>
                             {item.english.grades && item.english.grades.length > 0 && (
-                                <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100">
+                                <span className="text-[10px] font-bold px-2.5 py-1 rounded bg-secondary/10 text-secondary-foreground border border-secondary/20 uppercase tracking-tighter">
                                     {item.english.grades[0].grade}
                                 </span>
                             )}
                         </div>
 
-                        <div className="p-6 md:p-8">
+                        <div className="p-8 md:p-10">
                             {/* Arabic Text */}
-                            <div className="mb-8 text-right" dir="rtl">
-                                <p className="text-3xl md:text-4xl text-slate-800 leading-loose font-serif">
+                            <div className="mb-10 text-right" dir="rtl">
+                                <p className="text-4xl md:text-5xl text-primary leading-[1.8] font-arabic">
                                     {item.arabic.text}
                                 </p>
                             </div>
 
                             {/* English Translation */}
-                            <div className="mb-6">
-                                <p className="text-lg text-slate-700 leading-relaxed">
-                                    {item.english.text}
+                            <div className="mb-8">
+                                <p className="text-xl text-foreground/90 leading-relaxed font-serif italic">
+                                    "{item.english.text}"
                                 </p>
                             </div>
 
                             {/* Urdu Translation */}
                             {showUrdu && item.urdu && (
-                                <div className="mb-6 text-right border-t border-slate-100 pt-6" dir="rtl">
-                                    <p className="text-xl text-slate-600 leading-loose font-serif">
+                                <div className="mb-8 text-right border-t border-primary/5 pt-8" dir="rtl">
+                                    <p className="text-2xl text-foreground/80 leading-loose font-arabic">
                                         {item.urdu.text}
                                     </p>
                                 </div>
                             )}
 
                             {/* Action Bar */}
-                            <div className="flex items-center justify-end space-x-2 mt-8 pt-4 border-t border-slate-50">
+                            <div className="flex items-center justify-end space-x-3 mt-10 pt-6 border-t border-primary/5">
                                 <button
                                     onClick={() => handleCopy(item, item.english.hadithnumber)}
-                                    className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
+                                    className="p-3 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300"
                                     title="Copy Text"
                                 >
                                     {copiedId === item.english.hadithnumber ? <Check size={20} /> : <Copy size={20} />}
@@ -170,7 +177,7 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
 
                                 <button
                                     onClick={() => handleShare(item)}
-                                    className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
+                                    className="p-3 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300"
                                     title="Share"
                                 >
                                     <Share2 size={20} />
@@ -179,7 +186,12 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
                                 <button
                                     onClick={() => handleBookmark(item)}
                                     disabled={isLoading}
-                                    className={`p-2 rounded-full transition-colors ${isBookmarked ? 'text-amber-500 bg-amber-50' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
+                                    className={cn(
+                                        "p-3 rounded-full transition-all duration-300",
+                                        isBookmarked
+                                            ? "text-secondary bg-secondary/10"
+                                            : "text-muted-foreground hover:text-secondary hover:bg-secondary/10"
+                                    )}
                                     title={isBookmarked ? "Remove Bookmark" : "Bookmark Hadith"}
                                 >
                                     {isLoading ? (

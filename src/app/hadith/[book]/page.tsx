@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getBookSections, getSupportedBooks } from '@/lib/api/hadith';
 import { ArrowLeft, BookOpen } from 'lucide-react';
+import { Header } from "@/components/layout/Header";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface PageProps {
     params: Promise<{
@@ -33,56 +35,59 @@ export default async function BookChaptersPage({ params }: PageProps) {
     const chapters = await getBookSections(bookId as any);
 
     return (
-        <main className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-background py-24 px-4 sm:px-6 lg:px-8">
+            <Header />
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-10">
                     <Link
                         href="/hadith"
-                        className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium mb-6 transition-colors"
+                        className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-6 transition-colors"
                     >
-                        <ArrowLeft size={20} className="mr-2" />
+                        <ArrowLeft size={18} className="mr-2" />
                         Back to Library
                     </Link>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-serif mb-2">
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">
                         {bookData.name}
                     </h1>
-                    <p className="text-slate-600">
+                    <p className="text-lg text-muted-foreground font-medium">
                         {bookData.author} • {chapters.length} Chapters
                     </p>
                 </div>
 
                 {/* Chapters List */}
-                <div className="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden">
-                    {chapters.length > 0 ? (
-                        <div className="divide-y divide-emerald-50">
-                            {chapters.map((chapter) => (
-                                <Link
-                                    key={chapter.number}
-                                    href={`/hadith/${bookId}/${chapter.number}`}
-                                    className="group flex items-center p-5 hover:bg-emerald-50/50 transition-colors duration-200"
-                                >
-                                    <div className="flex-shrink-0 w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-lg mr-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                        {chapter.number}
-                                    </div>
-                                    <div className="flex-grow">
-                                        <h3 className="text-lg font-medium text-slate-800 group-hover:text-emerald-900">
-                                            {chapter.name}
-                                        </h3>
-                                    </div>
-                                    <div className="flex-shrink-0 text-slate-400 group-hover:text-emerald-500">
-                                        <BookOpen size={20} />
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="p-12 text-center text-slate-500">
-                            No chapters found. Please check your connection.
-                        </div>
-                    )}
-                </div>
+                <Card className="bg-card/50 backdrop-blur-sm border-primary/10 overflow-hidden shadow-xl">
+                    <CardContent className="p-0">
+                        {chapters.length > 0 ? (
+                            <div className="divide-y divide-primary/5">
+                                {chapters.map((chapter) => (
+                                    <Link
+                                        key={chapter.number}
+                                        href={`/hadith/${bookId}/${chapter.number}`}
+                                        className="group flex items-center p-6 hover:bg-primary/5 transition-all duration-200"
+                                    >
+                                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-lg mr-4 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                            {chapter.number}
+                                        </div>
+                                        <div className="flex-grow">
+                                            <h3 className="text-xl font-medium text-foreground group-hover:text-primary transition-colors">
+                                                {chapter.name}
+                                            </h3>
+                                        </div>
+                                        <div className="flex-shrink-0 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-1">
+                                            <BookOpen size={20} />
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-12 text-center text-muted-foreground">
+                                No chapters found. Please check your connection.
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </main>
     );

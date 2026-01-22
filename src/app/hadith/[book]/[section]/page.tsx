@@ -4,6 +4,7 @@ import { getSupportedBooks, getBookSections, getHadithsForSection } from '@/lib/
 import HadithFeed from '@/components/hadith/HadithFeed';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { Header } from "@/components/layout/Header";
 
 interface PageProps {
     params: Promise<{
@@ -38,11 +39,11 @@ export default async function HadithReaderPage({ params }: PageProps) {
 
     if (!engData || engData.arabic.length === 0) {
         return (
-            <main className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
+            <main className="min-h-screen bg-background py-24 px-4 flex items-center justify-center">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-slate-700 mb-2">Chapter Not Found</h2>
-                    <p className="text-slate-500 mb-6">Could not load Hadiths for this chapter.</p>
-                    <Link href={`/hadith/${bookId}`} className="btn btn-primary">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">Chapter Not Found</h2>
+                    <p className="text-muted-foreground mb-6">Could not load Hadiths for this chapter.</p>
+                    <Link href={`/hadith/${bookId}`} className="text-primary hover:underline">
                         Return to Chapters
                     </Link>
                 </div>
@@ -69,22 +70,23 @@ export default async function HadithReaderPage({ params }: PageProps) {
     const chapterName = currentSection ? currentSection.name : `Chapter ${sectionId}`;
 
     return (
-        <main className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-background py-24 px-4 sm:px-6 lg:px-8">
+            <Header />
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-10">
                     <Link
                         href={`/hadith/${bookId}`}
-                        className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium mb-6 transition-colors"
+                        className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-6 transition-colors"
                     >
-                        <ArrowLeft size={20} className="mr-2" />
+                        <ArrowLeft size={18} className="mr-2" />
                         Back to Chapters
                     </Link>
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-serif mb-2 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-2 leading-tight">
                         {chapterName}
                     </h1>
-                    <p className="text-slate-600 font-medium">
+                    <p className="text-lg text-muted-foreground font-medium">
                         {bookData.name}
                     </p>
                 </div>
