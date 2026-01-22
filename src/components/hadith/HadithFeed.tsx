@@ -99,22 +99,32 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
     return (
         <div className="space-y-6">
             {/* Controls */}
-            <div className="flex justify-end items-center mb-6 bg-card/50 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-primary/10">
-                <span className="text-sm font-medium mr-3 text-muted-foreground">Urdu Translation</span>
-                <button
-                    onClick={() => setShowUrdu(!showUrdu)}
-                    className={cn(
-                        "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                        showUrdu ? "bg-primary" : "bg-muted"
-                    )}
-                >
-                    <span
+            <div className="flex justify-between items-center mb-8 bg-card/60 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-primary/20">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center font-bold text-primary">ع</div>
+                    <div>
+                        <h3 className="text-sm font-bold text-foreground">Advanced View</h3>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest leading-none">Translation & References</p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">Urdu Translation</span>
+                    <button
+                        onClick={() => setShowUrdu(!showUrdu)}
                         className={cn(
-                            "inline-block h-4 w-4 transform rounded-full bg-background transition-transform shadow-sm",
-                            showUrdu ? "translate-x-6" : "translate-x-1"
+                            "relative inline-flex h-7 w-14 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-inner",
+                            showUrdu ? "bg-primary" : "bg-muted"
                         )}
-                    />
-                </button>
+                    >
+                        <span
+                            className={cn(
+                                "inline-block h-5 w-5 transform rounded-full bg-background transition-transform shadow-md ring-1 ring-black/5",
+                                showUrdu ? "translate-x-8" : "translate-x-1"
+                            )}
+                        />
+                    </button>
+                </div>
             </div>
 
             {/* Hadith Cards */}
@@ -158,12 +168,52 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
 
                             {/* Urdu Translation */}
                             {showUrdu && item.urdu && (
-                                <div className="mb-8 text-right border-t border-primary/5 pt-8" dir="rtl">
-                                    <p className="text-2xl text-foreground/80 leading-loose font-arabic">
+                                <div className="mb-8 text-right border-t-2 border-primary/10 pt-8 bg-primary/5 p-6 rounded-xl" dir="rtl">
+                                    <div className="text-xs font-bold text-primary mb-2 uppercase tracking-widest text-left">Urdu translation</div>
+                                    <p className="text-2xl text-foreground/90 leading-loose font-arabic">
                                         {item.urdu.text}
                                     </p>
                                 </div>
                             )}
+
+                            {/* Detailed Reference Section */}
+                            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-primary/5">
+                                    <h4 className="font-bold uppercase tracking-wider text-primary/70">Source Reference</h4>
+                                    <div className="flex justify-between border-b border-primary/5 pb-1">
+                                        <span className="text-muted-foreground">Collection</span>
+                                        <span className="font-medium">{bookName}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-primary/5 pb-1">
+                                        <span className="text-muted-foreground">Hadith Number</span>
+                                        <span className="font-mono font-bold">{item.english.hadithnumber}</span>
+                                    </div>
+                                    {item.english.reference && (
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">In-Book Reference</span>
+                                            <span className="font-mono">Book {item.english.reference.book}, Hadith {item.english.reference.hadith}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-primary/5">
+                                    <h4 className="font-bold uppercase tracking-wider text-primary/70">Authentication</h4>
+                                    {item.english.grades && item.english.grades.length > 0 ? (
+                                        item.english.grades.map((g, i) => (
+                                            <div key={i} className="flex justify-between border-b border-primary/5 last:border-0 pb-1">
+                                                <span className="text-muted-foreground">{g.name}</span>
+                                                <span className={cn(
+                                                    "font-bold",
+                                                    g.grade.toLowerCase().includes('sahih') ? "text-emerald-600" :
+                                                        g.grade.toLowerCase().includes('hasan') ? "text-amber-600" : "text-primary"
+                                                )}>{g.grade}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-muted-foreground italic tracking-tight">Grade information not available for this collection.</div>
+                                    )}
+                                </div>
+                            </div>
 
                             {/* Action Bar */}
                             <div className="flex items-center justify-end space-x-3 mt-10 pt-6 border-t border-primary/5">
