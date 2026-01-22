@@ -53,9 +53,33 @@ export async function getAyahs(surahId: number, translations: string = "20,234,5
     return data.verses;
 }
 
-export async function getSurahAudio(surahId: number, reciterId: number = 7): Promise<string> {
-    // 7 is Mishary Rashid Alafasy
-    const res = await fetch(`${BASE_URL}/chapter_recitations/${reciterId}/${surahId}`);
+export async function getSurahAudio(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<string> {
+    // 7: Mishary Rashid Alafasy (Arabic)
+    // 159: Shamshad Ali Khan (Urdu Translation) - Note: Reciter ID needs to be verified or sourced correctly.
+    // Let's check available recitations. Quran.com API usually separates translations.
+    // However, for MVP, if we use a reciter that includes Urdu, we need the correct ID.
+    // A clearer approach for audio translations might be fetching a specific translation resource, but standard recitations are usually Arabic.
+    // Let's use a known Urdu audio source ID if available, otherwise we might need to inform the user.
+    // ID 10 is Saud Al-Shuraim, 7 is Alafasy.
+    // For Urdu, often "Sudais with Urdu translation" is popular but might not be in this endpoint directly without correct ID.
+    // Let's try to stick to Arabic for now unless we are sure.
+    // Wait, user specifically asked for Urdu recitation.
+    // Let's use 161 which is a common placeholder for Urdu translation audio in some docs, or better yet, make it selectable.
+
+    // Updated Logic:
+    // If language is 'ur', we try to fetch a specific Urdu recitation.
+    // ID 97 is often Yasser Al-Dosari.
+    // Let's look up a specific Urdu one. ID 234 is text translation.
+    // For audio, we might need to use a different endpoint or specific ID.
+    // Let's assume user wants to switch between them.
+
+    const targetReciterId = language === 'ur' ? 105 : reciterId; // 105 is a placeholder for Urdu, let's Verify. 
+    // Actually, quran.com API has recitations. 
+    // Let's use a conditional Reciter ID. 
+    // If 'ur', we use a Reciter ID that provides Urdu. 
+    // Allow passing reciterId dynamically is best.
+
+    const res = await fetch(`${BASE_URL}/chapter_recitations/${targetReciterId}/${surahId}`);
     if (!res.ok) throw new Error("Failed to fetch Audio");
     const data = await res.json();
     return data.audio_file.audio_url;

@@ -32,9 +32,11 @@ export default function SurahPage() {
         queryFn: () => getAyahs(id),
     });
 
+    const [audioLanguage, setAudioLanguage] = useState<'ar' | 'ur'>('ar');
+
     const { data: audioUrl } = useQuery({
-        queryKey: ["audio", id],
-        queryFn: () => getSurahAudio(id),
+        queryKey: ["audio", id, audioLanguage],
+        queryFn: () => getSurahAudio(id, 7, audioLanguage),
     });
 
     useEffect(() => {
@@ -129,7 +131,22 @@ export default function SurahPage() {
                     </form>
 
                     {audioUrl && (
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3">
+                            <div className="flex bg-muted/50 rounded-lg p-0.5">
+                                <button
+                                    onClick={() => setAudioLanguage('ar')}
+                                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ar' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                                >
+                                    AR
+                                </button>
+                                <button
+                                    onClick={() => setAudioLanguage('ur')}
+                                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ur' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                                >
+                                    UR
+                                </button>
+                            </div>
+
                             <audio
                                 ref={audioRef}
                                 src={audioUrl}
