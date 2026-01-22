@@ -177,6 +177,11 @@ export default function SurahPage() {
 
                     {audioData && (
                         <div className="flex items-center space-x-3">
+                            {audioLanguage === 'ur' && (
+                                <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded hidden md:inline-block animate-pulse">
+                                    Sync unavailable for Urdu
+                                </span>
+                            )}
                             <div className="flex bg-muted/50 rounded-lg p-0.5">
                                 <button
                                     onClick={() => setAudioLanguage('ar')}
