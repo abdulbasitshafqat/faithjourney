@@ -11,12 +11,11 @@ const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined
 
 export function FontSizeProvider({ children }: { children: React.ReactNode }) {
     const [fontSize, setFontSizeState] = useState(28); // Default size
-    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
         const savedSize = localStorage.getItem("quran-font-size");
         if (savedSize) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFontSizeState(Number(savedSize));
         }
     }, []);

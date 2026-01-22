@@ -19,7 +19,7 @@ export default function PrivacyPage() {
                         <p className="text-muted-foreground leading-relaxed">
                             At FaithJourney.pro, we respect your privacy and are committed to protecting it.
                             This Privacy Policy explains how we handle your data when you use our website
-                            and related services (collectively, the "Service").
+                            and related services (collectively, the &quot;Service&quot;).
                         </p>
                     </section>
 
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
                                 <h3 className="font-semibold text-foreground mb-2">Location Data</h3>
                                 <p className="text-muted-foreground leading-relaxed">
                                     To provide accurate Prayer Times and Qibla direction, we may request access
-                                    to your device's geolocation. This data is processed locally on your device
+                                    to your device&apos;s geolocation. This data is processed locally on your device
                                     or sent directly to our calculation APIs. We do not store your precise
                                     location history on our servers.
                                 </p>
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
                             <div>
                                 <h3 className="font-semibold text-foreground mb-2">Local Preferences</h3>
                                 <p className="text-muted-foreground leading-relaxed">
-                                    We use your browser's Local Storage to save your preferences, such as:
+                                    We use your browser&apos;s Local Storage to save your preferences, such as:
                                     <ul className="list-disc pl-6 mt-2 space-y-1">
                                         <li>Theme settings (Dark/Light mode)</li>
                                         <li>Font size preferences</li>

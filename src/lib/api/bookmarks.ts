@@ -5,14 +5,14 @@ export interface Bookmark {
     user_id: string;
     item_id: string;
     type: 'hadith' | 'dua';
-    metadata: any;
+    metadata: Record<string, unknown>;
     created_at: string;
 }
 
 export async function toggleBookmark(
     itemId: string,
     type: 'hadith' | 'dua',
-    metadata: any
+    metadata: Record<string, unknown>
 ) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('You must be logged in to bookmark items.');

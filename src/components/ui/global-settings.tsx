@@ -3,18 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
 import { useFontSize } from "@/components/providers/FontSizeProvider";
+import { useMounted } from "@/hooks/use-mounted";
 
 export function GlobalSettings() {
     const { fontSize, setFontSize } = useFontSize();
     const { setTheme, theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const mounted = useMounted();
 
     if (!mounted) return null;
 

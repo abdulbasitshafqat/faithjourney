@@ -17,9 +17,9 @@ export default function TermsPage() {
                             1. Acceptance of Terms
                         </h2>
                         <p className="text-muted-foreground leading-relaxed">
-                            By accessing and using FaithJourney.pro ("the Service"), you
+                            By accessing and using FaithJourney.pro (&quot;the Service&quot;), you
                             accept and agree to be bound by the terms and provision of this
-                            agreement. In addition, when using this Service's particular
+                            agreement. In addition, when using this Service&apos;s particular
                             services, you shall be subject to any posted guidelines or rules
                             applicable to such services.
                         </p>
@@ -32,7 +32,7 @@ export default function TermsPage() {
                         <p className="text-muted-foreground leading-relaxed">
                             FaithJourney.pro is a digital Islamic utility application that
                             provides users with the Holy Quran, prayer times, Qibla direction,
-                            and other spiritual tools. The Service is provided "as is" and is
+                            and other spiritual tools. The Service is provided &quot;as is&quot; and is
                             intended for educational and spiritual purposes.
                         </p>
                     </section>
@@ -55,7 +55,7 @@ export default function TermsPage() {
                             </li>
                             <li>
                                 <strong>Qibla Direction:</strong> The compass feature relies on
-                                your device's sensors, which can be affected by magnetic interference.
+                                your device&apos;s sensors, which can be affected by magnetic interference.
                             </li>
                             <li>
                                 <strong>Quranic Text:</strong> We source our text from reputable
@@ -97,7 +97,7 @@ export default function TermsPage() {
                             6. Disclaimer
                         </h2>
                         <p className="text-muted-foreground leading-relaxed">
-                            THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS
+                            THE SERVICE IS PROVIDED ON AN &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; BASIS
                             WITHOUT ANY REPRESENTATION OR WARRANTY, WHETHER EXPRESS, IMPLIED
                             OR STATUTORY. FAITHJOURNEY.PRO SPECIFICALLY DISCLAIMS ANY IMPLIED
                             WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR

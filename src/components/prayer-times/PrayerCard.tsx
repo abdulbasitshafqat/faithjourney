@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPrayerTimes } from "@/lib/api/prayer-times";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Sunrise, Sun, Sunset, Moon, Volume2 } from "lucide-react";
+import { MapPin, Sunrise, Sun, Sunset, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function PrayerCard() {
@@ -14,6 +14,7 @@ export function PrayerCard() {
 
     useEffect(() => {
         if (!navigator.geolocation) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setError("Geolocation is not supported by your browser");
             return;
         }

@@ -7,6 +7,7 @@ import { Hadith } from '@/lib/api/hadith';
 import { toggleBookmark, checkBookmarksBatch } from '@/lib/api/bookmarks';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { User } from '@supabase/supabase-js';
 
 interface HadithFeedProps {
     hadiths: {
@@ -24,7 +25,7 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
     const [copiedId, setCopiedId] = useState<number | null>(null);
     const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
     const [loadingBookmarks, setLoadingBookmarks] = useState<Record<string, boolean>>({});
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -88,9 +89,9 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
 
             const result = await toggleBookmark(id, 'hadith', metadata);
             setBookmarkedIds(prev => ({ ...prev, [id]: result.action === 'added' }));
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error bookmarking:', error);
-            alert(error.message || 'Failed to update bookmark');
+            alert((error as Error).message || 'Failed to update bookmark');
         } finally {
             setLoadingBookmarks(prev => ({ ...prev, [id]: false }));
         }
@@ -162,7 +163,7 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
                             {/* English Translation */}
                             <div className="mb-8">
                                 <p className="text-xl text-foreground/90 leading-relaxed font-serif italic">
-                                    "{item.english.text}"
+                                    &quot;{item.english.text}&quot;
                                 </p>
                             </div>
 

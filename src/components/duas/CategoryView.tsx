@@ -11,9 +11,10 @@ import { duasData, duaCategories } from "@/lib/data/duas";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Bookmark, Loader2 } from "lucide-react";
-import { notFound } from "next/navigation";
 import { toggleBookmark, checkBookmarksBatch } from "@/lib/api/bookmarks";
 import { supabase } from "@/lib/supabase";
+import { User } from "@supabase/supabase-js";
+import { useFontSize } from "@/components/providers/FontSizeProvider";
 
 // Deep Emerald & Gold Theme Constants
 const THEME = {
@@ -25,12 +26,27 @@ const THEME = {
     border: "border-[#1F4D3E]", // Emerald Border
 };
 
+// Define local interface for Dua
+interface Dua {
+    id: string;
+    category_id: string;
+    arabic_text: string;
+    translations: {
+        en: string;
+        ur: string;
+    };
+    transliteration: string;
+    reference: string;
+    virtue?: string;
+    repeat_count: number;
+}
+
 export default function CategoryView({ categoryKey }: { categoryKey: string }) {
-    const [fontSize, setFontSize] = useState(18);
+    const { fontSize } = useFontSize();
     const [mounted, setMounted] = useState(false);
     const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
     const [loadingBookmarks, setLoadingBookmarks] = useState<Record<string, boolean>>({});
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     // Resolve category
     const categoryTitle = duaCategories[categoryKey as keyof typeof duaCategories];
@@ -52,7 +68,7 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
         checkStatus();
     }, [categoryKey]);
 
-    const handleBookmark = async (dua: any) => {
+    const handleBookmark = async (dua: Dua) => {
         if (!user) {
             alert("Please sign in to bookmark Duas.");
             return;
@@ -69,7 +85,7 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
             };
             const result = await toggleBookmark(dua.id, 'dua', metadata);
             setBookmarkedIds(prev => ({ ...prev, [dua.id]: result.action === 'added' }));
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error bookmarking:", error);
         } finally {
             setLoadingBookmarks(prev => ({ ...prev, [dua.id]: false }));

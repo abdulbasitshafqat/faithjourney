@@ -11,6 +11,6 @@ export function calculateQibla(latitude: number, longitude: number): number {
         Math.cos(phi1) * Math.sin(phi2) -
         Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
 
-    let qibla = (Math.atan2(y, x) * 180) / Math.PI;
+    const qibla = (Math.atan2(y, x) * 180) / Math.PI;
     return (qibla + 360) % 360;
 }

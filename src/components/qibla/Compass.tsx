@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { calculateQibla } from "@/lib/qibla";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Compass as CompassIcon, Navigation } from "lucide-react";
+import { Compass as CompassIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Compass() {
@@ -14,6 +14,7 @@ export function Compass() {
 
     useEffect(() => {
         if (!navigator.geolocation) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setError("Geolocation is not supported");
             return;
         }
@@ -29,8 +30,10 @@ export function Compass() {
     }, []);
 
     const requestAccess = async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const permission = await (DeviceOrientationEvent as any).requestPermission();
                 if (permission === "granted") {
                     setPermissionGranted(true);
@@ -38,7 +41,7 @@ export function Compass() {
                 } else {
                     setError("Permission denied");
                 }
-            } catch (e) {
+            } catch {
                 setError("Error requesting permission");
             }
         } else {
@@ -49,8 +52,9 @@ export function Compass() {
     };
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const anyEvent = event as any;
-        let compass = anyEvent.webkitCompassHeading || Math.abs(event.alpha! - 360);
+        const compass = anyEvent.webkitCompassHeading || Math.abs(event.alpha! - 360);
         setHeading(compass);
     };
 
@@ -59,8 +63,6 @@ export function Compass() {
             window.removeEventListener("deviceorientation", handleOrientation);
         };
     }, []);
-
-    const rotation = qibla ? qibla - heading : 0;
 
     return (
         <Card className="w-full max-w-md mx-auto mt-8 bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg">
@@ -75,6 +77,7 @@ export function Compass() {
                     <p className="text-red-500">{error}</p>
                 ) : !qibla ? (
                     <p className="text-muted-foreground">Locating...</p>
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ) : !permissionGranted && typeof (DeviceOrientationEvent as any).requestPermission === "function" ? (
                     <Button onClick={requestAccess}>Enable Compass</Button>
                 ) : (

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { GlobalSettings } from "@/components/ui/global-settings";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ import { cn } from "@/lib/utils";
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -41,7 +42,7 @@ export function Header() {
             setUser(session?.user ?? null);
         });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
             setUser(session?.user ?? null);
         });
 

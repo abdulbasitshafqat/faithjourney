@@ -104,7 +104,7 @@ export async function getHadithsForSection(
     language: 'eng' | 'urd' = 'eng'
 ): Promise<{ arabic: Hadith[]; translation: Hadith[] }> {
 
-    const engEdition = BOOK_EDITIONS[bookSlug].eng; // Not used but good reference
+    // const engEdition = BOOK_EDITIONS[bookSlug].eng; // Not used but good reference
     const targetEdition = BOOK_EDITIONS[bookSlug][language];
     const araEdition = BOOK_EDITIONS[bookSlug].ara;
 
