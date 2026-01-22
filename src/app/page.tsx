@@ -191,6 +191,55 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* SEO Rich Content Section */}
+        <section className="py-20 bg-muted/20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                  <h2 className="text-3xl font-serif font-bold text-primary mb-6">Designed for Your Spiritual Growth</h2>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    Faith Journey is more than just an <strong>Islamic app</strong>. It is a comprehensive ecosystem designed to help you integrate your faith into your modern lifestyle. Whether you are looking to <strong>read the Holy Quran online</strong>, find <strong>accurate prayer times</strong> for your city, or explore the <strong>authentic collections of Hadith</strong>, we provide a serene and distraction-free experience.
+                  </p>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    Our platform is built with a focus on privacy and aesthetic excellence. We believe that spiritual tools should be beautiful, intuitive, and accessible from any device.
+                  </p>
+                </div>
+                <div className="bg-primary/10 aspect-square rounded-3xl flex items-center justify-center p-12">
+                  <div className="text-center">
+                    <Moon className="w-20 h-20 text-primary mx-auto mb-4 animate-pulse" />
+                    <div className="text-2xl font-serif font-bold text-primary">Faith Journey</div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-widest mt-2">v2.1 Est. 2024</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ Section for SEO */}
+              <div className="space-y-8">
+                <h3 className="text-2xl font-serif font-bold text-center text-primary mb-10">Common Questions</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-foreground">What makes Faith Journey unique?</h4>
+                    <p className="text-sm text-muted-foreground">Unlike many other apps, we prioritize a premium, ad-free experience with a focus on high-quality typography and serene design to minimize distractions during worship.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-foreground">Is the Quran text authentic?</h4>
+                    <p className="text-sm text-muted-foreground">Yes, we uses the standardized Uthmani script and verified translations from reputable sources to ensure accuracy for all our users.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-foreground">How are prayer times calculated?</h4>
+                    <p className="text-sm text-muted-foreground">We use high-precision astronomical calculations based on your geographic location, supporting various conventions like MWL, ISNA, and others.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-foreground">Is this platform really free?</h4>
+                    <p className="text-sm text-muted-foreground">Faith Journey is a labor of love. Core features are free to use, as our primary goal is to provide value to the global Muslim community.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />

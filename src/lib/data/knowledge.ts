@@ -80,5 +80,81 @@ export const articles: Article[] = [
                 <li>When it rains</li>
             </ul>
         `
+    },
+    {
+        slug: "concept-of-tawhid",
+        title: "Understanding Tawhid: The Core of Faith",
+        description: "An in-depth look at the oneness of God, the foundation of Islamic belief and spirituality.",
+        category: "Faith",
+        readTime: "8 min read",
+        content: `
+            <h3>The Foundation of Islam</h3>
+            <p>Tawhid is the defining doctrine of Islam. It is the belief in the absolute oneness and uniqueness of Allah, the Creator and Sustainer of the universe.</p>
+            
+            <h3>Three Aspects of Tawhid</h3>
+            <p>Scholars often categorize Tawhid into three parts to help us understand our relationship with the Divine:</p>
+            <ul>
+                <li><strong>Tawhid ar-Rububiyyah:</strong> Oneness in Lordship (Allah is the only Creator and Provider).</li>
+                <li><strong>Tawhid al-Uluhiyyah:</strong> Oneness in Worship (Allah is the only one worthy of worship).</li>
+                <li><strong>Tawhid al-Asma was-Sifat:</strong> Oneness in Names and Attributes (Allah's names are unique to Him).</li>
+            </ul>
+        `
+    },
+    {
+        slug: "intro-to-hadith-science",
+        title: "Introduction to Hadith Science",
+        description: "How scholars verified the sayings and actions of the Prophet (PBUH) through a rigorous system.",
+        category: "History",
+        readTime: "10 min read",
+        content: `
+            <h3>What is Hadith?</h3>
+            <p>A Hadith refers to the reports of the statements, actions, and silent approvals of Prophet Muhammad (PBUH). It is the second primary source of Islamic law after the Quran.</p>
+            
+            <h3>The Rigorous Verification Process</h3>
+            <p>Islamic scholars developed 'Ilm al-Hadith (Science of Hadith) to verify authenticity. Every authentic Hadith has two parts:</p>
+            <ul>
+                <li><strong>Isnad (Chain of Narrators):</strong> A list of trustworthy individuals who passed the message down.</li>
+                <li><strong>Matn (Main Text):</strong> The actual content of the report.</li>
+            </ul>
+        `
+    },
+    {
+        slug: "ramadan-spiritual-recharge",
+        title: "Ramadan: A Month of Spiritual Growth",
+        description: "Beyond abstaining from food and drink, Ramadan is a time for self-discipline, charity, and prayer.",
+        category: "Practice",
+        readTime: "6 min read",
+        content: `
+            <h3>The Gate of Ar-Rayyan</h3>
+            <p>Ramadan is the ninth month of the Islamic calendar, observed by Muslims worldwide as a month of fasting. It commemorates the first revelation of the Quran to Prophet Muhammad (PBUH).</p>
+            
+            <h3>Core Objectives</h3>
+            <p>The primary goal is to attain <em>Taqwa</em> (God-consciousness). Achievements of the month include:</p>
+            <ul>
+                <li>Self-control and discipline</li>
+                <li>Empathy for the less fortunate</li>
+                <li>Community bonding through Iftar and Taraweeh</li>
+                <li>Intense Quranic study</li>
+            </ul>
+        `
+    },
+    {
+        slug: "impact-of-sadaqah",
+        title: "The Power of Sadaqah",
+        description: "How voluntary charity benefits both the giver and the receiver in this life and the next.",
+        category: "Spirituality",
+        readTime: "5 min read",
+        content: `
+            <h3>Invest in the Hereafter</h3>
+            <p>While Zakat is obligatory, Sadaqah is voluntary charity given out of compassion and a desire to please Allah. It is described in the Quran as a 'beautiful loan' to God.</p>
+            
+            <h3>Forms of Sadaqah</h3>
+            <p>Sadaqah is not limited to money. Prophet Muhammad (PBUH) taught that:</p>
+            <ul>
+                <li>"A smile to your brother is Sadaqah."</li>
+                <li>"Removing an obstacle from the path is Sadaqah."</li>
+                <li>"Helping a person with their burden is Sadaqah."</li>
+            </ul>
+        `
     }
 ];
