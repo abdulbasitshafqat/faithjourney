@@ -78,6 +78,7 @@ export function Header() {
                     {[
                         { name: "Quran", href: "/quran" },
                         { name: "Hadith", href: "/hadith" },
+                        { name: "Duas", href: "/duas" },
                         { name: "Prayer Times", href: "/prayer-times" },
                         { name: "Tasbih", href: "/tasbih" },
                         { name: "Knowledge", href: "/knowledge" },
@@ -158,6 +159,12 @@ export function Header() {
                                     pathname === "/prayer-times" ? "text-primary" : "text-foreground/70"
                                 )}>
                                     Prayer Times
+                                </Link>
+                                <Link href="/duas" className={cn(
+                                    "text-lg font-medium transition-colors",
+                                    pathname.startsWith("/duas") ? "text-primary" : "text-foreground/70"
+                                )}>
+                                    Duas & Azkar
                                 </Link>
                                 <Link href="/tasbih" className={cn(
                                     "text-lg font-medium transition-colors",
