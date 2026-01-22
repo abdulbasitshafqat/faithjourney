@@ -12,10 +12,30 @@ export interface Surah {
     };
 }
 
+export interface Word {
+    id: number;
+    position: number;
+    audio_url: string | null;
+    char_type_name: string;
+    text_uthmani: string;
+    page_number: number;
+    line_number: number;
+    text: string;
+    translation?: {
+        text: string;
+        language_name: string;
+    };
+    transliteration?: {
+        text: string;
+        language_name: string;
+    };
+}
+
 export interface Ayah {
     id: number;
     verse_key: string;
     text_uthmani: string;
+    words?: Word[];
     translations?: {
         id: number;
         resource_id: number;
@@ -26,6 +46,19 @@ export interface Ayah {
     audio?: {
         url: string;
     };
+}
+
+export interface AudioTimestamp {
+    verse_key: string;
+    timestamp_from: number;
+    timestamp_to: number;
+    duration: number;
+    segments: [number, number, number][]; // [wordIndex, startMs, endMs]
+}
+
+export interface SurahAudioData {
+    audioUrl: string;
+    timestamps: AudioTimestamp[];
 }
 
 export async function getSurahs(): Promise<Surah[]> {
@@ -46,7 +79,7 @@ export async function getAyahs(surahId: number, translations: string = "20,234,5
     // 20: Sahih International (English)
     // 234: Fatah Muhammad Jalandhari (Urdu)
     const res = await fetch(
-        `${BASE_URL}/verses/by_chapter/${surahId}?language=en&words=false&translations=${translations}&fields=text_uthmani&per_page=286`
+        `${BASE_URL}/verses/by_chapter/${surahId}?language=en&words=true&word_fields=text_uthmani,id,position&translations=${translations}&fields=text_uthmani&per_page=286`
     );
     if (!res.ok) throw new Error("Failed to fetch Ayahs");
     const data = await res.json();
@@ -55,34 +88,33 @@ export async function getAyahs(surahId: number, translations: string = "20,234,5
 
 export async function getSurahAudio(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<string> {
     // 7: Mishary Rashid Alafasy (Arabic)
-    // 159: Shamshad Ali Khan (Urdu Translation) - Note: Reciter ID needs to be verified or sourced correctly.
-    // Let's check available recitations. Quran.com API usually separates translations.
-    // However, for MVP, if we use a reciter that includes Urdu, we need the correct ID.
-    // A clearer approach for audio translations might be fetching a specific translation resource, but standard recitations are usually Arabic.
-    // Let's use a known Urdu audio source ID if available, otherwise we might need to inform the user.
-    // ID 10 is Saud Al-Shuraim, 7 is Alafasy.
-    // For Urdu, often "Sudais with Urdu translation" is popular but might not be in this endpoint directly without correct ID.
-    // Let's try to stick to Arabic for now unless we are sure.
-    // Wait, user specifically asked for Urdu recitation.
-    // Let's use 161 which is a common placeholder for Urdu translation audio in some docs, or better yet, make it selectable.
+    // 158: Shamshad Ali Khan (Urdu) - Verified
 
-    // Updated Logic:
-    // If language is 'ur', we try to fetch a specific Urdu recitation.
-    // ID 97 is often Yasser Al-Dosari.
-    // Let's look up a specific Urdu one. ID 234 is text translation.
-    // For audio, we might need to use a different endpoint or specific ID.
-    // Let's assume user wants to switch between them.
-
-    const targetReciterId = language === 'ur' ? 105 : reciterId; // 105 is a placeholder for Urdu, let's Verify. 
-    // Actually, quran.com API has recitations. 
-    // Let's use a conditional Reciter ID. 
-    // If 'ur', we use a Reciter ID that provides Urdu. 
-    // Allow passing reciterId dynamically is best.
+    const targetReciterId = language === 'ur' ? 158 : reciterId;
 
     const res = await fetch(`${BASE_URL}/chapter_recitations/${targetReciterId}/${surahId}`);
     if (!res.ok) throw new Error("Failed to fetch Audio");
     const data = await res.json();
     return data.audio_file.audio_url;
+}
+
+export async function getSurahRecitation(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<SurahAudioData> {
+    // 7: Mishary Rashid Alafasy (Arabic)
+    // 158: Shamshad Ali Khan (Urdu) - Verified
+
+    // Timestamps are only available for Arabic recitations typically, or specific ones. 
+    // Urdu might not have timestamps. We should handle that.
+    const targetReciterId = language === 'ur' ? 158 : reciterId;
+    const segmentsParam = language === 'ar' ? '?segments=true' : '';
+
+    const res = await fetch(`${BASE_URL}/chapter_recitations/${targetReciterId}/${surahId}${segmentsParam}`);
+    if (!res.ok) throw new Error("Failed to fetch Audio Data");
+    const data = await res.json();
+
+    return {
+        audioUrl: data.audio_file.audio_url,
+        timestamps: data.audio_file.timestamps || []
+    };
 }
 
 export async function getVerseOfTheDay(): Promise<{

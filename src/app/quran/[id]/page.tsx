@@ -3,7 +3,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { getSurahDetails, getAyahs, getSurahAudio } from "@/lib/api/quran";
+import { getSurahDetails, getAyahs, getSurahRecitation, Word } from "@/lib/api/quran";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useFontSize } from "@/components/providers/FontSizeProvider";
+import { cn } from "@/lib/utils";
 
 export default function SurahPage() {
     const params = useParams();
@@ -34,9 +35,9 @@ export default function SurahPage() {
 
     const [audioLanguage, setAudioLanguage] = useState<'ar' | 'ur'>('ar');
 
-    const { data: audioUrl } = useQuery({
+    const { data: audioData } = useQuery({
         queryKey: ["audio", id, audioLanguage],
-        queryFn: () => getSurahAudio(id, 7, audioLanguage),
+        queryFn: () => getSurahRecitation(id, 7, audioLanguage),
     });
 
     useEffect(() => {
@@ -66,6 +67,7 @@ export default function SurahPage() {
     };
 
     const [activeAyahId, setActiveAyahId] = useState<number | null>(null);
+    const [activeWordPosition, setActiveWordPosition] = useState<number | null>(null);
 
     // Auto-scroll to active ayah
     useEffect(() => {
@@ -80,6 +82,36 @@ export default function SurahPage() {
     const handleAudioEnded = () => {
         setIsPlaying(false);
         setActiveAyahId(null);
+        setActiveWordPosition(null);
+    };
+
+    const handleTimeUpdate = () => {
+        if (!audioRef.current || !audioData?.timestamps) return;
+
+        const currentTimeMs = audioRef.current.currentTime * 1000;
+
+        // Find active Verse
+        const activeVerse = audioData.timestamps.find(
+            t => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
+        );
+
+        if (activeVerse) {
+            const matchedAyah = ayahs?.find(a => a.verse_key === activeVerse.verse_key);
+            if (matchedAyah && matchedAyah.id !== activeAyahId) {
+                setActiveAyahId(matchedAyah.id);
+            }
+
+            // Find active Word in the verse segments
+            const activeSegment = activeVerse.segments.find(
+                s => currentTimeMs >= s[1] && currentTimeMs < s[2]
+            );
+
+            if (activeSegment) {
+                setActiveWordPosition(activeSegment[0]);
+            } else {
+                setActiveWordPosition(null);
+            }
+        }
     };
 
     if (isSurahLoading || isAyahsLoading) {
@@ -143,7 +175,7 @@ export default function SurahPage() {
                         />
                     </form>
 
-                    {audioUrl && (
+                    {audioData && (
                         <div className="flex items-center space-x-3">
                             <div className="flex bg-muted/50 rounded-lg p-0.5">
                                 <button
@@ -162,7 +194,8 @@ export default function SurahPage() {
 
                             <audio
                                 ref={audioRef}
-                                src={audioUrl}
+                                src={audioData.audioUrl}
+                                onTimeUpdate={handleTimeUpdate}
                                 onEnded={handleAudioEnded}
                                 className="hidden"
                             />
@@ -184,7 +217,6 @@ export default function SurahPage() {
 
             <main className="flex-grow container mx-auto px-4 py-8">
                 {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
-                {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
                 {Number(surah.id) !== 1 && Number(surah.id) !== 9 && surah.name_simple !== "Al-Fatihah" && (
                     <div key="bismillah-header" className="mb-12 mt-8 text-center font-arabic text-4xl md:text-5xl text-primary leading-[3] py-2">
                         ﷽
@@ -197,14 +229,17 @@ export default function SurahPage() {
                         const englishTranslation = ayah.translations?.find(t => t.resource_id === 20)?.text;
                         const urduTranslation = ayah.translations?.find(t => t.resource_id === 234)?.text;
 
-                        const isActive = activeAyahId === ayah.id || (activeAyahId === null && false); // Placeholder logic until timestamp sync is added
+                        const isAyahActive = activeAyahId === ayah.id;
 
                         return (
                             <Card
                                 key={ayah.id}
                                 id={`ayah-${ayah.verse_key.split(":")[1]}`}
-                                className={`border-none shadow-sm transition-all duration-500 ${isActive ? 'bg-primary/10 ring-2 ring-primary scale-[1.02]' : 'bg-card/50 hover:bg-card'}`}
-                                onClick={() => setActiveAyahId(ayah.id)} // Allow manual selection for now
+                                className={cn(
+                                    "border-none shadow-sm transition-all duration-500",
+                                    isAyahActive ? 'bg-primary/5 ring-1 ring-primary/50' : 'bg-card/50 hover:bg-card'
+                                )}
+                                onClick={() => setActiveAyahId(ayah.id)}
                             >
                                 <CardContent className="p-6">
                                     <div className="flex flex-col space-y-8">
@@ -213,12 +248,55 @@ export default function SurahPage() {
                                             <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-xs text-primary font-medium shrink-0 mt-1 font-sans">
                                                 {ayah.verse_key.split(":")[1]}
                                             </div>
-                                            <p
-                                                className="font-arabic text-right leading-[2.2] text-primary w-full pl-4"
-                                                style={{ fontSize: `${fontSize}px` }}
+
+                                            <div
+                                                className="text-right w-full pl-4 leading-[2.2] flex flex-wrap justify-end gap-x-1"
+                                                dir="rtl"
                                             >
-                                                {ayah.text_uthmani}
-                                            </p>
+                                                {ayah.words?.map((word, wordIndex) => {
+                                                    const isWordActive = isAyahActive && activeWordPosition === word.position;
+
+                                                    // Handle end of verse marker
+                                                    if (word.char_type_name === "end") {
+                                                        return (
+                                                            <span
+                                                                key={word.id}
+                                                                className="text-primary font-arabic select-none text-2xl mx-1"
+                                                                style={{ fontSize: `${fontSize * 0.8}px` }}
+                                                            >
+                                                                {word.text_uthmani}
+                                                            </span>
+                                                        )
+                                                    }
+
+                                                    return (
+                                                        <span
+                                                            key={word.id}
+                                                            className={cn(
+                                                                "font-arabic transition-all duration-200 cursor-pointer rounded px-0.5",
+                                                                isWordActive
+                                                                    ? "text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.6)] font-semibold scale-105"
+                                                                    : "text-primary hover:text-primary/80"
+                                                            )}
+                                                            style={{ fontSize: `${fontSize}px` }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                // Optional: seek to word
+                                                            }}
+                                                        >
+                                                            {word.text_uthmani + " "}
+                                                        </span>
+                                                    );
+                                                }) || (
+                                                        // Fallback if words data is missing
+                                                        <p
+                                                            className="font-arabic text-primary"
+                                                            style={{ fontSize: `${fontSize}px` }}
+                                                        >
+                                                            {ayah.text_uthmani}
+                                                        </p>
+                                                    )}
+                                            </div>
                                         </div>
 
                                         {/* Translations Container */}
