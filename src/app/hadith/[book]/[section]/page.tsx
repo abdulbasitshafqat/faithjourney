@@ -6,7 +6,25 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
 
-interface PageProps {
+export async function generateStaticParams() {
+    const books = getSupportedBooks();
+    const paths = [];
+
+    for (const book of books) {
+        // Validation: book.id must allow 'bukhari'|'muslim'|'abudawud' etc.
+        // getBookSections handles the string key safely or returns []
+        const sections = await getBookSections(book.id as any);
+        for (const section of sections) {
+            paths.push({
+                book: book.id,
+                section: section.number
+            });
+        }
+    }
+    return paths;
+}
+
+export interface PageProps {
     params: Promise<{
         book: string;
         section: string;

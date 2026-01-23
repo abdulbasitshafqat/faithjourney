@@ -6,7 +6,14 @@ import { ArrowLeft, BookOpen } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface PageProps {
+export async function generateStaticParams() {
+    const books = getSupportedBooks();
+    return books.map((book) => ({
+        book: book.id,
+    }));
+}
+
+export interface PageProps {
     params: Promise<{
         book: string;
     }>;
