@@ -57,3 +57,27 @@ You need to add the following environment variables to your deployment platform 
 
 7.  Log in to your domain registrar, find the **DNS Settings** or **Zone Editor**, and add these records.
 8.  Wait for propagation (can take minutes to hours). Vercel will automatically issue an SSL certificate once verified.
+
+## 5. Mobile App (Android APK)
+
+After receiving the premium updates, follow these steps to generate a test APK:
+
+1. **Build the Web Assets**:
+   ```bash
+   npm run build
+   ```
+   This generates the static files in the `out` directory.
+
+2. **Sync with Capacitor**:
+   ```bash
+   npx cap sync
+   ```
+   This copies the updated web code into the `android` project.
+
+3. **Build the APK**:
+   - Open the `android` folder in **Android Studio**.
+   - Or run from terminal:
+     ```bash
+     cd android && ./gradlew assembleDebug
+     ```
+   - The APK will be located at: `android/app/build/outputs/apk/debug/app-debug.apk`

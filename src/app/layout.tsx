@@ -4,6 +4,9 @@ import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { FontSizeProvider } from "@/components/providers/FontSizeProvider";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import AppFlowProvider from "@/components/providers/AppFlowProvider";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { AppSplash } from "@/components/layout/AppSplash";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -100,12 +103,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ReactQueryProvider>
-            <FontSizeProvider>
-              {children}
-              <ScrollToTop />
-            </FontSizeProvider>
-          </ReactQueryProvider>
+          <AppSplash />
+          <AppFlowProvider>
+            <ReactQueryProvider>
+              <FontSizeProvider>
+                {children}
+                <BottomNav />
+                <ScrollToTop />
+              </FontSizeProvider>
+            </ReactQueryProvider>
+          </AppFlowProvider>
         </ThemeProvider>
       </body>
     </html>

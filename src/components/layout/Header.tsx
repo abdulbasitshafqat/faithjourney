@@ -16,6 +16,7 @@ import { usePathname } from "next/navigation";
 import { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { GlobalSettings } from "@/components/ui/global-settings";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import { cn } from "@/lib/utils";
 // Force HMR update
 
@@ -70,7 +71,7 @@ export function Header() {
                         <Moon className="h-5 w-5 text-primary rotate-[-15deg]" />
                     </div>
                     <span className="text-2xl font-serif font-bold text-primary tracking-tight">
-                        Faith Journey
+                        Faith Journey Pro
                     </span>
                 </Link>
 
@@ -81,7 +82,7 @@ export function Header() {
                         { name: "Hadith", href: "/hadith" },
                         { name: "Duas", href: "/duas" },
                         { name: "Prayer Times", href: "/prayer-times" },
-                        { name: "Guide", href: "/guide/salah" },
+                        { name: "Guides", href: "/guides" },
                         { name: "Tasbih", href: "/tasbih" },
                         { name: "Knowledge", href: "/knowledge" },
                     ].map((link) => (
@@ -123,6 +124,7 @@ export function Header() {
                             </Button>
                         </Link>
                     )}
+                    <ModeToggle />
                     <GlobalSettings />
                     <Link href="/settings">
                         <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
@@ -145,7 +147,7 @@ export function Header() {
                                     <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                         <Moon className="h-6 w-6 text-primary rotate-[-15deg]" />
                                     </div>
-                                    <SheetTitle className="font-serif text-2xl text-primary tracking-tight">Faith Journey</SheetTitle>
+                                    <SheetTitle className="font-serif text-2xl text-primary tracking-tight">Faith Journey Pro</SheetTitle>
                                 </div>
                             </SheetHeader>
 
@@ -156,7 +158,7 @@ export function Header() {
                                         { name: "Hadith", href: "/hadith" },
                                         { name: "Prayer Times", href: "/prayer-times" },
                                         { name: "Duas & Azkar", href: "/duas" },
-                                        { name: "Guide", href: "/guide/salah" },
+                                        { name: "Guides", href: "/guides" },
                                         { name: "Tasbih", href: "/tasbih" },
                                         { name: "Names of Allah", href: "/names" },
                                         { name: "Knowledge", href: "/knowledge" },

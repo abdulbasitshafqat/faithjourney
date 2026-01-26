@@ -78,12 +78,43 @@ export async function getSurahDetails(id: number): Promise<Surah> {
 export async function getAyahs(surahId: number, translations: string = "20,234,57"): Promise<Ayah[]> {
     // 20: Sahih International (English)
     // 234: Fatah Muhammad Jalandhari (Urdu)
-    const res = await fetch(
-        `${BASE_URL}/verses/by_chapter/${surahId}?language=en&words=true&word_fields=text_uthmani,id,position&translations=${translations}&fields=text_uthmani&per_page=286`
-    );
-    if (!res.ok) throw new Error("Failed to fetch Ayahs");
-    const data = await res.json();
-    return data.verses;
+
+    // First, verify how many verses we expect (optional, but good for progress or robust checks)
+    // For now, we just loop until we get them all.
+
+    let allVerses: Ayah[] = [];
+    let page = 1;
+    let keepFetching = true;
+    const perPage = 50; // API usually limits to 50
+
+    while (keepFetching) {
+        const res = await fetch(
+            `${BASE_URL}/verses/by_chapter/${surahId}?language=en&words=true&word_fields=text_uthmani,id,position&translations=${translations}&fields=text_uthmani&per_page=${perPage}&page=${page}`
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch Ayahs");
+
+        const data = await res.json();
+        const verses = data.verses || [];
+
+        if (verses.length === 0) {
+            keepFetching = false;
+        } else {
+            allVerses = [...allVerses, ...verses];
+
+            // If we got fewer than perPage, we are done
+            if (verses.length < perPage) {
+                keepFetching = false;
+            } else {
+                page++;
+            }
+        }
+
+        // Safety break for very long loops (though longest surah is < 300 verses, so ~6 pages max)
+        if (page > 10) keepFetching = false;
+    }
+
+    return allVerses;
 }
 
 export async function getSurahAudio(surahId: number, reciterId: number = 7, language: 'ar' | 'ur' = 'ar'): Promise<string> {

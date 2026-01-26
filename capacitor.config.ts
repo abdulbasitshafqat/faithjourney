@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.faithjourney.pro',
-  appName: 'Faith Journey',
+  appName: 'Faith Journey Pro',
   webDir: 'out'
 };
 

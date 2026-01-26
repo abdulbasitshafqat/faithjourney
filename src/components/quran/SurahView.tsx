@@ -57,7 +57,7 @@ export default function SurahView({ id }: SurahViewProps) {
 
     const handleJump = (e: React.FormEvent) => {
         e.preventDefault();
-        const element = document.getElementById(`ayah-${jumpAyah}`);
+        const element = document.getElementById(`ayah-${id}-${jumpAyah}`);
         if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "center" });
             setJumpAyah("");
@@ -68,22 +68,22 @@ export default function SurahView({ id }: SurahViewProps) {
         setIsPlaying(!isPlaying);
     };
 
-    const [activeAyahId, setActiveAyahId] = useState<number | null>(null);
+    const [activeVerseKey, setActiveVerseKey] = useState<string | null>(null);
     const [activeWordPosition, setActiveWordPosition] = useState<number | null>(null);
 
     // Auto-scroll to active ayah
     useEffect(() => {
-        if (activeAyahId) {
-            const element = document.getElementById(`ayah-${activeAyahId}`);
+        if (activeVerseKey) {
+            const element = document.getElementById(`ayah-${activeVerseKey.replace(":", "-")}`);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
-    }, [activeAyahId]);
+    }, [activeVerseKey]);
 
     const handleAudioEnded = () => {
         setIsPlaying(false);
-        setActiveAyahId(null);
+        setActiveVerseKey(null);
         setActiveWordPosition(null);
     };
 
@@ -94,18 +94,17 @@ export default function SurahView({ id }: SurahViewProps) {
 
         // Find active Verse
         const activeVerse = audioData.timestamps.find(
-            t => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
+            (t: any) => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
         );
 
         if (activeVerse) {
-            const matchedAyah = ayahs?.find(a => a.verse_key === activeVerse.verse_key);
-            if (matchedAyah && matchedAyah.id !== activeAyahId) {
-                setActiveAyahId(matchedAyah.id);
+            if (activeVerse.verse_key !== activeVerseKey) {
+                setActiveVerseKey(activeVerse.verse_key);
             }
 
             // Find active Word in the verse segments
             const activeSegment = activeVerse.segments.find(
-                s => currentTimeMs >= s[1] && currentTimeMs < s[2]
+                (s: any) => currentTimeMs >= s[1] && currentTimeMs < s[2]
             );
 
             if (activeSegment) {
@@ -225,8 +224,8 @@ export default function SurahView({ id }: SurahViewProps) {
             <main className="flex-grow container mx-auto px-4 py-8">
                 {/* Bismillah - Show for all except Surah Al-Fatihah (1) and At-Tawbah (9) */}
                 {Number(surah.id) !== 1 && Number(surah.id) !== 9 && surah.name_simple !== "Al-Fatihah" && (
-                    <div key="bismillah-header" className="mb-12 mt-8 text-center font-arabic text-4xl md:text-5xl text-primary leading-[3] py-2">
-                        ﷽
+                    <div key="bismillah-header" className="mb-10 mt-6 text-center font-arabic text-3xl md:text-5xl text-primary py-2 max-w-full overflow-hidden flex justify-center">
+                        <span className="whitespace-nowrap px-4 drop-shadow-sm">﷽</span>
                     </div>
                 )}
 
@@ -236,17 +235,20 @@ export default function SurahView({ id }: SurahViewProps) {
                         const englishTranslation = ayah.translations?.find(t => t.resource_id === 20)?.text;
                         const urduTranslation = ayah.translations?.find(t => t.resource_id === 234)?.text;
 
-                        const isAyahActive = activeAyahId === ayah.id;
+                        const isAyahActive = activeVerseKey === ayah.verse_key;
 
                         return (
                             <Card
                                 key={ayah.id}
-                                id={`ayah-${ayah.verse_key.split(":")[1]}`}
+                                id={`ayah-${ayah.verse_key.replace(":", "-")}`}
                                 className={cn(
                                     "border-none shadow-sm transition-all duration-500",
                                     isAyahActive ? 'bg-primary/5 ring-1 ring-primary/50' : 'bg-card/50 hover:bg-card'
                                 )}
-                                onClick={() => setActiveAyahId(ayah.id)}
+                                onClick={() => {
+                                    // Calculate time to seek to if we want click-to-play
+                                    // For now just highlight
+                                }}
                             >
                                 <CardContent className="p-6">
                                     <div className="flex flex-col space-y-8">

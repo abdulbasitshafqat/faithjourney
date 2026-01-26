@@ -1,0 +1,497 @@
+[
+    {
+        "id": "1",
+        "category": "Cosmos",
+        "title": "The Expanding Universe",
+        "verse_arabic": "وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ",
+        "verse_reference": "Surah Adh-Dhariyat 51:47",
+        "scientific_fact": "In 1929, Edwin Hubble discovered that the universe is not static but expanding. Galaxies are moving away from us, a fact confirmed by the redshift in their light spectra, matching the Quranic description of 'expanding' the heavens.",
+        "visual_asset": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "2",
+        "category": "Earth",
+        "title": "Mountains as Stakes",
+        "verse_arabic": "أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا . وَالْجِبَالَ أَوْتَادًا",
+        "verse_reference": "Surah An-Naba 78:6-7",
+        "scientific_fact": "Modern geology confirms that mountains have deep roots comprising over 80% of their mass, extending deep into the lithosphere. These roots act like pegs or stakes ('Awtad'), stabilizing the Earth's crust against tectonic plate movement.",
+        "visual_asset": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "3",
+        "category": "Cosmos",
+        "title": "The Protective Ceiling",
+        "verse_arabic": "وَجَعَلْنَا السَّمَاءَ سَقْفًا مَحْفُوظًا ۖ وَهُمْ عَنْ آيَاتِهَا مُعْرِضُونَ",
+        "verse_reference": "Surah Al-Anbya 21:32",
+        "scientific_fact": "Earth's atmosphere and magnetic field serve as a 'protected roof,' shielding life from lethal cosmic rays, solar flares, and meteorites. Without this protective layer, life on Earth would be impossible.",
+        "visual_asset": "https://images.unsplash.com/photo-1534293507119-74f0c7849e7b?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "4",
+        "category": "Biology",
+        "title": "Embryology: The 'Alaqah' Stage",
+        "verse_arabic": "ثُمَّ خَلَقْنَا النُّطْفَةَ عَلَقَةً فَخَلَقْنَا الْعَلَقَةَ مُضْغَةً",
+        "verse_reference": "Surah Al-Mu'minun 23:14",
+        "scientific_fact": "The Quran describes the embryo as 'Alaqah' (a leech-like substance, suspended thing, or blood clot). Modern embryology confirms the early embryo looks remarkably like a leech and obtains nutrients from the mother's blood, just like a leech.",
+        "visual_asset": "https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "5",
+        "category": "Biology",
+        "title": "Origin of Life in Water",
+        "verse_arabic": "وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ ۖ أَفَلَا يُؤْمِنُونَ",
+        "verse_reference": "Surah Al-Anbya 21:30",
+        "scientific_fact": "Cytoplasm, the basic substance of the cell, is approx. 80% water. Every living organism is predominantly made of water, a fact discovered only after the invention of the microscope, yet stated 1400 years ago.",
+        "visual_asset": "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "6",
+        "category": "Cosmos",
+        "title": "Iron Sent Down",
+        "verse_arabic": "وَأَنْزَلْنَا الْحَدِيدَ فِيهِ بَأْسٌ شَدِيدٌ وَمَنَافِعُ لِلنَّاسِ",
+        "verse_reference": "Surah Al-Hadid 57:25",
+        "scientific_fact": "Iron is not natural to earth; it was sent down in giant meteorites. The energy required to fuse iron is greater than the sun's capacity, meaning it originated from distant supernovae.",
+        "visual_asset": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "7",
+        "category": "Cosmos",
+        "title": "Orbits of Celestial Bodies",
+        "verse_arabic": "لَا الشَّمْسُ يَنْبَغِي لَهَا أَنْ تُدْرِكَ الْقَمَرَ وَلَا اللَّيْلُ سَابِقُ النَّهَارِ ۚ وَكُلٌّ فِي فَلَكٍ يَسْبَحُونَ",
+        "verse_reference": "Surah Ya-Sin 36:40",
+        "scientific_fact": "The Quran states that the Sun and Moon swim in their own orbits. We now know the Sun orbits the center of the Milky Way, taking approx. 225 million years to complete one revolution.",
+        "visual_asset": "https://images.unsplash.com/photo-1614730341194-75c60740a070?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "8",
+        "category": "Earth",
+        "title": "The Barrier Between Seas",
+        "verse_arabic": "مَرَجَ الْبَحْرَيْنِ يَلْتَقِيَانِ . بَيْنَهُمَا بَرْزَخٌ لَا يَبْغِيَانِ",
+        "verse_reference": "Surah Ar-Rahman 55:19-20",
+        "scientific_fact": "Oceanography confirms that there is a barrier where distinct seas meet (e.g., Mediterranean and Atlantic). They maintain their own salinity, temperature, and density, not mixing immediately.",
+        "visual_asset": "https://images.unsplash.com/photo-1544256718-3bcf66b5b481?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "9",
+        "category": "Earth",
+        "title": "Darkness in Deep Oceans",
+        "verse_arabic": "أَوْ كَظُلُمَاتٍ فِي بَحْرٍ لُجِّيٍّ يَغْشَاهُ مَوْجٌ مِنْ فَوْقِهِ مَوْجٌ",
+        "verse_reference": "Surah An-Nur 24:40",
+        "scientific_fact": "Below 200m in the ocean, there is almost complete darkness. The verse also mentions 'internal waves' (waves above waves), a phenomenon discovered only recently in deep oceanography.",
+        "visual_asset": "https://images.unsplash.com/photo-1682687982501-1e58ab814714?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "10",
+        "category": "Biology",
+        "title": "The Frontal Lobe and Lying",
+        "verse_arabic": "نَاصِيَةٍ كَاذِبَةٍ خَاطِئَةٍ",
+        "verse_reference": "Surah Al-Alaq 96:16",
+        "scientific_fact": "The Quran connects the 'forelock' (nasiyah) to lying and sin. Modern neuroscience identifies the prefrontal cortex as the area responsible for decision making, planning, and lying.",
+        "visual_asset": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "11",
+        "category": "Biology",
+        "title": "Pain Receptors in Skin",
+        "verse_arabic": "كُلَّمَا نَضِجَتْ جُلُودُهُمْ بَدَّلْنَاهُمْ جُلُودًا غَيْرَهَا لِيَذُوقُوا الْعَذَابَ",
+        "verse_reference": "Surah An-Nisa 4:56",
+        "scientific_fact": "The verse states that skin will be replaced so they 'taste' the punishment. We now know that pain receptors are located in the skin; deep burns destroy these receptors, numbing the pain.",
+        "visual_asset": "https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "12",
+        "category": "Cosmos",
+        "title": "The Big Bang",
+        "verse_arabic": "أَنَّ السَّمَاوَاتِ وَالْأَرْضَ كَانَتَا رَتْقًا فَفَتَقْنَاهُمَا",
+        "verse_reference": "Surah Al-Anbya 21:30",
+        "scientific_fact": "The universe began as a single point (singularity) and then expanded. The Quran describes the heavens and earth as a 'joined entity' (ratq) that was then 'separated' (fataq).",
+        "visual_asset": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "13",
+        "category": "Cosmos",
+        "title": "Smoke in the Early Universe",
+        "verse_arabic": "ثُمَّ اسْتَوَىٰ إِلَى السَّمَاءِ وَهِيَ دُخَانٌ",
+        "verse_reference": "Surah Fussilat 41:11",
+        "scientific_fact": "Before stars formed, the universe was an opaque cloud of hot gas. The Quran uses the word 'Dukhan' (smoke), which accurately describes the hot, gaseous state of the early universe.",
+        "visual_asset": "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "14",
+        "category": "Nature",
+        "title": "Wind Pollination",
+        "verse_arabic": "وَأَرْسَلْنَا الرِّيَاحَ لَوَاقِحَ",
+        "verse_reference": "Surah Al-Hijr 15:22",
+        "scientific_fact": "The verse describes winds as 'fertilizing'. Science confirms that wind plays a crucial role in pollination for many plants and also in the formation of rain clouds.",
+        "visual_asset": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "15",
+        "category": "Earth",
+        "title": "The Water Cycle",
+        "verse_arabic": "أَلَمْ تَرَ أَنَّ اللَّهَ أَنْزَلَ مِنَ السَّمَاءِ مَاءً فَسَلَكَهُ يَنَابِيعَ فِي الْأَرْضِ",
+        "verse_reference": "Surah Az-Zumar 39:21",
+        "scientific_fact": "The Quran accurately describes the water cycle: rain falling, seeping into the ground, and forming springs. This concept was not fully understood in Europe until the 16th century.",
+        "visual_asset": "https://images.unsplash.com/photo-1518182170546-0766aa6f6b0c?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "16",
+        "category": "Biology",
+        "title": "Fingerprints",
+        "verse_arabic": "بَلَىٰ قَادِرِينَ عَلَىٰ أَنْ نُسَوِّيَ بَنَانَهُ",
+        "verse_reference": "Surah Al-Qiyamah 75:4",
+        "scientific_fact": "The Quran emphasizes God's ability to reconstruct even the fingertips. We now know that fingerprints are unique to every individual and are a key method of identification.",
+        "visual_asset": "https://images.unsplash.com/photo-1629814496464-92934241687f?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "17",
+        "category": "Biology",
+        "title": "Female Bees Worker",
+        "verse_arabic": "وَأَوْحَىٰ رَبُّكَ إِلَى النَّحْلِ أَنِ اتَّخِذِي مِنَ الْجِبَالِ بُيُوتًا...",
+        "verse_reference": "Surah An-Nahl 16:68-69",
+        "scientific_fact": "The Arabic verbs used for the bee in these verses are in the female gender. Science confirms that the worker bees who build the hive and gather nectar are females, not males.",
+        "visual_asset": "https://images.unsplash.com/photo-1559235038-1b0fadd7594d?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "18",
+        "category": "Nature",
+        "title": "Spider's Web Fragility",
+        "verse_arabic": "وَإِنَّ أَوْهَنَ الْبُيُوتِ لَبَيْتُ الْعَنْكَبُوتِ",
+        "verse_reference": "Surah Al-Ankabut 29:41",
+        "scientific_fact": "The Quran compares those who take protectors other than Allah to a spider's web, calling it the weakest of houses. While the silk is strong, the 'house' (social structure) is often frail, with females sometimes killing males.",
+        "visual_asset": "https://images.unsplash.com/photo-1562916817-57352355883d?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "19",
+        "category": "Nature",
+        "title": "Ants Communication",
+        "verse_arabic": "قَالَتْ نَمْلَةٌ يَا أَيُّهَا النَّمْلُ ادْخُلُوا مَسَاكِنَكُمْ",
+        "verse_reference": "Surah An-Naml 27:18",
+        "scientific_fact": "The Quran describes an ant warning others of Solomon's army. Modern entomology confirms that ants communicate via complex chemical signals (pheromones) and sound to warn of danger.",
+        "visual_asset": "https://images.unsplash.com/photo-1579781878848-8df011d618d3?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "20",
+        "category": "Biology",
+        "title": "Sleep and Rest",
+        "verse_arabic": "وَجَعَلْنَا نَوْمَكُمْ سُبَاتًا",
+        "verse_reference": "Surah An-Naba 78:9",
+        "scientific_fact": "'Subata' implies cutting off for rest. Sleep disconnects us from awareness to recharge the body and brain, a physiological necessity for survival and mental health.",
+        "visual_asset": "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "21",
+        "category": "Earth",
+        "title": "Spherical Shape of Earth",
+        "verse_arabic": "يُكَوِّرُ اللَّيْلَ عَلَى النَّهَارِ وَيُكَوِّرُ النَّهَارَ عَلَى اللَّيْلِ",
+        "verse_reference": "Surah Az-Zumar 39:5",
+        "scientific_fact": "The word 'Yukawwiru' means to wrap around a spherical object (like a turban). This description fits the day and night wrapping around the spherical Earth.",
+        "visual_asset": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "22",
+        "category": "History",
+        "title": "Haman and Ancient Egypt",
+        "verse_arabic": "وَقَالَ فِرْعَوْنُ يَا هَامَانُ ابْنِ لِي صَرْحًا",
+        "verse_reference": "Surah Ghafir 40:36",
+        "scientific_fact": "The Quran mentions Haman as a builder for Pharaoh. Hieroglyphs decoded recently identify 'Haman' as the head of quarry workers, a fact unknown at the time of the revelation.",
+        "visual_asset": "https://images.unsplash.com/photo-1533575770077-052fa2c609fc?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "23",
+        "category": "Earth",
+        "title": "Lowest Point on Earth",
+        "verse_arabic": "غُلِبَتِ الرُّومُ . فِي أَدْنَى الْأَرْضِ",
+        "verse_reference": "Surah Ar-Rum 30:2-3",
+        "scientific_fact": "The battle between Persia and Rome happened near the Dead Sea. The Quran calls it 'Adna al-Ard', meaning the lowest land. The Dead Sea basin is indeed the lowest point on dry land on Earth.",
+        "visual_asset": "https://images.unsplash.com/photo-1473187983305-f615310e7daa?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "24",
+        "category": "Cosmos",
+        "title": "Pairs in Creation",
+        "verse_arabic": "وَمِنْ كُلِّ شَيْءٍ خَلَقْنَا زَوْجَيْنِ",
+        "verse_reference": "Surah Adh-Dhariyat 51:49",
+        "scientific_fact": "The Quran states that all things are created in pairs. This applies not just to gender, but to matter/antimatter, forces (positive/negative), and even day/night.",
+        "visual_asset": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "25",
+        "category": "Biology",
+        "title": "Preservation of Pharaoh",
+        "verse_arabic": "فَالْيَوْمَ نُنَجِّيكَ بِبَدَنِكَ لِتَكُونَ لِمَنْ خَلْفَكَ آيَةً",
+        "verse_reference": "Surah Yunus 10:92",
+        "scientific_fact": "God promised to preserve Pharaoh's body as a sign. The mummified body of Merneptah (often associated with the Exodus) was discovered in 1898, remarkably preserved.",
+        "visual_asset": "https://images.unsplash.com/photo-1542358891-b3eb278696b9?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "26",
+        "category": "Nature",
+        "title": "Clouds: Heavy with Rain",
+        "verse_arabic": "وَيُنْشِئُ السَّحَابَ الثِّقَالَ",
+        "verse_reference": "Surah Ar-Ra'd 13:12",
+        "scientific_fact": "The Quran describes clouds as 'heavy.' A typical cumulus cloud can weigh up to 500,000 kilograms (1.1 million pounds), yet it floats in the air.",
+        "visual_asset": "https://images.unsplash.com/photo-1594156596782-fa8205b93c18?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "27",
+        "category": "Biology",
+        "title": "Milk Production",
+        "verse_arabic": "نُسْقِيكُمْ مِمَّا فِي بُطُونِهِ مِنْ بَيْنَ فَرْثٍ وَدَمٍ لَبَنًا خَالِصًا",
+        "verse_reference": "Surah An-Nahl 16:66",
+        "scientific_fact": "The Quran describes milk forming 'between chyme and blood.' Physiology confirms that nutrients are absorbed from digested food (chyme) into the blood, which then supplies the mammary glands.",
+        "visual_asset": "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "28",
+        "category": "Cosmos",
+        "title": "The Sun's Motion",
+        "verse_arabic": "وَالشَّمْسُ تَجْرِي لِمُسْتَقَرٍّ لَهَا",
+        "verse_reference": "Surah Ya-Sin 36:38",
+        "scientific_fact": "The verse says the sun 'runs' to a resting place. Solar Apex theory confirms the sun is moving towards a specific point in the constellation Hercules at 12 miles per second.",
+        "visual_asset": "https://images.unsplash.com/photo-1532598065077-cf9ee59fd90f?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "29",
+        "category": "Nature",
+        "title": "Date Palms and Birth",
+        "verse_arabic": "وَهُزِّي إِلَيْكِ بِجِذْعِ النَّخْلَةِ تُسَاقِطْ عَلَيْكِ رُطَبًا جَنِيًّا",
+        "verse_reference": "Surah Maryam 19:25",
+        "scientific_fact": "Mary was told to eat dates during labor. Dates contain oxytocin-like substances that facilitate labor and sugars that provide rapid energy, ideal for childbirth.",
+        "visual_asset": "https://images.unsplash.com/photo-1518596647953-6262446f2549?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "30",
+        "category": "Biology",
+        "title": "Hearing Before Sight",
+        "verse_arabic": "وَجَعَلَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ",
+        "verse_reference": "Surah An-Nahl 16:78",
+        "scientific_fact": "The Quran consistently mentions hearing before sight. Embryology confirms that the inner ear develops before the eyes, and a fetus can hear sounds in the womb before it can see.",
+        "visual_asset": "https://images.unsplash.com/photo-1519817914152-22d216bb9170?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "31",
+        "category": "Cosmos",
+        "title": "Stars as Guides",
+        "verse_arabic": "وَبِالنَّجْمِ هُمْ يَهْتَدُونَ",
+        "verse_reference": "Surah An-Nahl 16:16",
+        "scientific_fact": "Stars have been the primary tool for navigation for millennia. The Quran highlights this precise function, accurate for both land and sea travel.",
+        "visual_asset": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "32",
+        "category": "Nature",
+        "title": "Diversity of Colors",
+        "verse_arabic": "وَمَا ذَرَأَ لَكُمْ فِي الْأَرْضِ مُخْتَلِفًا أَلْوَانُهُ",
+        "verse_reference": "Surah An-Nahl 16:13",
+        "scientific_fact": "The Quran celebrates the diversity of creation's colors. Biodiversity is crucial for ecosystem resilience; the variety of species and forms ensures life's continuity.",
+        "visual_asset": "https://images.unsplash.com/photo-1549608276-5786777e6587?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "33",
+        "category": "Earth",
+        "title": "Vegetation Reviving Earth",
+        "verse_arabic": "فَأَحْيَا بِهِ الْأَرْضَ بَعْدَ مَوْتِهَا",
+        "verse_reference": "Surah Al-Baqarah 2:164",
+        "scientific_fact": "Deserts can bloom rapidly after rain. The 'resurrection' of dead land portrays the biological truth of dormant seeds waiting for water to germinate.",
+        "visual_asset": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "34",
+        "category": "Biology",
+        "title": "Honey: Healing for People",
+        "verse_arabic": "فِيهِ شِفَاءٌ لِلنَّاسِ",
+        "verse_reference": "Surah An-Nahl 16:69",
+        "scientific_fact": "The Quran refers to honey as healing. Modern medicine confirms honey has powerful antibacterial, antifungal, and anti-inflammatory properties.",
+        "visual_asset": "https://images.unsplash.com/photo-1587049359535-b64d786db931?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "35",
+        "category": "Earth",
+        "title": "Fault Lines and Cracks",
+        "verse_arabic": "وَالْأَرْضِ ذَاتِ الصَّدْعِ",
+        "verse_reference": "Surah At-Tariq 86:12",
+        "scientific_fact": "The Quran swears by the 'Earth which splits'. This perfectly describes the crust's fault lines and tectonic plate boundaries, crucial for geothermal venting and the carbon cycle.",
+        "visual_asset": "https://images.unsplash.com/photo-1469521669194-babb45f999f1?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "36",
+        "category": "Nature",
+        "title": "Animal Communities",
+        "verse_arabic": "أُمَمٌ أَمْثَالُكُمْ",
+        "verse_reference": "Surah Al-An'am 6:38",
+        "scientific_fact": "The Quran states animals live in communities like humans. Ethology (animal behavior) confirms that animals have complex social structures, languages, and hierarchies.",
+        "visual_asset": "https://images.unsplash.com/photo-1474511320723-9a56873867b5?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "37",
+        "category": "Cosmos",
+        "title": "Moonlight is Reflected",
+        "verse_arabic": "وَجَعَلَ الْقَمَرَ فِيهِنَّ نُورًا وَجَعَلَ الشَّمْسَ سِرَاجًا",
+        "verse_reference": "Surah Nuh 71:16",
+        "scientific_fact": "The Quran calls the Sun a 'lamp' (Siraj - source of light) and the Moon a 'light' (Nur - reflected light). This distinction accurately describes that the moon only confirms light.",
+        "visual_asset": "https://images.unsplash.com/photo-1532693322450-2cb5c511067d?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "38",
+        "category": "Nature",
+        "title": "Flight of Birds",
+        "verse_arabic": "أَوَلَمْ يَرَوْا إِلَى الطَّيْرِ فَوْقَهُمْ صَافَّاتٍ وَيَقْبِضْنَ",
+        "verse_reference": "Surah Al-Mulk 67:19",
+        "scientific_fact": "The verse mentions birds spreading and folding their wings. Aerodynamics studies show how these specific movements generate lift and thrust, managed by instinct.",
+        "visual_asset": "https://images.unsplash.com/photo-1444464666117-439d5c437786?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "39",
+        "category": "Biology",
+        "title": "Bone and Muscle Development",
+        "verse_arabic": "فَكَسَوْنَا الْعِظَامَ لَحْمًا",
+        "verse_reference": "Surah Al-Mu'minun 23:14",
+        "scientific_fact": "The Quran states bones form first, then are clothed with flesh. Embryology indicates that cartilage models of bones form before the muscles migrate and wrap around them.",
+        "visual_asset": "https://images.unsplash.com/photo-1563215286-9ac64600e12e?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "40",
+        "category": "Time",
+        "title": "Relativity of Time",
+        "verse_arabic": "وَإِنَّ يَوْمًا عِنْدَ رَبِّكَ كَأَلْفِ سَنَةٍ مِمَّا تَعُدُّونَ",
+        "verse_reference": "Surah Al-Hajj 22:47",
+        "scientific_fact": "The Quran suggests time is relative, not absolute ('a day is like a thousand years'). Einstein's theory of relativity proved that time varies depending on speed and gravity.",
+        "visual_asset": "https://images.unsplash.com/photo-1482361045293-6a9787e97262?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "41",
+        "category": "Biology",
+        "title": "Blood Circulation (Implied)",
+        "verse_arabic": "وَفِي أَنْفُسِكُمْ ۚ أَفَلَا تُبْصِرُونَ",
+        "verse_reference": "Surah Adh-Dhariyat 51:21",
+        "scientific_fact": "The call to look 'within yourselves' has led Muslim scientists like Ibn al-Nafis to discover pulmonary circulation centuries before Harvey.",
+        "visual_asset": "https://images.unsplash.com/photo-1542382156-9a29a1b644f1?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "42",
+        "category": "Earth",
+        "title": "Reduction of Earth's Edges",
+        "verse_arabic": "نَنْقُصُ الْأَرْضَ مِنْ أَطْرَافِهَا",
+        "verse_reference": "Surah Ar-Ra'd 13:41",
+        "scientific_fact": "Some interpret this as the polar flattening of the Earth (it's not a perfect sphere). Others see it as land erosion or sea level rise. Both fit the description of reducing edges.",
+        "visual_asset": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "43",
+        "category": "Cosmos",
+        "title": "Stars Dying",
+        "verse_arabic": "وَالنَّجْمِ إِذَا هَوَىٰ",
+        "verse_reference": "Surah An-Najm 53:1",
+        "scientific_fact": "'Hawa' implies falling or collapsing. Stars eventually collapse (supernova, black hole) or fade. The Quran swears by this event, highlighting its significance.",
+        "visual_asset": "https://images.unsplash.com/photo-1465101162946-434192d3071b?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "44",
+        "category": "Earth",
+        "title": "Weight of an Atom",
+        "verse_arabic": "مِثْقَالَ ذَرَّةٍ",
+        "verse_reference": "Surah Az-Zalzalah 99:7",
+        "scientific_fact": "The Quran refers to the 'weight of an atom' (Dharrah). It acknowledged the existence of the smallest particle long before atomic theory was developed.",
+        "visual_asset": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "45",
+        "category": "Nature",
+        "title": "Fire from Green Trees",
+        "verse_arabic": "الَّذِي جَعَلَ لَكُمْ مِنَ الشَّجَرِ الْأَخْضَرِ نَارًا",
+        "verse_reference": "Surah Ya-Sin 36:80",
+        "scientific_fact": "This refers to the conversion of solar energy into chemical energy (carbon) via photosynthesis in green plants, which is then released as fire/energy when burned.",
+        "visual_asset": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "46",
+        "category": "Cosmos",
+        "title": "Pulsars (The Knocking Star)",
+        "verse_arabic": "وَالسَّمَاءِ وَالطَّارِقِ",
+        "verse_reference": "Surah At-Tariq 86:1",
+        "scientific_fact": "'At-Tariq' means the knocker. Pulsars are rotating neutron stars that emit a beam of radiation, creating a precise 'knocking' sound when converted to audio.",
+        "visual_asset": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "47",
+        "category": "Earth",
+        "title": "Layers of the Atmosphere",
+        "verse_arabic": "وَبَنَيْنَا فَوْقَكُمْ سَبْعًا شِدَادًا",
+        "verse_reference": "Surah An-Naba 78:12",
+        "scientific_fact": "The Quran mentions seven heavens/layers. Science classifies the atmosphere into distinct layers (Troposphere, Stratosphere, Mesosphere, etc.), protecting the Earth.",
+        "visual_asset": "https://images.unsplash.com/photo-1534293507119-74f0c7849e7b?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "48",
+        "category": "Nature",
+        "title": "Shadow Movement",
+        "verse_arabic": "أَلَمْ تَرَ إِلَىٰ رَبِّكَ كَيْفَ مَدَّ الظِّلَّ",
+        "verse_reference": "Surah Al-Furqan 25:45",
+        "scientific_fact": "The Quran invites reflection on how shadows stretch. The movement of shadows is a direct result of the Earth's rotation relative to the sun, a complex astronomical motion.",
+        "visual_asset": "https://images.unsplash.com/photo-1549608276-5786777e6587?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "49",
+        "category": "Biology",
+        "title": "Sperm Drops",
+        "verse_arabic": "أَلَمْ يَكُ نُطْفَةً مِنْ مَنِيٍّ",
+        "verse_reference": "Surah Al-Qiyamah 75:37",
+        "scientific_fact": "The Quran specifies that humans are created from a drop of sperm (maniy), not the entire fluid. Science confirms only one sperm out of millions is needed for fertilization.",
+        "visual_asset": "https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "50",
+        "category": "Earth",
+        "title": "Land and Sea Ratio (Implied)",
+        "verse_arabic": "Multiple Verses",
+        "verse_reference": "Various",
+        "scientific_fact": "The word 'Sea' appears 32 times and 'Land' 13 times in the Quran. The ratio (32/45) is approx 71%, which corresponds to the proportion of the Earth's surface covered by water.",
+        "visual_asset": "https://images.unsplash.com/photo-1473187983305-f615310e7daa?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "51",
+        "category": "Nature",
+        "title": "Olive and Fig",
+        "verse_arabic": "وَالتِّينِ وَالزَّيْتُونِ",
+        "verse_reference": "Surah At-Tin 95:1",
+        "scientific_fact": "The Quran swears by the Fig and Olive. Both are nutritional powerhouses. Modern science highlights the Mediterranean diet (rich in olives) as one of the healthiest.",
+        "visual_asset": "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "52",
+        "category": "Biology",
+        "title": "Cleanliness and Wudu",
+        "verse_arabic": "إِذَا قُمْتُمْ إِلَى الصَّلَاةِ فَاغْسِلُوا وُجُوهَكُمْ",
+        "verse_reference": "Surah Al-Ma'idah 5:6",
+        "scientific_fact": "Regular washing of exposed parts (hands, face, feet) 5 times a day reduces the spread of germs and diseases significantly, a hygienic practice prescribed 1400 years ago.",
+        "visual_asset": "https://images.unsplash.com/photo-1518182170546-0766aa6f6b0c?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "53",
+        "category": "Psychology",
+        "title": "Hearts Finding Rest",
+        "verse_arabic": "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+        "verse_reference": "Surah Ar-Ra'd 13:28",
+        "scientific_fact": "Meditation and remembrance (Dhikr) reduce cortisol levels and stress. The Quran prescribed this spiritual practice for mental peace long before modern psychology.",
+        "visual_asset": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "54",
+        "category": "Cosmos",
+        "title": "The End of the World",
+        "verse_arabic": "إِذَا الشَّمْسُ كُوِّرَتْ",
+        "verse_reference": "Surah At-Takwir 81:1",
+        "scientific_fact": "The Quran describes the sun being 'wound round' and losing light. Astrophysics predicts our sun will eventually become a Red Giant and then a White Dwarf, effectively dying out.",
+        "visual_asset": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
+    },
+    {
+        "id": "55",
+        "category": "Biology",
+        "title": "Breastfeeding Duration",
+        "verse_arabic": "وَالْوَالِدَاتُ يُرْضِعْنَ أَوْلَادَهُنَّ حَوْلَيْنِ كَامِلَيْنِ",
+        "verse_reference": "Surah Al-Baqarah 2:233",
+        "scientific_fact": "The Quran recommends breastfeeding for two full years. The WHO today recommends breastfeeding up to two years or beyond for optimal child health.",
+        "visual_asset": "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=1000&auto=format&fit=crop"
+    }
+]

@@ -57,6 +57,16 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/hadith" className="hover:text-primary transition-colors">
+                                    Hadith Library
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/calendar" className="hover:text-primary transition-colors">
+                                    Islamic Calendar
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/zakat" className="hover:text-primary transition-colors">
                                     Zakat Calculator
                                 </Link>

@@ -60,8 +60,13 @@ export const salahSteps = [
         arabic: "ٱللَّٰهُ أَكْبَرُ",
         transliteration: "Allahu Akbar",
         meaning: "Allah is the Greatest",
-        instruction: "Place your right hand over your left hand on your chest.",
-        note: "Consistent with Ahle Hadees practice of placing hands on the chest."
+        instruction: "Place your hands according to your school of thought.",
+        variations: {
+            hanafi: "Place your hands below the navel, right over left.",
+            shafi: "Place your hands on the chest, slightly to the left.",
+            maliki: "You may either place hands on the chest or leave them at your sides (Sadh).",
+            hanbali: "Place your hands below the navel or on the chest."
+        }
     },
     {
         step: 2,
@@ -78,25 +83,42 @@ export const salahSteps = [
         arabic: "بِسْمِ ٱللَّٰهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ... (Surah Al-Fatiha)",
         transliteration: "Bismillahi r-rahmani r-rahim...",
         meaning: "In the name of Allah, the Most Gracious, the Most Merciful...",
-        instruction: "After Al-Fatiha, say 'Ameen' (silently or audibly depending on the prayer). Then recite another portion of the Quran."
+        instruction: "Recite with concentration.",
+        variations: {
+            hanafi: "Say 'Ameen' silently after Surah Al-Fatiha.",
+            shafi: "Say 'Ameen' audibly in loud prayers.",
+            maliki: "Recitation of Al-Fatiha is required behind the Imam.",
+            hanbali: "Say 'Ameen' audibly in loud prayers."
+        }
     },
     {
         step: 4,
         title: "Ruku (Bowing)",
-        description: "Raise your hands (Raf' al-Yadayn) saying 'Allahu Akbar' and bow down.",
+        description: "Say 'Allahu Akbar' and bow down. Keep your back straight and parallel to the floor.",
         arabic: "سُبْحَانَ رَبِّيَ ٱلْعَظِيمِ",
         transliteration: "Subhana Rabbiyal Azeem",
         meaning: "Glory be to my Lord, the Magnificent",
         count: "3 times or more (odd number)",
-        note: "Ensure your back is straight."
+        variations: {
+            hanafi: "Only raise hands (Raf-al-Yadayn) at the start of prayer.",
+            shafi: "Raise hands (Raf-al-Yadayn) before going into Ruku.",
+            maliki: "Raising hands before Ruku is a recommended Sunnah.",
+            hanbali: "Raise hands (Raf-al-Yadayn) before going into Ruku."
+        }
     },
     {
         step: 5,
         title: "Rising from Ruku (I'tidal)",
-        description: "Rise from bowing, raising your hands (Raf' al-Yadayn).",
+        description: "Rise from bowing to a standing position.",
         arabic: "سَمِعَ ٱللَّٰهُ لِمَنْ حَمِدَهُ... رَبَّنَا وَلَكَ ٱلْحَمْدُ",
         transliteration: "Sami'Allahu liman hamidah... Rabbana wa lakal hamd",
-        meaning: "Allah hears those who praise Him... Our Lord, and to You is all praise"
+        meaning: "Allah hears those who praise Him... Our Lord, and to You is all praise",
+        variations: {
+            hanafi: "Do not raise hands when rising.",
+            shafi: "Raise hands when rising (Raf-al-Yadayn).",
+            maliki: "Rising with hands at sides is common.",
+            hanbali: "Raise hands when rising (Raf-al-Yadayn)."
+        }
     },
     {
         step: 6,
@@ -111,7 +133,7 @@ export const salahSteps = [
     {
         step: 7,
         title: "Sitting between Two Sujoods",
-        description: "Rise from Sujood saying 'Allahu Akbar' and sit.",
+        description: "Rise from Sujood saying 'Allahu Akbar' and sit briefly.",
         arabic: "رَبِّ ٱغْفِرْ لِي، رَبِّ ٱغْفِرْ لِي",
         transliteration: "Rabbighfir li, Rabbighfir li",
         meaning: "My Lord forgive me, My Lord forgive me"
@@ -128,7 +150,13 @@ export const salahSteps = [
         arabic: "ٱلتَّحِيَّاتُ لِلَّٰهِ وَٱلصَّلَوَاتُ وَٱلطَّيِّبَاتُ...",
         transliteration: "At-tahiyyatu lillahi was-salawatu wat-tayyibatu...",
         meaning: "All compliments, prayers and pure words are due to Allah...",
-        instruction: "Point with your index finger while moving it slightly or keeping it still (Ahle Hadees view supports moving it)."
+        instruction: "Sit on your left foot with the right foot upright.",
+        variations: {
+            hanafi: "Raise the index finger when saying 'La ilaha' and drop it after 'ill-Allah'.",
+            shafi: "Raise the index finger and keep it still or slightly curved.",
+            maliki: "Move the index finger from side to side throughout the Tashahhud.",
+            hanbali: "Point with the index finger throughout the Tashahhud without moving it."
+        }
     },
     {
         step: 10,
