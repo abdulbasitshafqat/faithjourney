@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowRight, Droplets, BookOpen, HandHeart, Sparkles } from "lucide-react";
+import { ArrowRight, Droplets, BookOpen, HandHeart, Sparkles, MapPin, Milestone, Users } from "lucide-react";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -23,24 +23,38 @@ const guides = [
     },
     {
         title: "Fasting (Sawm)",
-        description: "A comprehensive look at the rules and virtues of fasting during Ramadan and beyond. Learn the fard and sunnah acts.",
+        description: "A comprehensive look at the rules and virtues of fasting during Ramadan. Learn the intentions, suhoor, and iftar.",
         icon: HandHeart,
-        href: "/knowledge/fasting-guide",
+        href: "/guides/fasting",
         color: "text-orange-600 bg-orange-100 dark:bg-orange-900/20"
     },
     {
         title: "Zakat (Charity)",
-        description: "Understanding your obligations for giving Zakat. How to calculate it and who is eligible to receive it.",
+        description: "Understanding your obligations for giving Zakat. Includes a calculator to determine your payable amount.",
         icon: Sparkles,
-        href: "/zakat",
-        color: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/20"
+        href: "/guides/zakat",
+        color: "text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20"
     },
     {
-        title: "Hajj & Umrah",
-        description: "A step-by-step guide to the pilgrimage. Preparing for the journey of a lifetime to the Holy Kaaba.",
-        icon: BookOpen,
-        href: "/knowledge/hajj-guide",
+        title: "Hajj (Pilgrimage)",
+        description: "A step-by-step guide to the Major Pilgrimage. From Ihram to the days of Tashreeq, follow the path of the prophets.",
+        icon: MapPin,
+        href: "/guides/hajj",
         color: "text-slate-600 bg-slate-100 dark:bg-slate-900/20"
+    },
+    {
+        title: "Umrah",
+        description: "Guide to the Minor Pilgrimage. Learn the rituals of Ihram, Tawaf, Sa'i and Halq in a simplified manner.",
+        icon: Milestone,
+        href: "/guides/umrah",
+        color: "text-teal-600 bg-teal-100 dark:bg-teal-900/20"
+    },
+    {
+        title: "Janazah (Funeral)",
+        description: "A guide to the funeral rites and prayer. Understand the rights of the deceased and how to perform Salat al-Janazah.",
+        icon: Users,
+        href: "/guides/janazah",
+        color: "text-indigo-600 bg-indigo-100 dark:bg-indigo-900/20"
     }
 ];
 
