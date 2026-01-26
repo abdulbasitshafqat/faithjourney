@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Amiri, Lora } from "next/font/google";
+import { Playfair_Display, Amiri, Lora } from "next/font/google"; // Import next/font/google first as it's a built-in
+import { Toaster } from "@/components/ui/toaster";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { FontSizeProvider } from "@/components/providers/FontSizeProvider";
@@ -110,6 +111,7 @@ export default function RootLayout({
                 {children}
                 <BottomNav />
                 <ScrollToTop />
+                <Toaster />
               </FontSizeProvider>
             </ReactQueryProvider>
           </AppFlowProvider>

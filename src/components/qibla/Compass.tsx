@@ -70,7 +70,7 @@ export function Compass() {
     };
 
     const requestAccess = async () => {
-        console.log("Requested Access for Compass");
+
 
         // Handle iOS 13+ permission
         const win = window as any;

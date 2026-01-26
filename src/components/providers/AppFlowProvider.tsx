@@ -90,7 +90,7 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
                             schedule: { at: scheduleDate, every: 'day', allowWhileIdle: true }
                         }]
                     });
-                    console.log("Daily Dua Notification Scheduled");
+
                 }
             } catch (error) {
                 console.error("Error scheduling daily dua:", error);
