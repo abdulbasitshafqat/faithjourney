@@ -1,9 +1,15 @@
 import Link from "next/link";
 
+import { SadaqahComponent } from "@/components/support/SadaqahComponent";
+
 export function Footer() {
     return (
-        <footer className="bg-muted/30 border-t mt-auto">
-            <div className="container mx-auto px-4 py-12">
+        <footer className="bg-muted/30 border-t mt-auto relative overflow-hidden">
+            <div className="container mx-auto px-4 py-12 relative z-10">
+                <div className="mb-12">
+                    <SadaqahComponent compact={true} className="shadow-none border-none bg-transparent" />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand */}
                     <div className="space-y-4">
@@ -69,6 +75,11 @@ export function Footer() {
                             <li>
                                 <Link href="/zakat" className="hover:text-primary transition-colors">
                                     Zakat Calculator
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/support" className="hover:text-primary transition-colors font-medium text-emerald-600 dark:text-emerald-400">
+                                    Support Us
                                 </Link>
                             </li>
                         </ul>
