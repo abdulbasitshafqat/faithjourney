@@ -62,7 +62,12 @@ export default function DuasLandingPage() {
                                     </div>
 
                                     <h3 className="text-xl font-serif font-semibold text-foreground group-hover:text-primary transition-colors">
-                                        {label}
+                                        {label.split(" (")[0]}
+                                        {label.includes(" (") && (
+                                            <span className="block text-lg font-thin font-serif mt-1 opacity-80 text-muted-foreground group-hover:text-primary/80">
+                                                {label.split(" (")[1].replace(")", "")}
+                                            </span>
+                                        )}
                                     </h3>
                                 </div>
 

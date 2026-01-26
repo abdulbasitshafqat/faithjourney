@@ -118,8 +118,13 @@ export default function CategoryView({ categoryKey }: { categoryKey: string }) {
 
                 {/* Category Title */}
                 <div className="text-center mb-12">
-                    <h1 className={`text-3xl md:text-5xl font-serif font-bold ${THEME.textPrimary} mb-4 drop-shadow-md`}>
-                        {categoryTitle}
+                    <h1 className={`text-3xl md:text-5xl font-serif font-bold ${THEME.textPrimary} mb-4 drop-shadow-md flex flex-col items-center gap-2`}>
+                        <span>{categoryTitle?.split(" (")[0]}</span>
+                        {categoryTitle?.includes(" (") && (
+                            <span className="text-2xl md:text-3xl font-thin font-serif opacity-90 mt-1">
+                                {categoryTitle.split(" (")[1].replace(")", "")}
+                            </span>
+                        )}
                     </h1>
                     <div className="h-1 w-24 mx-auto bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
                 </div>
