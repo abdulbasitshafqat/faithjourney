@@ -47,6 +47,10 @@ export function Compass() {
         fetchLocation();
     }, [fetchLocation]);
 
+    // Smoothing factor (0 = no smoothing, 1 = no change). Lower = smoother but slower.
+    const SMOOTHING_FACTOR = 0.15;
+    const lastHeading = useRef<number>(0);
+
     const handleOrientation = (event: DeviceOrientationEvent) => {
         const anyEvent = event as any;
         let compass = null;
@@ -55,23 +59,29 @@ export function Compass() {
             // iOS: Direct magnetic heading
             compass = anyEvent.webkitCompassHeading;
         } else if (anyEvent.alpha !== null) {
-            // Android/Chrome: alpha is usually relative, but if absolute is true, it's relative to magnetic north
-            if (anyEvent.absolute === true || anyEvent.absolute === undefined) {
-                // For Android, 0 is North, and it increases counter-clockwise (alpha).
-                // Usually, heading = 360 - alpha
-                compass = (360 - anyEvent.alpha) % 360;
-            }
+            // Android: deviceorientationabsolute or deviceorientation with absolute=true
+            // alpha: 0=North, 90=West, 180=South, 270=East (increasing counter-clockwise)
+            // Heading (clockwise from North): 360 - alpha
+            compass = (360 - anyEvent.alpha) % 360;
         }
 
         if (compass !== null) {
-            setHeading(compass);
+            // Low-pass filter for smoothing
+            let diff = compass - lastHeading.current;
+            // Handle wrap-around (e.g. 359 -> 1)
+            if (diff > 180) diff -= 360;
+            if (diff < -180) diff += 360;
+
+            lastHeading.current += diff * SMOOTHING_FACTOR;
+            // Normalize to 0-360
+            lastHeading.current = (lastHeading.current + 360) % 360;
+
+            setHeading(lastHeading.current);
             if (!isCalibrated) setIsCalibrated(true);
         }
     };
 
     const requestAccess = async () => {
-
-
         // Handle iOS 13+ permission
         const win = window as any;
         const DeviceEvent = win.DeviceOrientationEvent;
@@ -87,14 +97,13 @@ export function Compass() {
                 }
             } catch (err) {
                 console.error("Permission error:", err);
-                // Fallback for some non-standard implementations
                 setPermissionGranted(true);
                 win.addEventListener("deviceorientation", handleOrientation);
             }
         } else {
-            // Android or Non-iOS 13+
+            // Android: Prefer absolute orientation
             setPermissionGranted(true);
-            if ("ondeviceorientationabsolute" in win) {
+            if ('ondeviceorientationabsolute' in win) {
                 win.addEventListener("deviceorientationabsolute", handleOrientation);
             } else {
                 win.addEventListener("deviceorientation", handleOrientation);
@@ -103,9 +112,10 @@ export function Compass() {
     };
 
     useEffect(() => {
+        const win = window as any;
         return () => {
-            window.removeEventListener("deviceorientation", handleOrientation);
-            (window as any).removeEventListener("deviceorientationabsolute", handleOrientation);
+            win.removeEventListener("deviceorientation", handleOrientation);
+            win.removeEventListener("deviceorientationabsolute", handleOrientation);
         };
     }, []);
 
