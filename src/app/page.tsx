@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { getDuaOfTheDay } from "@/lib/api/daily-dua";
+import { WondersSection } from "@/components/home/WondersSection";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -221,6 +222,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* WONDERS OF ALLAH SECTION */}
+        <WondersSection />
 
         {/* DUA OF THE DAY SECTION */}
         <section className="py-24 bg-primary/5 relative">

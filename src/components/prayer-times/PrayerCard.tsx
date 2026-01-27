@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPrayerTimes, getPrayerCalendar, CALCULATION_METHODS } from "@/lib/api/prayer-times";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Sunrise, Sun, Sunset, Moon, Bell, BellOff, Volume2, Settings2, Info, ChevronDown, ChevronUp, Clock, Sparkles } from "lucide-react";
+import { MapPin, Sunrise, Sun, Sunset, Moon, Bell, BellOff, Volume2, Settings2, Info, ChevronDown, ChevronUp, Clock, Sparkles, PlayCircle, StopCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
@@ -29,6 +29,9 @@ export function PrayerCard() {
     const [school, setSchool] = useState(1);
     const [showSettings, setShowSettings] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [playedPrayers, setPlayedPrayers] = useState<string[]>([]);
+    const [previewAudio, setPreviewAudio] = useState<HTMLAudioElement | null>(null);
+    const [isPlayingPreview, setIsPlayingPreview] = useState(false);
 
     // Update current time every second for countdown
     useEffect(() => {
@@ -55,13 +58,54 @@ export function PrayerCard() {
         if (typeof window !== 'undefined') {
             const savedMethod = localStorage.getItem("fj_method");
             const savedSchool = localStorage.getItem("fj_school");
+            const savedAdhan = localStorage.getItem("fj_adhan");
             if (savedMethod) setMethod(parseInt(savedMethod));
             if (savedSchool) setSchool(parseInt(savedSchool));
+            if (savedAdhan) setSelectedAdhan(savedAdhan);
         }
 
         fetchLocation();
         checkScheduledNotifications();
     }, []);
+
+    const togglePreview = (adhanId: string) => {
+        if (isPlayingPreview && previewAudio) {
+            previewAudio.pause();
+            previewAudio.currentTime = 0;
+            setIsPlayingPreview(false);
+            setPreviewAudio(null);
+
+            // If clicking a different one, start it
+            if (previewAudio.src !== adhanOptions.find(a => a.id === adhanId)?.url) {
+                const url = adhanOptions.find(a => a.id === adhanId)?.url;
+                if (url) {
+                    const audio = new Audio(url);
+                    audio.play().catch(e => console.error(e));
+                    audio.onended = () => setIsPlayingPreview(false);
+                    setPreviewAudio(audio);
+                    setIsPlayingPreview(true);
+                }
+            }
+        } else {
+            const url = adhanOptions.find(a => a.id === adhanId)?.url;
+            if (url) {
+                const audio = new Audio(url);
+                audio.play().catch(e => console.error(e));
+                audio.onended = () => setIsPlayingPreview(false);
+                setPreviewAudio(audio);
+                setIsPlayingPreview(true);
+            }
+        }
+    };
+
+    // Stop audio on unmount
+    useEffect(() => {
+        return () => {
+            if (previewAudio) {
+                previewAudio.pause();
+            }
+        };
+    }, [previewAudio]);
 
     const checkScheduledNotifications = async () => {
         try {
@@ -97,6 +141,43 @@ export function PrayerCard() {
         { name: "Maghrib", time: timings?.Maghrib, icon: Sunset, color: "from-orange-600 via-pink-500 to-rose-400" },
         { name: "Isha", time: timings?.Isha, icon: Moon, color: "from-indigo-950 via-purple-900 to-indigo-900" },
     ], [timings]);
+
+    // Check for prayer times and play audio
+    useEffect(() => {
+        if (!timings || !scheduledPrayers.length) return;
+
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const currentSeconds = now.getSeconds(); // Check down to seconds to avoid miss? 
+        const currentDateString = now.toDateString();
+
+        prayers.forEach(prayer => {
+            if (!prayer.time) return;
+            const [pHours, pMinutes] = prayer.time.split(" ")[0].split(":").map(Number);
+
+            if (currentHours === pHours && currentMinutes === pMinutes) {
+                const prayerKey = `${prayer.name}-${currentDateString}`;
+
+                if (scheduledPrayers.includes(prayer.name) && !playedPrayers.includes(prayerKey)) {
+                    // Play Audio
+                    const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
+                    if (adhanUrl) {
+                        const audio = new Audio(adhanUrl);
+                        audio.play().catch(e => console.error("Audio play failed:", e));
+
+                        // Show toast as backup visual feedback
+                        Toast.show({
+                            text: `It is time for ${prayer.name}`,
+                            duration: 'long'
+                        });
+                    }
+
+                    setPlayedPrayers(prev => [...prev, prayerKey]);
+                }
+            }
+        });
+    }, [currentTime, timings, scheduledPrayers, selectedAdhan, prayers, playedPrayers]);
 
     const getNextPrayer = useMemo(() => {
         if (!timings) return null;
@@ -266,18 +347,57 @@ export function PrayerCard() {
             {/* ADHAN & SETTINGS PANEL */}
             <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3 bg-card/60 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-5 shadow-inner">
-                    <div className="flex items-center gap-2 mb-3 px-1">
-                        <Volume2 className="h-4 w-4 text-primary" />
-                        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mt-0.5">Notification Tones</span>
+                    <div className="flex items-center justify-between mb-3 px-1">
+                        <div className="flex items-center gap-2">
+                            <Volume2 className="h-4 w-4 text-primary" />
+                            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mt-0.5">Notification Tones</span>
+                        </div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 rounded-full hover:bg-primary/10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                togglePreview(selectedAdhan);
+                            }}
+                        >
+                            {isPlayingPreview ? (
+                                <BellOff className="h-3 w-3 text-red-500 animate-pulse" />
+                            ) : (
+                                <Clock className="h-3 w-3 text-primary" />
+                            )}
+                            <span className="sr-only">Preview Adhan</span>
+                        </Button>
                     </div>
-                    <Select value={selectedAdhan} onValueChange={setSelectedAdhan}>
-                        <SelectTrigger className="border-none bg-primary/5 h-12 rounded-2xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-3xl border-primary/10 shadow-2xl p-2">
-                            {adhanOptions.map(a => <SelectItem key={a.id} value={a.id} className="text-sm font-bold py-4 px-4 rounded-xl focus:bg-primary/5">{a.name}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                        <Select value={selectedAdhan} onValueChange={(val) => {
+                            setSelectedAdhan(val);
+                            localStorage.setItem("fj_adhan", val);
+                        }}>
+                            <SelectTrigger className="border-none bg-primary/5 h-12 rounded-2xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4 flex-1">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-3xl border-primary/10 shadow-2xl p-2 max-h-[300px]">
+                                {adhanOptions.map(a => <SelectItem key={a.id} value={a.id} className="text-sm font-bold py-4 px-4 rounded-xl focus:bg-primary/5">{a.name}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            className={cn(
+                                "h-12 w-12 rounded-2xl transition-all",
+                                isPlayingPreview ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-primary/5 text-primary hover:bg-primary/10"
+                            )}
+                            onClick={() => togglePreview(selectedAdhan)}
+                        >
+                            {isPlayingPreview ? (
+                                <span className="flex h-3 w-3 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                </span>
+                            ) : (
+                                <Volume2 className="h-5 w-5" />
+                            )}
+                        </Button>
+                    </div>
                 </div>
                 <Button
                     variant="ghost"
