@@ -71,11 +71,6 @@ export function Footer() {
                                     Zakat Calculator
                                 </Link>
                             </li>
-                            <li>
-                                <Link href="/support" className="hover:text-primary transition-colors">
-                                    Support Us
-                                </Link>
-                            </li>
                         </ul>
                     </div>
 
