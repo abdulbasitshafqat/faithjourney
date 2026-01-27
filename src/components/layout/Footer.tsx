@@ -72,7 +72,7 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/support" className="hover:text-primary transition-colors font-medium text-emerald-600 dark:text-emerald-400">
+                                <Link href="/support" className="hover:text-primary transition-colors">
                                     Support Us
                                 </Link>
                             </li>
