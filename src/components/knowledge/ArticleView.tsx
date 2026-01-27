@@ -35,35 +35,48 @@ export default function ArticleView({ slug }: ArticleViewProps) {
             <Header />
 
             <main className="flex-grow">
-                <article className="container mx-auto px-4 py-16 max-w-4xl">
-                    <Button variant="ghost" className="mb-8 pl-0 hover:bg-transparent hover:text-primary" onClick={() => router.push("/knowledge")}>
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Knowledge
-                    </Button>
+                {/* Immersive Header */}
+                <div className="relative bg-primary/5 pt-32 pb-20 overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-70" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-[80px]" />
 
-                    <header className="mb-12 text-center md:text-left">
-                        <Badge variant="outline" className="mb-4 border-primary/20 text-primary">{article.category}</Badge>
-                        <h1 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-6 leading-tight">
+                    <div className="container mx-auto px-4 max-w-4xl relative z-10">
+                        <Button variant="ghost" className="mb-8 pl-0 hover:bg-transparent hover:text-primary group" onClick={() => router.push("/knowledge")}>
+                            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" /> Back to Knowledge
+                        </Button>
+
+                        <div className="flex flex-wrap items-center gap-4 mb-6">
+                            <Badge variant="outline" className="border-primary/30 text-primary bg-background/40 backdrop-blur-sm px-3 py-1">
+                                {article.category}
+                            </Badge>
+                            <span className="flex items-center text-sm font-medium text-muted-foreground">
+                                <Clock className="w-4 h-4 mr-2 text-secondary" /> {article.readTime}
+                            </span>
+                        </div>
+
+                        <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground mb-8 leading-tight">
                             {article.title}
                         </h1>
-                        <div className="flex flex-col md:flex-row items-center gap-4 text-muted-foreground text-sm">
-                            <div className="flex items-center">
-                                <Clock className="w-4 h-4 mr-2" />
-                                {article.readTime}
-                            </div>
-                            <span className="hidden md:inline">•</span>
-                            <span>Written by FaithJourney Team</span>
-                        </div>
-                    </header>
 
+                        <p className="text-xl text-muted-foreground/90 font-light leading-relaxed max-w-2xl border-l-4 border-primary/20 pl-6">
+                            {article.description}
+                        </p>
+                    </div>
+                </div>
+
+                <article className="container mx-auto px-4 py-16 max-w-3xl">
                     <div
-                        className="prose prose-lg dark:prose-invert prose-headings:font-serif prose-headings:text-primary prose-p:text-foreground/90 prose-p:leading-relaxed max-w-none"
+                        className="prose prose-lg dark:prose-invert prose-headings:font-serif prose-headings:text-foreground prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-8 prose-li:text-muted-foreground prose-strong:text-foreground prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-lg max-w-none"
                         dangerouslySetInnerHTML={{ __html: article.content }}
                     />
 
-                    <div className="mt-16 pt-8 border-t border-border flex justify-between items-center">
-                        <p className="text-muted-foreground italic">Share this knowledge</p>
-                        <Button variant="outline" size="sm" onClick={() => navigator.share({ title: article.title, url: window.location.href })}>
-                            <Share2 className="w-4 h-4 mr-2" /> Share
+                    <div className="mt-20 pt-10 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="text-center md:text-left">
+                            <h4 className="font-serif font-bold text-lg text-foreground">Faith Journey Team</h4>
+                            <p className="text-sm text-muted-foreground">Curated knowledge for spiritual growth.</p>
+                        </div>
+                        <Button variant="outline" className="rounded-full border-primary/20 hover:bg-primary/5 hover:text-primary" onClick={() => navigator.share({ title: article.title, url: window.location.href })}>
+                            <Share2 className="w-4 h-4 mr-2" /> Share Article
                         </Button>
                     </div>
                 </article>
