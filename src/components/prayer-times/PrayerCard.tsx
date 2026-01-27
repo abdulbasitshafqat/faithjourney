@@ -347,11 +347,12 @@ export function PrayerCard() {
             {/* ADHAN & SETTINGS PANEL */}
             <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3 bg-card/60 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-5 shadow-inner">
-                    <div className="flex items-center justify-between mb-3 px-1">
+                    <div className="flex items-center justify-between mb-4 px-1">
                         <div className="flex items-center gap-2">
                             <Volume2 className="h-4 w-4 text-primary" />
-                            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mt-0.5">Notification Tones</span>
+                            <span className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none mt-0.5">Notification Tones</span>
                         </div>
+                        {/* Mini Preview Button in Header */}
                         <Button
                             variant="ghost"
                             size="sm"
@@ -364,37 +365,37 @@ export function PrayerCard() {
                             {isPlayingPreview ? (
                                 <BellOff className="h-3 w-3 text-red-500 animate-pulse" />
                             ) : (
-                                <Clock className="h-3 w-3 text-primary" />
+                                <Clock className="h-3 w-3 text-primary/40" />
                             )}
-                            <span className="sr-only">Preview Adhan</span>
                         </Button>
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="flex items-center gap-3">
                         <Select value={selectedAdhan} onValueChange={(val) => {
                             setSelectedAdhan(val);
                             localStorage.setItem("fj_adhan", val);
                         }}>
-                            <SelectTrigger className="border-none bg-primary/5 h-12 rounded-2xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4 flex-1">
+                            <SelectTrigger className="flex-1 border-none bg-primary/5 h-14 rounded-2xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-5">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-3xl border-primary/10 shadow-2xl p-2 max-h-[300px]">
                                 {adhanOptions.map(a => <SelectItem key={a.id} value={a.id} className="text-sm font-bold py-4 px-4 rounded-xl focus:bg-primary/5">{a.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
+
                         <Button
                             className={cn(
-                                "h-12 w-12 rounded-2xl transition-all",
-                                isPlayingPreview ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-primary/5 text-primary hover:bg-primary/10"
+                                "h-14 w-14 rounded-2xl shrink-0 transition-all shadow-sm",
+                                isPlayingPreview
+                                    ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                    : "bg-white text-primary border border-primary/10 hover:bg-primary/5 hover:border-primary/20"
                             )}
                             onClick={() => togglePreview(selectedAdhan)}
                         >
                             {isPlayingPreview ? (
-                                <span className="flex h-3 w-3 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                                </span>
+                                <StopCircle className="h-6 w-6 fill-current animate-pulse" />
                             ) : (
-                                <Volume2 className="h-5 w-5" />
+                                <PlayCircle className="h-6 w-6 fill-current opacity-80" />
                             )}
                         </Button>
                     </div>
