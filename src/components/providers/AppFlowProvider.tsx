@@ -12,6 +12,11 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
     const router = useRouter();
     const pathname = usePathname();
 
+    // Scroll to top on route change to ensure pages start from the top
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [pathname]);
+
     useEffect(() => {
         let lastBackPress = 0;
 
