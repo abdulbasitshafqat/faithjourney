@@ -1,11 +1,18 @@
 import { MetadataRoute } from 'next';
 
+export const dynamic = 'force-static';
+
 export default function robots(): MetadataRoute.Robots {
     return {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: '/settings/',
+            disallow: [
+                '/settings/',
+                '/auth/',
+                '/bookmarks/',
+                '/api/', // Generally restrict indexing APIs
+            ],
         },
         sitemap: 'https://faithjourney.pro/sitemap.xml',
     };
