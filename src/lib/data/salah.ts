@@ -175,3 +175,64 @@ export const salahSteps = [
         meaning: "Peace be upon you and the mercy of Allah"
     }
 ];
+
+export type RakahType = 'Sunnah Muakkadah' | 'Sunnah Ghair Muakkadah' | 'Fard' | 'Nafl' | 'Witr';
+
+export interface PrayerStructure {
+    name: string;
+    rakahs: { type: RakahType; count: number }[];
+}
+
+export const prayerStructures: PrayerStructure[] = [
+    {
+        name: "Fajr",
+        rakahs: [
+            { type: 'Sunnah Muakkadah', count: 2 },
+            { type: 'Fard', count: 2 }
+        ]
+    },
+    {
+        name: "Dhuhr",
+        rakahs: [
+            { type: 'Sunnah Muakkadah', count: 4 },
+            { type: 'Fard', count: 4 },
+            { type: 'Sunnah Muakkadah', count: 2 },
+            { type: 'Nafl', count: 2 }
+        ]
+    },
+    {
+        name: "Asr",
+        rakahs: [
+            { type: 'Sunnah Ghair Muakkadah', count: 4 },
+            { type: 'Fard', count: 4 }
+        ]
+    },
+    {
+        name: "Maghrib",
+        rakahs: [
+            { type: 'Fard', count: 3 },
+            { type: 'Sunnah Muakkadah', count: 2 },
+            { type: 'Nafl', count: 2 }
+        ]
+    },
+    {
+        name: "Isha",
+        rakahs: [
+            { type: 'Sunnah Ghair Muakkadah', count: 4 },
+            { type: 'Fard', count: 4 },
+            { type: 'Sunnah Muakkadah', count: 2 },
+            { type: 'Nafl', count: 2 },
+            { type: 'Witr', count: 3 },
+            { type: 'Nafl', count: 2 }
+        ]
+    }
+];
+
+export const recitationRules = {
+    fard: [
+        "1st & 2nd Rakah: Surah Al-Fatiha + Another Surah",
+        "3rd & 4th Rakah: Surah Al-Fatiha Only (Silent)"
+    ],
+    sunnah: "All Rakahs: Surah Al-Fatiha + Another Surah",
+    nafl: "All Rakahs: Surah Al-Fatiha + Another Surah"
+};

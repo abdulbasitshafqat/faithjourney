@@ -19,7 +19,12 @@ interface SurahViewProps {
     id: number;
 }
 
+import { motion } from "framer-motion";
+import { useProgress } from "@/hooks/useProgress";
+
 export default function SurahView({ id }: SurahViewProps) {
+    const { updateProgress } = useProgress();
+
     const router = useRouter();
 
     const [isPlaying, setIsPlaying] = useState(false);
@@ -238,109 +243,119 @@ export default function SurahView({ id }: SurahViewProps) {
                         const isAyahActive = activeVerseKey === ayah.verse_key;
 
                         return (
-                            <Card
+                            <motion.div
                                 key={ayah.id}
-                                id={`ayah-${ayah.verse_key.replace(":", "-")}`}
-                                className={cn(
-                                    "border-none shadow-sm transition-all duration-500",
-                                    isAyahActive ? 'bg-primary/5 ring-1 ring-primary/50' : 'bg-card/50 hover:bg-card'
-                                )}
-                                onClick={() => {
-                                    // Calculate time to seek to if we want click-to-play
-                                    // For now just highlight
+                                initial={{ opacity: 0.95 }}
+                                whileInView={{ opacity: 1 }}
+                                viewport={{ margin: "-20% 0px -50% 0px" }}
+                                onViewportEnter={() => {
+                                    const ayahNum = parseInt(ayah.verse_key.split(":")[1]);
+                                    updateProgress(id, ayahNum);
                                 }}
                             >
-                                <CardContent className="p-6">
-                                    <div className="flex flex-col space-y-8">
-                                        {/* Arabic Text */}
-                                        <div className="flex justify-between items-start w-full">
-                                            <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-xs text-primary font-medium shrink-0 mt-1 font-sans">
-                                                {ayah.verse_key.split(":")[1]}
-                                            </div>
+                                <Card
+                                    id={`ayah-${ayah.verse_key.replace(":", "-")}`}
+                                    className={cn(
+                                        "border-none shadow-sm transition-all duration-500",
+                                        isAyahActive ? 'bg-primary/5 ring-1 ring-primary/50' : 'bg-card/50 hover:bg-card'
+                                    )}
+                                    onClick={() => {
+                                        // Calculate time to seek to if we want click-to-play
+                                        // For now just highlight
+                                    }}
+                                >
+                                    <CardContent className="p-6">
+                                        <div className="flex flex-col space-y-8">
+                                            {/* Arabic Text */}
+                                            <div className="flex justify-between items-start w-full">
+                                                <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-xs text-primary font-medium shrink-0 mt-1 font-sans">
+                                                    {ayah.verse_key.split(":")[1]}
+                                                </div>
 
-                                            <div
-                                                className="text-right w-full pl-4 leading-[2.2] flex flex-wrap justify-end gap-x-1"
-                                                dir="rtl"
-                                            >
-                                                {ayah.words?.map((word, wordIndex) => {
-                                                    const isWordActive = isAyahActive && activeWordPosition === word.position;
+                                                <div
+                                                    className="text-right w-full pl-4 leading-[2.2] flex flex-wrap justify-end gap-x-1"
+                                                    dir="rtl"
+                                                >
+                                                    {ayah.words?.map((word, wordIndex) => {
+                                                        const isWordActive = isAyahActive && activeWordPosition === word.position;
 
-                                                    // Handle end of verse marker
-                                                    if (word.char_type_name === "end") {
+                                                        // Handle end of verse marker
+                                                        if (word.char_type_name === "end") {
+                                                            return (
+                                                                <span
+                                                                    key={word.id}
+                                                                    className="text-primary font-arabic select-none text-2xl mx-1"
+                                                                    style={{ fontSize: `${fontSize * 0.8}px` }}
+                                                                >
+                                                                    {word.text_uthmani}
+                                                                </span>
+                                                            )
+                                                        }
+
                                                         return (
                                                             <span
                                                                 key={word.id}
-                                                                className="text-primary font-arabic select-none text-2xl mx-1"
-                                                                style={{ fontSize: `${fontSize * 0.8}px` }}
+                                                                className={cn(
+                                                                    "font-arabic transition-all duration-200 cursor-pointer rounded px-0.5",
+                                                                    isWordActive
+                                                                        ? "text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.6)] font-semibold scale-105"
+                                                                        : "text-primary hover:text-primary/80"
+                                                                )}
+                                                                style={{ fontSize: `${fontSize}px` }}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    // Optional: seek to word
+                                                                }}
                                                             >
-                                                                {word.text_uthmani}
+                                                                {word.text_uthmani + " "}
                                                             </span>
-                                                        )
-                                                    }
+                                                        );
+                                                    }) || (
+                                                            // Fallback if words data is missing
+                                                            <p
+                                                                className="font-arabic text-primary"
+                                                                style={{ fontSize: `${fontSize}px` }}
+                                                            >
+                                                                {ayah.text_uthmani}
+                                                            </p>
+                                                        )}
+                                                </div>
+                                            </div>
 
-                                                    return (
-                                                        <span
-                                                            key={word.id}
-                                                            className={cn(
-                                                                "font-arabic transition-all duration-200 cursor-pointer rounded px-0.5",
-                                                                isWordActive
-                                                                    ? "text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.6)] font-semibold scale-105"
-                                                                    : "text-primary hover:text-primary/80"
-                                                            )}
-                                                            style={{ fontSize: `${fontSize}px` }}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                // Optional: seek to word
-                                                            }}
-                                                        >
-                                                            {word.text_uthmani + " "}
-                                                        </span>
-                                                    );
-                                                }) || (
-                                                        // Fallback if words data is missing
-                                                        <p
-                                                            className="font-arabic text-primary"
-                                                            style={{ fontSize: `${fontSize}px` }}
-                                                        >
-                                                            {ayah.text_uthmani}
+                                            {/* Translations Container */}
+                                            <div className="grid gap-6 pt-6 border-t border-border/50">
+                                                {/* Transliteration */}
+                                                {ayah.translations?.find(t => t.resource_id === 57)?.text && (
+                                                    <div className="text-left bg-muted/30 p-4 rounded-lg border border-border/10">
+                                                        <p className="text-sm font-bold text-primary/70 uppercase tracking-widest mb-1">Transliteration</p>
+                                                        <p className="text-base md:text-lg text-foreground/80 italic font-serif leading-relaxed">
+                                                            {ayah.translations?.find(t => t.resource_id === 57)?.text.replace(/<sup.*?<\/sup>/g, "")}
                                                         </p>
-                                                    )}
+                                                    </div>
+                                                )}
+
+                                                {/* Urdu Translation */}
+                                                {urduTranslation && (
+                                                    <div className="text-right" dir="rtl">
+                                                        <p className="text-xl md:text-2xl text-foreground/90 font-serif leading-loose font-arabic">
+                                                            {urduTranslation.replace(/<sup.*?<\/sup>/g, "")}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* English Translation */}
+                                                {englishTranslation && (
+                                                    <div className="text-left" dir="ltr">
+                                                        <p className="text-lg md:text-xl text-muted-foreground font-serif leading-relaxed">
+                                                            {englishTranslation.replace(/<sup.*?<\/sup>/g, "")}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-
-                                        {/* Translations Container */}
-                                        <div className="grid gap-6 pt-6 border-t border-border/50">
-                                            {/* Transliteration */}
-                                            {ayah.translations?.find(t => t.resource_id === 57)?.text && (
-                                                <div className="text-left bg-muted/30 p-4 rounded-lg border border-border/10">
-                                                    <p className="text-sm font-bold text-primary/70 uppercase tracking-widest mb-1">Transliteration</p>
-                                                    <p className="text-base md:text-lg text-foreground/80 italic font-serif leading-relaxed">
-                                                        {ayah.translations?.find(t => t.resource_id === 57)?.text.replace(/<sup.*?<\/sup>/g, "")}
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            {/* Urdu Translation */}
-                                            {urduTranslation && (
-                                                <div className="text-right" dir="rtl">
-                                                    <p className="text-xl md:text-2xl text-foreground/90 font-serif leading-loose font-arabic">
-                                                        {urduTranslation.replace(/<sup.*?<\/sup>/g, "")}
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            {/* English Translation */}
-                                            {englishTranslation && (
-                                                <div className="text-left" dir="ltr">
-                                                    <p className="text-lg md:text-xl text-muted-foreground font-serif leading-relaxed">
-                                                        {englishTranslation.replace(/<sup.*?<\/sup>/g, "")}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
                         );
                     })}
                 </div>

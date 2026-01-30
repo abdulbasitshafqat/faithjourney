@@ -8,6 +8,7 @@
   --font-sans: var(--font-lora);
   --font-serif: var(--font-playfair);
   --font-arabic: var(--font-amiri);
+  --font-urdu: var(--font-gulzar);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

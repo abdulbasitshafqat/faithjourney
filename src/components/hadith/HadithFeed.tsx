@@ -8,6 +8,7 @@ import { toggleBookmark, checkBookmarksBatch } from '@/lib/api/bookmarks';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { User } from '@supabase/supabase-js';
+import { HadithCard } from './HadithCard';
 
 interface HadithFeedProps {
     hadiths: {
@@ -131,129 +132,19 @@ export default function HadithFeed({ hadiths, bookName, chapterName }: HadithFee
             {/* Hadith Cards */}
             {hadiths.map((item, index) => {
                 const hadithId = `${bookName}-${item.english.hadithnumber}`;
-                const isBookmarked = bookmarkedIds[hadithId];
-                const isLoading = loadingBookmarks[hadithId];
+                const isBookmarked = bookmarkedIds[hadithId] || false;
 
                 return (
-                    <div
+                    <HadithCard
                         key={index}
-                        id={`hadith-${item.english.hadithnumber}`}
-                        className="bg-card/40 backdrop-blur-md rounded-2xl shadow-xl border border-primary/10 overflow-hidden hover:shadow-2xl transition-all duration-300 group"
-                    >
-                        {/* Header: Number & Grade */}
-                        <div className="bg-primary/5 px-6 py-4 flex justify-between items-center border-b border-primary/10">
-                            <span className="inline-flex items-center justify-center px-4 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
-                                Hadith #{item.english.hadithnumber}
-                            </span>
-                            {item.english.grades && item.english.grades.length > 0 && (
-                                <span className="text-[10px] font-bold px-2.5 py-1 rounded bg-secondary/10 text-secondary-foreground border border-secondary/20 uppercase tracking-tighter">
-                                    {item.english.grades[0].grade}
-                                </span>
-                            )}
-                        </div>
-
-                        <div className="p-8 md:p-10">
-                            {/* Arabic Text */}
-                            <div className="mb-10 text-right" dir="rtl">
-                                <p className="text-4xl md:text-5xl text-primary leading-[1.8] font-arabic">
-                                    {item.arabic.text}
-                                </p>
-                            </div>
-
-                            {/* English Translation */}
-                            <div className="mb-8">
-                                <p className="text-xl text-foreground/90 leading-relaxed font-serif italic">
-                                    &quot;{item.english.text}&quot;
-                                </p>
-                            </div>
-
-                            {/* Urdu Translation */}
-                            {showUrdu && item.urdu && (
-                                <div className="mb-8 text-right border-t-2 border-primary/10 pt-8 bg-primary/5 p-6 rounded-xl" dir="rtl">
-                                    <div className="text-xs font-bold text-primary mb-2 uppercase tracking-widest text-left">Urdu translation</div>
-                                    <p className="text-2xl text-foreground/90 leading-loose font-arabic">
-                                        {item.urdu.text}
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Detailed Reference Section */}
-                            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                                <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-primary/5">
-                                    <h4 className="font-bold uppercase tracking-wider text-primary/70">Source Reference</h4>
-                                    <div className="flex justify-between border-b border-primary/5 pb-1">
-                                        <span className="text-muted-foreground">Collection</span>
-                                        <span className="font-medium">{bookName}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-primary/5 pb-1">
-                                        <span className="text-muted-foreground">Hadith Number</span>
-                                        <span className="font-mono font-bold">{item.english.hadithnumber}</span>
-                                    </div>
-                                    {item.english.reference && (
-                                        <div className="flex justify-between">
-                                            <span className="text-muted-foreground">In-Book Reference</span>
-                                            <span className="font-mono">Book {item.english.reference.book}, Hadith {item.english.reference.hadith}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2 p-4 bg-muted/30 rounded-lg border border-primary/5">
-                                    <h4 className="font-bold uppercase tracking-wider text-primary/70">Authentication</h4>
-                                    {item.english.grades && item.english.grades.length > 0 ? (
-                                        item.english.grades.map((g, i) => (
-                                            <div key={i} className="flex justify-between border-b border-primary/5 last:border-0 pb-1">
-                                                <span className="text-muted-foreground">{g.name}</span>
-                                                <span className={cn(
-                                                    "font-bold",
-                                                    g.grade.toLowerCase().includes('sahih') ? "text-emerald-600" :
-                                                        g.grade.toLowerCase().includes('hasan') ? "text-amber-600" : "text-primary"
-                                                )}>{g.grade}</span>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-muted-foreground italic tracking-tight">Grade information not available for this collection.</div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Action Bar */}
-                            <div className="flex items-center justify-end space-x-3 mt-10 pt-6 border-t border-primary/5">
-                                <button
-                                    onClick={() => handleCopy(item, item.english.hadithnumber)}
-                                    className="p-3 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300"
-                                    title="Copy Text"
-                                >
-                                    {copiedId === item.english.hadithnumber ? <Check size={20} /> : <Copy size={20} />}
-                                </button>
-
-                                <button
-                                    onClick={() => handleShare(item)}
-                                    className="p-3 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300"
-                                    title="Share"
-                                >
-                                    <Share2 size={20} />
-                                </button>
-
-                                <button
-                                    onClick={() => handleBookmark(item)}
-                                    disabled={isLoading}
-                                    className={cn(
-                                        "p-3 rounded-full transition-all duration-300",
-                                        isBookmarked
-                                            ? "text-secondary bg-secondary/10"
-                                            : "text-muted-foreground hover:text-secondary hover:bg-secondary/10"
-                                    )}
-                                    title={isBookmarked ? "Remove Bookmark" : "Bookmark Hadith"}
-                                >
-                                    {isLoading ? (
-                                        <Loader2 size={20} className="animate-spin" />
-                                    ) : (
-                                        <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                        item={item}
+                        bookName={bookName}
+                        chapterName={chapterName}
+                        showUrdu={showUrdu}
+                        user={user}
+                        isBookmarked={isBookmarked}
+                        onBookmarkUpdate={(id, status) => setBookmarkedIds(prev => ({ ...prev, [id]: status }))}
+                    />
                 );
             })}
         </div>

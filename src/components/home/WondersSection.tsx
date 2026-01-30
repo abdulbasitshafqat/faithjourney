@@ -84,106 +84,59 @@ export function WondersSection() {
                     </div>
                 </div>
 
-                {/* Main Card Display */}
-                <div className="relative aspect-[4/5] md:aspect-[21/9] max-w-6xl mx-auto">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeWonder.id}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.5, ease: "circOut" }}
-                            drag="x"
-                            dragConstraints={{ left: 0, right: 0 }}
-                            dragElastic={0.2}
-                            onDragEnd={(e, { offset, velocity }) => {
-                                const swipe = offset.x; // simple offset check
-                                if (swipe < -50) {
-                                    handleNext();
-                                } else if (swipe > 50) {
-                                    handlePrev();
-                                }
-                            }}
-                            className="w-full h-full relative rounded-[3rem] overflow-hidden group shadow-2xl border border-white/10 cursor-grab active:cursor-grabbing"
+                {/* Main Card Display - Bento Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[400px] max-w-7xl mx-auto">
+                    {wonders.map((wonder, i) => (
+                        <div
+                            key={wonder.id}
+                            className={cn(
+                                "group relative rounded-[2rem] overflow-hidden border border-white/10 shadow-xl transition-all duration-500 hover:shadow-2xl hover:scale-[1.01] bg-white/5 backdrop-blur-sm",
+                                (i === 0 || i === 3) ? "md:col-span-2" : "md:col-span-1"
+                            )}
                         >
-                            {/* Card Background Image */}
+                            {/* Background Image */}
                             <div className="absolute inset-0">
                                 <img
-                                    src={activeWonder.visual_asset}
-                                    alt={activeWonder.title}
+                                    src={wonder.visual_asset}
+                                    alt={wonder.title}
                                     className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-70 transition-opacity" />
                             </div>
 
-                            {/* Card Content */}
-                            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-end md:justify-center md:items-start max-w-4xl">
-                                <div className="space-y-6 md:space-y-8 relative">
-                                    <div className="overflow-hidden">
-                                        <motion.div
-                                            initial={{ y: 20, opacity: 0 }}
-                                            animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 0.2 }}
-                                            className="inline-block px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4"
-                                        >
-                                            {activeWonder.category}
-                                        </motion.div>
-                                    </div>
-
-                                    <h3 className="text-3xl md:text-6xl font-serif font-black text-white leading-[1.1] drop-shadow-lg">
-                                        {activeWonder.title}
+                            {/* Content */}
+                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    <span className="inline-block px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-300 text-[10px] font-bold uppercase tracking-widest mb-3 backdrop-blur-md">
+                                        {wonder.category}
+                                    </span>
+                                    <h3 className={cn(
+                                        "font-serif font-black text-white leading-[1.1] mb-2 drop-shadow-lg",
+                                        (i === 0 || i === 3) ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"
+                                    )}>
+                                        {wonder.title}
                                     </h3>
 
-                                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/10 max-w-2xl">
-                                        <p className="font-arabic text-2xl md:text-3xl text-right text-emerald-100 mb-6 leading-loose">
-                                            {activeWonder.verse_arabic}
+                                    <div className="space-y-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 h-0 group-hover:h-auto overflow-hidden">
+                                        <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed line-clamp-3">
+                                            {wonder.scientific_fact}
                                         </p>
-                                        <div className="space-y-4">
-                                            <div className="flex items-start gap-4">
-                                                <div className="p-2 bg-emerald-500/10 rounded-lg shrink-0 mt-1">
-                                                    <Info className="h-4 w-4 text-emerald-400" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-white/90 leading-relaxed font-medium">
-                                                        {activeWonder.scientific_fact}
-                                                    </p>
-                                                    <p className="text-emerald-400/60 text-sm mt-3 font-mono">
-                                                        {activeWonder.verse_reference}
-                                                    </p>
-                                                </div>
-                                            </div>
+                                        <div className="pt-2 flex items-center gap-2 text-emerald-400 text-xs font-mono">
+                                            <Info className="h-3 w-3" />
+                                            {wonder.verse_reference}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Mobile Swipe Hint */}
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:hidden text-white/40 text-xs uppercase tracking-widest animate-pulse">
-                                Swipe for more
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Progress Indicator */}
-                    <div className="absolute -bottom-10 left-0 right-0 flex justify-center gap-2">
-                        {wonders.map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setActiveIndex(idx)}
-                                className={cn(
-                                    "h-1.5 rounded-full transition-all duration-300",
-                                    idx === activeIndex ? "w-8 bg-emerald-500" : "w-1.5 bg-white/10 hover:bg-white/30"
-                                )}
-                            />
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="mt-20 text-center">
                     <Button
                         size="lg"
                         variant="outline"
-                        className="h-14 px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white text-white font-bold tracking-wide"
+                        className="h-14 px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white text-white font-bold tracking-wide transition-all"
                         asChild
                     >
                         <Link href="/wonders">

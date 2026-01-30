@@ -118,7 +118,7 @@ export function Header() {
                             </Button>
                         </>
                     ) : (
-                        <Link href="/auth">
+                        <Link href="/login">
                             <Button variant="outline" size="sm">
                                 Sign In
                             </Button>
@@ -196,7 +196,7 @@ export function Header() {
                                                 Sign Out
                                             </Button>
                                         ) : (
-                                            <Link href="/auth">
+                                            <Link href="/login">
                                                 <Button variant="outline" className="w-full h-11 rounded-xl border-primary/20 justify-start px-4 font-serif">
                                                     Sign In
                                                 </Button>

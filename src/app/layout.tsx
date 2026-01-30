@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Amiri, Lora } from "next/font/google"; // Import next/font/google first as it's a built-in
+import { Playfair_Display, Amiri, Lora, Gulzar } from "next/font/google"; // Import next/font/google first as it's a built-in
 import { Toaster } from "@/components/ui/toaster";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -26,6 +26,13 @@ const amiri = Amiri({
   subsets: ["arabic"],
   weight: ["400", "700"],
   variable: "--font-amiri",
+  display: "swap",
+});
+
+const gulzar = Gulzar({
+  subsets: ["arabic"],
+  weight: ["400"],
+  variable: "--font-gulzar",
   display: "swap",
 });
 
@@ -95,7 +102,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${lora.variable} ${amiri.variable} font-serif antialiased bg-background text-foreground`}
+        className={`${playfair.variable} ${lora.variable} ${amiri.variable} ${gulzar.variable} font-serif antialiased bg-background text-foreground`}
         suppressHydrationWarning
       >
         <ThemeProvider

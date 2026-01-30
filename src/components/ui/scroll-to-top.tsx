@@ -34,7 +34,7 @@ export function ScrollToTop() {
     }, []);
 
     return (
-        <div className="fixed bottom-8 right-8 z-50">
+        <div className="fixed bottom-24 md:bottom-8 right-8 z-50">
             <Button
                 variant="default" // Using default primary styling
                 size="icon"

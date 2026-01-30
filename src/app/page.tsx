@@ -17,6 +17,9 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { getDuaOfTheDay } from "@/lib/api/daily-dua";
 import { WondersSection } from "@/components/home/WondersSection";
+import { ResumeJourney } from "@/components/dashboard/ResumeJourney";
+import { SpiritualStreak } from "@/components/dashboard/SpiritualStreak";
+import { ReadingGoals } from "@/components/dashboard/ReadingGoals";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -78,6 +81,19 @@ export default function Home() {
               <Button size="lg" variant="ghost" className="h-16 px-10 rounded-2xl border-2 border-primary/10 hover:bg-primary/5 text-lg font-bold group" asChild>
                 <Link href="/prayer-times">Prayer Times</Link>
               </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* PERSONAL DASHBOARD (Visible when logged in/active) */}
+        <section className="container mx-auto px-4 -mt-20 z-20 relative mb-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-700">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <ResumeJourney />
+            </div>
+            <div className="space-y-6">
+              <SpiritualStreak />
+              <ReadingGoals />
             </div>
           </div>
         </section>

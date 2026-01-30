@@ -32,6 +32,7 @@ export function PrayerCard() {
     const [playedPrayers, setPlayedPrayers] = useState<string[]>([]);
     const [previewAudio, setPreviewAudio] = useState<HTMLAudioElement | null>(null);
     const [isPlayingPreview, setIsPlayingPreview] = useState(false);
+    const [playingAdhanId, setPlayingAdhanId] = useState<string | null>(null);
 
     // Update current time every second for countdown
     useEffect(() => {
@@ -69,32 +70,40 @@ export function PrayerCard() {
     }, []);
 
     const togglePreview = (adhanId: string) => {
+        // If currently playing
         if (isPlayingPreview && previewAudio) {
+            // Stop current playback
             previewAudio.pause();
             previewAudio.currentTime = 0;
             setIsPlayingPreview(false);
             setPreviewAudio(null);
 
-            // If clicking a different one, start it
-            if (previewAudio.src !== adhanOptions.find(a => a.id === adhanId)?.url) {
-                const url = adhanOptions.find(a => a.id === adhanId)?.url;
-                if (url) {
-                    const audio = new Audio(url);
-                    audio.play().catch(e => console.error(e));
-                    audio.onended = () => setIsPlayingPreview(false);
-                    setPreviewAudio(audio);
-                    setIsPlayingPreview(true);
-                }
+            const wasPlayingId = playingAdhanId;
+            setPlayingAdhanId(null);
+
+            // IF we clicked the same button (same ID), we are done (STOP action).
+            // IF we clicked a different button, we proceed to play the new one.
+            if (wasPlayingId === adhanId) {
+                return;
             }
-        } else {
-            const url = adhanOptions.find(a => a.id === adhanId)?.url;
-            if (url) {
-                const audio = new Audio(url);
-                audio.play().catch(e => console.error(e));
-                audio.onended = () => setIsPlayingPreview(false);
-                setPreviewAudio(audio);
-                setIsPlayingPreview(true);
-            }
+        }
+
+        // Play new audio
+        const url = adhanOptions.find(a => a.id === adhanId)?.url;
+        if (url) {
+            const audio = new Audio(url);
+            audio.play().catch(e => console.error(e));
+
+            // When audio ends
+            audio.onended = () => {
+                setIsPlayingPreview(false);
+                setPreviewAudio(null);
+                setPlayingAdhanId(null);
+            };
+
+            setPreviewAudio(audio);
+            setIsPlayingPreview(true);
+            setPlayingAdhanId(adhanId);
         }
     };
 
@@ -141,6 +150,81 @@ export function PrayerCard() {
         { name: "Maghrib", time: timings?.Maghrib, icon: Sunset, color: "from-orange-600 via-pink-500 to-rose-400" },
         { name: "Isha", time: timings?.Isha, icon: Moon, color: "from-indigo-950 via-purple-900 to-indigo-900" },
     ], [timings]);
+
+    // Auto-enable notifications for 5 daily prayers on first launch
+    useEffect(() => {
+        const initNotifications = async () => {
+            if (!calendarQuery.data || isLoading) return;
+
+            const hasInitialized = localStorage.getItem('fj_notifications_init_v2');
+            if (hasInitialized) return;
+
+            // Check permissions first
+            const perm = await LocalNotifications.checkPermissions();
+            if (perm.display !== 'granted') {
+                const req = await LocalNotifications.requestPermissions();
+                if (req.display !== 'granted') return;
+            }
+
+            const prayersToSchedule = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+            const newlyScheduled: string[] = [];
+
+            for (const prayerName of prayersToSchedule) {
+                // Avoid re-scheduling if already done (though init check prevents this usually)
+                if (scheduledPrayers.includes(prayerName)) continue;
+
+                // Logic copied from toggleNotification but for "enable" only
+                try {
+                    const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
+                    const notifications = [];
+                    const now = new Date();
+                    const todayIndex = calendarQuery.data.data.findIndex(d => d.date.readable.startsWith(now.getDate().toString().padStart(2, '0')));
+
+                    if (todayIndex === -1) continue;
+
+                    const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
+                    for (let i = 0; i < daysToSchedule; i++) {
+                        const dayData = calendarQuery.data.data[todayIndex + i];
+                        const timeStr = (dayData.timings as any)[prayerName];
+                        if (!timeStr) continue;
+                        const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
+                        const scheduleDate = new Date();
+                        scheduleDate.setDate(now.getDate() + i);
+                        scheduleDate.setHours(hours, minutes, 0, 0);
+                        if (i === 0 && scheduleDate < now) continue;
+
+                        notifications.push({
+                            title: `Time for ${prayerName}`,
+                            body: `It is time for ${prayerName} prayer.`,
+                            id: Math.floor(Math.random() * 1000000),
+                            schedule: { at: scheduleDate },
+                            sound: adhanUrl || undefined,
+                            extra: { prayerName }
+                        });
+                    }
+
+                    if (notifications.length > 0) {
+                        await LocalNotifications.schedule({ notifications });
+                        newlyScheduled.push(prayerName);
+                    }
+                } catch (e) {
+                    console.error(`Failed to auto-schedule ${prayerName}`, e);
+                }
+            }
+
+            if (newlyScheduled.length > 0) {
+                setScheduledPrayers(prev => [...prev, ...newlyScheduled]);
+                Toast.show({
+                    text: "Daily prayer notifications enabled automatically.",
+                    duration: 'long'
+                });
+            }
+
+            localStorage.setItem('fj_notifications_init_v2', 'true');
+        };
+
+        initNotifications();
+    }, [calendarQuery.data, isLoading, selectedAdhan]);
 
     // Check for prayer times and play audio
     useEffect(() => {
@@ -375,27 +459,33 @@ export function PrayerCard() {
                             setSelectedAdhan(val);
                             localStorage.setItem("fj_adhan", val);
                         }}>
-                            <SelectTrigger className="flex-1 border-none bg-primary/5 h-14 rounded-2xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-5">
+                            <SelectTrigger className="flex-1 border-none bg-primary/5 h-12 rounded-xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4">
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-3xl border-primary/10 shadow-2xl p-2 max-h-[300px]">
-                                {adhanOptions.map(a => <SelectItem key={a.id} value={a.id} className="text-sm font-bold py-4 px-4 rounded-xl focus:bg-primary/5">{a.name}</SelectItem>)}
+                            <SelectContent className="rounded-2xl border-primary/10 shadow-2xl p-2 max-h-[300px]">
+                                {adhanOptions.map(a => <SelectItem key={a.id} value={a.id} className="text-sm font-bold py-3 px-4 rounded-xl focus:bg-primary/5">{a.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
 
                         <Button
                             className={cn(
-                                "h-14 w-14 rounded-2xl shrink-0 transition-all shadow-sm",
+                                "h-12 px-6 rounded-xl font-bold transition-all shadow-sm",
                                 isPlayingPreview
-                                    ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                    : "bg-white text-primary border border-primary/10 hover:bg-primary/5 hover:border-primary/20"
+                                    ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    : "bg-primary text-primary-foreground hover:bg-primary/90"
                             )}
                             onClick={() => togglePreview(selectedAdhan)}
                         >
                             {isPlayingPreview ? (
-                                <StopCircle className="h-6 w-6 fill-current animate-pulse" />
+                                <>
+                                    <StopCircle className="h-4 w-4 mr-2 animate-pulse" />
+                                    Stop
+                                </>
                             ) : (
-                                <PlayCircle className="h-6 w-6 fill-current opacity-80" />
+                                <>
+                                    <PlayCircle className="h-4 w-4 mr-2" />
+                                    Test
+                                </>
                             )}
                         </Button>
                     </div>
@@ -468,38 +558,38 @@ export function PrayerCard() {
                         <div
                             key={prayer.name}
                             className={cn(
-                                "group relative flex items-center justify-between p-6 rounded-[2.5rem] transition-all duration-700 border-2 overflow-hidden",
+                                "group relative flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 rounded-[2rem] transition-all duration-700 border overflow-hidden gap-4 sm:gap-0",
                                 isNext
-                                    ? "bg-primary/[0.03] border-primary/40 shadow-2xl scale-[1.02] -translate-y-1"
-                                    : "bg-white/40 border-primary/5 hover:border-primary/10 shadow-sm"
+                                    ? "bg-primary/10 border-primary/40 shadow-2xl scale-[1.02] -translate-y-1"
+                                    : "bg-card/50 backdrop-blur-md border-primary/5 hover:border-primary/10 shadow-sm"
                             )}
                         >
                             {isNext && <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent" />}
 
-                            <div className="flex items-center space-x-6 relative z-10">
+                            <div className="flex items-center space-x-4 sm:space-x-6 relative z-10 w-full sm:w-auto">
                                 <div className={cn(
-                                    "p-4 rounded-2xl transition-all duration-700",
-                                    isNext ? "bg-primary text-white scale-110 shadow-xl" : "bg-primary/[0.07] text-primary group-hover:bg-primary group-hover:text-white"
+                                    "p-3 sm:p-4 rounded-2xl transition-all duration-700 shrink-0",
+                                    isNext ? "bg-primary text-white scale-110 shadow-xl" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
                                 )}>
-                                    <prayer.icon className="h-7 w-7" />
+                                    <prayer.icon className="h-6 w-6 sm:h-7 sm:w-7" />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className={cn(
-                                        "font-serif text-2xl font-black tracking-tight transition-colors",
+                                        "font-serif text-xl sm:text-2xl font-black tracking-tight transition-colors",
                                         isNext ? "text-primary" : "text-foreground group-hover:text-primary"
                                     )}>{prayer.name}</span>
                                     {isNext && (
                                         <div className="flex items-center gap-1.5 mt-0.5">
                                             <div className="w-2 h-2 rounded-full bg-primary animate-ping" />
-                                            <span className="text-[11px] uppercase font-black tracking-[0.2em] text-primary/70">Current Focus</span>
+                                            <span className="text-[10px] sm:text-[11px] uppercase font-black tracking-[0.2em] text-primary/70">Current Focus</span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-6 relative z-10">
+                            <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end gap-4 sm:gap-6 relative z-10">
                                 <span className={cn(
-                                    "font-mono text-3xl font-black lowercase tracking-tighter",
+                                    "font-mono text-2xl sm:text-3xl font-black lowercase tracking-tighter",
                                     isNext ? "text-primary scale-110" : "text-foreground/80 group-hover:text-primary"
                                 )}>
                                     {formatTime(prayer.time)}
@@ -509,7 +599,7 @@ export function PrayerCard() {
                                     variant="ghost"
                                     size="icon"
                                     className={cn(
-                                        "rounded-[1.5rem] w-16 h-16 transition-all duration-700 border-2 flex items-center justify-center",
+                                        "rounded-[1.5rem] w-14 h-14 sm:w-16 sm:h-16 transition-all duration-700 border-2 flex items-center justify-center shrink-0",
                                         isScheduled
                                             ? "bg-secondary text-white border-secondary shadow-xl hover:rotate-[15deg] active:scale-95"
                                             : "bg-primary/5 text-primary border-transparent hover:bg-primary hover:text-white hover:shadow-2xl hover:border-primary"
@@ -517,7 +607,7 @@ export function PrayerCard() {
                                     onClick={() => prayer.time && toggleNotification(prayer.name)}
                                     disabled={!prayer.time}
                                 >
-                                    {isScheduled ? <Bell className="h-7 w-7 fill-current" /> : <BellOff className="h-7 w-7" />}
+                                    {isScheduled ? <Bell className="h-6 w-6 sm:h-7 sm:w-7 fill-current" /> : <BellOff className="h-6 w-6 sm:h-7 sm:w-7" />}
                                 </Button>
                             </div>
                         </div>

@@ -21,6 +21,7 @@ export const duaCategories = {
     "morning": "Morning Supplications (صبح کے اذکار)",
     "evening": "Evening Supplications (شام کے اذکار)",
     "after_salah": "After Salah (نماز کے بعد)",
+    "witr": "Witr (وتر)",
     "sleeping": "Sleeping (سوتے وقت)",
     "waking": "Waking Up (بیدار ہوتے وقت)",
     "travel": "Travelling (سفر کی دعا)",
@@ -45,5 +46,18 @@ export const duaCategories = {
 export const duasData: Dua[] = [
     ...morningAzkaar,
     ...eveningAzkaar,
-    ...otherAzkaar
+    ...otherAzkaar,
+    {
+        id: "qunoot-witr",
+        category_id: "witr",
+        arabic_text: "اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، إِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، [وَلَا يَعِزُّ مَنْ عَادَيْتَ]، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ",
+        transliteration: "Allahumma-hdini fiman hadayt, wa 'afini fiman 'afayt, wa tawallani fiman tawallayt, wa barik li fima a'tayt, wa qini sharra ma qadayt, fa-innaka taqdi wa la yuqda 'alayk, innahu la yadhillu man walayt, [wa la ya'izzu man 'adayt], tabarakta Rabbana wa ta'alayt.",
+        translations: {
+            en: "O Allah, guide me with those whom You have guided, and grant me well-being with those whom You have granted well-being, and take me to Your care with those whom You have taken to Your care, and bless me in what You have given, and protect me from the evil of what You have decreed. Surely, You decree and are not decreed upon; indeed, he whom You take as an ally is not humbled [and he whom You take as an enemy is not honored]. Blessed are You, our Lord, and Exalted.",
+            ur: "اے اللہ! مجھے ہدایت دے ان لوگوں میں جنہیں تو نے ہدایت دی، اور مجھے عافیت دے ان لوگوں میں جنہیں تو نے عافیت دی، اور میرا والی بن جا ان لوگوں میں جن کا تو والی بنا، اور میرے لیے برکت دے اس میں جو تو نے عطا کیا، اور مجھے اس چیز کے شر سے بچا جس کا تو نے فیصلہ کیا، بے شک تو فیصلہ کرتا ہے اور تیرے خلاف فیصلہ نہیں کیا جاتا، یقیناً جسے تو دوست رکھے وہ ذلیل نہیں ہوتا [اور جس سے تو دشمنی رکھے وہ عزت نہیں پاتا]، اے ہمارے رب! تو برکت والا ہے اور بلند ہے۔"
+        },
+        reference: "Hisn al-Muslim / Abu Dawud, Tirmidhi",
+        repeat_count: 1,
+        virtue: "Recited in the Witr prayer after bowing (Ruku') or before it."
+    }
 ];

@@ -6,16 +6,26 @@ import { Footer } from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplets, User, BookOpen, Volume2, Sparkles, ChevronRight, Scale } from "lucide-react";
-import { wuduSteps, salahSteps } from "@/lib/data/salah";
+import { wuduSteps, salahSteps, prayerStructures, recitationRules } from "@/lib/data/salah";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
+import { StructuredData } from "@/components/StructuredData";
 
 export default function SalahGuidePage() {
     const [activeTab, setActiveTab] = useState("salah");
     const [school, setSchool] = useState<"hanafi" | "shafi" | "maliki" | "hanbali">("hanafi");
 
+    // Prepare Structured Data
+    const howToData = {
+        name: "How to Perform Salah (Prayer)",
+        description: "Step-by-step guide to performing Islamic prayer according to Sunnah.",
+        steps: salahSteps.map(s => ({ name: s.title, text: s.description }))
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-background font-sans">
+            <StructuredData type="HowTo" data={howToData} />
             <Header />
 
             <main className="flex-grow pt-24 pb-16">
@@ -89,6 +99,91 @@ export default function SalahGuidePage() {
 
                         {/* Salah Content */}
                         <TabsContent value="salah" className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-6 duration-700">
+                            {/* Rakah Table & Recitation Logic */}
+                            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
+                                {/* Interactive Rakah Table */}
+                                <div className="xl:col-span-2 bg-card/40 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-6 md:p-8 shadow-xl">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                                            <Scale className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-serif font-bold text-foreground">Prayer Structure (Rakahs)</h3>
+                                            <p className="text-sm text-muted-foreground">Detailed breakdown of units for each prayer.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-primary/10 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                    <th className="p-4 pl-0">Prayer</th>
+                                                    <th className="p-4">Sunnah (M)</th>
+                                                    <th className="p-4">Fard</th>
+                                                    <th className="p-4">Sunnah (GM)</th>
+                                                    <th className="p-4">Witr / Nafl</th>
+                                                    <th className="p-4 pr-0">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="text-sm">
+                                                {prayerStructures.map((prayer) => {
+                                                    const sunnahM = prayer.rakahs.filter(r => r.type === 'Sunnah Muakkadah').reduce((a, b) => a + b.count, 0);
+                                                    const fard = prayer.rakahs.filter(r => r.type === 'Fard').reduce((a, b) => a + b.count, 0);
+                                                    const sunnahGM = prayer.rakahs.filter(r => r.type === 'Sunnah Ghair Muakkadah').reduce((a, b) => a + b.count, 0);
+                                                    const others = prayer.rakahs.filter(r => ['Witr', 'Nafl'].includes(r.type)).reduce((a, b) => a + b.count, 0);
+                                                    const total = sunnahM + fard + sunnahGM + others;
+
+                                                    return (
+                                                        <tr key={prayer.name} className="border-b border-primary/5 hover:bg-primary/5 transition-colors group">
+                                                            <td className="p-4 pl-0 font-bold font-serif text-primary text-lg">{prayer.name}</td>
+                                                            <td className="p-4 text-muted-foreground group-hover:text-foreground">{sunnahM || '-'}</td>
+                                                            <td className="p-4 font-bold text-foreground bg-primary/5 rounded-lg text-center">{fard}</td>
+                                                            <td className="p-4 text-muted-foreground group-hover:text-foreground">{sunnahGM || '-'}</td>
+                                                            <td className="p-4 text-muted-foreground group-hover:text-foreground">{others || '-'}</td>
+                                                            <td className="p-4 pr-0 font-bold text-primary">{total}</td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {/* Deep Recitation Logic */}
+                                <div className="bg-card/40 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-6 md:p-8 shadow-xl flex flex-col">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="p-2 bg-secondary/10 rounded-lg text-secondary">
+                                            <BookOpen className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-serif font-bold text-foreground">Recitation Rules</h3>
+                                            <p className="text-sm text-muted-foreground">What to read in each Rakah.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6 flex-grow">
+                                        <div className="space-y-2">
+                                            <h4 className="font-bold text-sm uppercase tracking-widest text-primary/70">Fard Prayers</h4>
+                                            <ul className="space-y-3">
+                                                {recitationRules.fard.map((rule, i) => (
+                                                    <li key={i} className="flex gap-3 text-sm p-3 bg-background/50 rounded-xl border border-primary/5">
+                                                        <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                                                        <span className="text-foreground/80 leading-snug">{rule}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-primary/10">
+                                            <h4 className="font-bold text-sm uppercase tracking-widest text-secondary mb-2">Sunnah & Nafl</h4>
+                                            <p className="text-sm text-muted-foreground bg-secondary/5 p-3 rounded-xl border border-secondary/10 italic">
+                                                {recitationRules.sunnah}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* School Selector */}
                             <div className="bg-card/40 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-6 mb-10 shadow-xl">
                                 <div className="flex items-center gap-3 mb-6 px-2">
