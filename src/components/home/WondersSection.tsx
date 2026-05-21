@@ -55,7 +55,7 @@ export function WondersSection() {
                             Divine Signs
                         </div>
                         <h2 className="text-4xl md:text-6xl font-serif font-black text-white tracking-tighter">
-                            Wonders of Allah
+                            Wonders of the Divine
                         </h2>
                         <p className="text-gray-400 text-lg max-w-xl font-medium leading-relaxed">
                             Discover the breathtaking scientific miracles and cosmic signs revealed in the Holy Quran centuries before modern discovery.
@@ -95,7 +95,7 @@ export function WondersSection() {
                             )}
                         >
                             {/* Background Image */}
-                            <div className="absolute inset-0">
+                            <div className="absolute inset-0 bg-slate-900">
                                 <img
                                     src={wonder.visual_asset}
                                     alt={wonder.title}
@@ -106,7 +106,7 @@ export function WondersSection() {
 
                             {/* Content */}
                             <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                <div className="transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-500">
                                     <span className="inline-block px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-300 text-[10px] font-bold uppercase tracking-widest mb-3 backdrop-blur-md">
                                         {wonder.category}
                                     </span>
@@ -117,7 +117,7 @@ export function WondersSection() {
                                         {wonder.title}
                                     </h3>
 
-                                    <div className="space-y-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 h-0 group-hover:h-auto overflow-hidden">
+                                    <div className="space-y-3 opacity-100 h-auto md:opacity-0 md:h-0 md:group-hover:opacity-100 md:group-hover:h-auto transition-all duration-500 delay-100 overflow-hidden">
                                         <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed line-clamp-3">
                                             {wonder.scientific_fact}
                                         </p>

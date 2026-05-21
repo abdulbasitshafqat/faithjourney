@@ -143,12 +143,12 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="right" className="w-[300px] sm:w-[350px] border-l-primary/10 bg-background/95 backdrop-blur-xl">
                             <SheetHeader className="text-left border-b border-primary/10 pb-6 mb-6">
-                                <div className="flex items-center gap-3">
+                                <Link href="/" className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                         <Moon className="h-6 w-6 text-primary rotate-[-15deg]" />
                                     </div>
                                     <SheetTitle className="font-serif text-2xl text-primary tracking-tight">Faith Journey Pro</SheetTitle>
-                                </div>
+                                </Link>
                             </SheetHeader>
 
                             <div className="flex flex-col h-full">
