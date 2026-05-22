@@ -103,6 +103,25 @@ export default function TasbihPage() {
         localStorage.setItem("tasbih-custom", JSON.stringify(customAzkar));
     }, [count, totalToday, history, customAzkar, mounted]);
 
+    // Live-sync external updates (e.g. from WebMCP AI tools or widgets)
+    useEffect(() => {
+        const handleSync = () => {
+            const savedCount = localStorage.getItem("tasbih-count");
+            const savedTotal = localStorage.getItem("tasbih-total-today");
+            if (savedCount) {
+                setCount(parseInt(savedCount, 10));
+            }
+            if (savedTotal) {
+                setTotalToday(parseInt(savedTotal, 10));
+            }
+        };
+
+        window.addEventListener("fj_tasbih_updated", handleSync);
+        return () => {
+            window.removeEventListener("fj_tasbih_updated", handleSync);
+        };
+    }, []);
+
     const playSound = useCallback(() => {
         if (!isSoundEnabled) return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

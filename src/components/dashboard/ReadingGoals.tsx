@@ -9,28 +9,59 @@ import confetti from 'canvas-confetti';
 
 export function ReadingGoals() {
     // Persist goal in localStorage for now
-    const [goal, setGoal] = useState('');
-    const [isSet, setIsSet] = useState(false);
-    const [isCompleted, setIsCompleted] = useState(false);
+    const [goal, setGoal] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('daily_goal_text') || '';
+        }
+        return '';
+    });
+    const [isSet, setIsSet] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return !!localStorage.getItem('daily_goal_text');
+        }
+        return false;
+    });
+    const [isCompleted, setIsCompleted] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const storedDate = localStorage.getItem('daily_goal_date');
+            const storedCompleted = localStorage.getItem('daily_goal_completed');
+            const today = new Date().toISOString().split('T')[0];
+            if (storedDate === today && storedCompleted === 'true') {
+                return true;
+            } else if (storedDate !== today && storedDate !== null) {
+                localStorage.setItem('daily_goal_completed', 'false');
+            }
+        }
+        return false;
+    });
 
+    // Live-sync external updates (e.g. from WebMCP AI tools or widgets)
     useEffect(() => {
-        const storedGoal = localStorage.getItem('daily_goal_text');
-        const storedDate = localStorage.getItem('daily_goal_date');
-        const storedCompleted = localStorage.getItem('daily_goal_completed');
-        const today = new Date().toISOString().split('T')[0];
+        const handleSync = () => {
+            const storedGoal = localStorage.getItem('daily_goal_text');
+            const storedDate = localStorage.getItem('daily_goal_date');
+            const storedCompleted = localStorage.getItem('daily_goal_completed');
+            const today = new Date().toISOString().split('T')[0];
 
-        if (storedGoal) {
-            setGoal(storedGoal);
-            setIsSet(true);
-        }
+            if (storedGoal) {
+                setGoal(storedGoal);
+                setIsSet(true);
+            } else {
+                setGoal('');
+                setIsSet(false);
+            }
 
-        if (storedDate === today && storedCompleted === 'true') {
-            setIsCompleted(true);
-        } else if (storedDate !== today) {
-            // Reset completion for new day
-            localStorage.setItem('daily_goal_completed', 'false');
-            setIsCompleted(false);
-        }
+            if (storedDate === today && storedCompleted === 'true') {
+                setIsCompleted(true);
+            } else {
+                setIsCompleted(false);
+            }
+        };
+
+        window.addEventListener("fj_goals_updated", handleSync);
+        return () => {
+            window.removeEventListener("fj_goals_updated", handleSync);
+        };
     }, []);
 
     const handleSet = () => {
@@ -62,7 +93,7 @@ export function ReadingGoals() {
                 {isSet ? (
                     <div className="text-center py-2 space-y-4">
                         <p className={cn("text-lg font-medium transition-all", isCompleted && "line-through text-muted-foreground opacity-50")}>
-                            "{goal}"
+                            &quot;{goal}&quot;
                         </p>
 
                         {!isCompleted ? (

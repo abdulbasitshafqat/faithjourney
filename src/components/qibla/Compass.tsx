@@ -3,10 +3,16 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { calculateQibla } from "@/lib/qibla";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Compass as CompassIcon, Navigation2, MapPin, Sparkles, LocateFixed, Info, AlertCircle, RefreshCw } from "lucide-react";
+import { Compass as CompassIcon, Navigation2, Sparkles, LocateFixed, Info, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Geolocation } from '@capacitor/geolocation';
 import { cn } from "@/lib/utils";
+
+interface ExtendedWindow extends Window {
+    DeviceOrientationEvent?: typeof DeviceOrientationEvent & {
+        requestPermission?: () => Promise<PermissionState>;
+    };
+}
 
 export function Compass() {
     const [heading, setHeading] = useState<number>(0); // Magnetic North
@@ -14,9 +20,6 @@ export function Compass() {
     const [error, setError] = useState<string | null>(null);
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
-    const [isCalibrated, setIsCalibrated] = useState(false);
-
-    const requestCount = useRef(0);
 
     const fetchLocation = useCallback(async () => {
         try {
@@ -37,9 +40,9 @@ export function Compass() {
             setLocation({ lat: latitude, lng: longitude });
             const qiblaDir = calculateQibla(latitude, longitude);
             setQiblaAngle(qiblaDir);
-        } catch (err: any) {
+        } catch (err) {
             console.error("Location error:", err);
-            setError(err.message || "Unable to retrieve GPS coordinates.");
+            setError(err instanceof Error ? err.message : "Unable to retrieve GPS coordinates.");
         }
     }, []);
 
@@ -51,18 +54,18 @@ export function Compass() {
     const SMOOTHING_FACTOR = 0.15;
     const lastHeading = useRef<number>(0);
 
-    const handleOrientation = (event: DeviceOrientationEvent) => {
-        const anyEvent = event as any;
+    const handleOrientation = useCallback((event: DeviceOrientationEvent) => {
+        const webkitEvent = event as DeviceOrientationEvent & { webkitCompassHeading?: number };
         let compass = null;
 
-        if (anyEvent.webkitCompassHeading) {
+        if (typeof webkitEvent.webkitCompassHeading === 'number') {
             // iOS: Direct magnetic heading
-            compass = anyEvent.webkitCompassHeading;
-        } else if (anyEvent.alpha !== null) {
+            compass = webkitEvent.webkitCompassHeading;
+        } else if (typeof event.alpha === 'number') {
             // Android: deviceorientationabsolute or deviceorientation with absolute=true
             // alpha: 0=North, 90=West, 180=South, 270=East (increasing counter-clockwise)
             // Heading (clockwise from North): 360 - alpha
-            compass = (360 - anyEvent.alpha) % 360;
+            compass = (360 - event.alpha) % 360;
         }
 
         if (compass !== null) {
@@ -77,13 +80,12 @@ export function Compass() {
             lastHeading.current = (lastHeading.current + 360) % 360;
 
             setHeading(lastHeading.current);
-            if (!isCalibrated) setIsCalibrated(true);
         }
-    };
+    }, []);
 
     const requestAccess = async () => {
         // Handle iOS 13+ permission
-        const win = window as any;
+        const win = window as unknown as ExtendedWindow;
         const DeviceEvent = win.DeviceOrientationEvent;
 
         if (DeviceEvent && typeof DeviceEvent.requestPermission === "function") {
@@ -91,33 +93,32 @@ export function Compass() {
                 const permission = await DeviceEvent.requestPermission();
                 if (permission === "granted") {
                     setPermissionGranted(true);
-                    win.addEventListener("deviceorientation", handleOrientation);
+                    window.addEventListener("deviceorientation", handleOrientation);
                 } else {
                     setError("Motion sensor permission denied. Please enable access in settings.");
                 }
             } catch (err) {
                 console.error("Permission error:", err);
                 setPermissionGranted(true);
-                win.addEventListener("deviceorientation", handleOrientation);
+                window.addEventListener("deviceorientation", handleOrientation);
             }
         } else {
             // Android: Prefer absolute orientation
             setPermissionGranted(true);
-            if ('ondeviceorientationabsolute' in win) {
-                win.addEventListener("deviceorientationabsolute", handleOrientation);
+            if ('ondeviceorientationabsolute' in (window as unknown as Record<string, unknown>)) {
+                window.addEventListener("deviceorientationabsolute", handleOrientation);
             } else {
-                win.addEventListener("deviceorientation", handleOrientation);
+                window.addEventListener("deviceorientation", handleOrientation);
             }
         }
     };
 
     useEffect(() => {
-        const win = window as any;
         return () => {
-            win.removeEventListener("deviceorientation", handleOrientation);
-            win.removeEventListener("deviceorientationabsolute", handleOrientation);
+            window.removeEventListener("deviceorientation", handleOrientation);
+            window.removeEventListener("deviceorientationabsolute", handleOrientation);
         };
-    }, []);
+    }, [handleOrientation]);
 
     // The angle we want the arrow to point (Relative to the top of the phone)
     // qiblaAngle is degrees from North (clockwise)
@@ -141,9 +142,16 @@ export function Compass() {
                 )} />
 
                 <CardHeader className="text-center pt-12 pb-6">
-                    <div className="flex items-center justify-center gap-2 mb-6 bg-primary/5 w-fit mx-auto px-5 py-2 rounded-full border border-primary/10">
-                        <LocateFixed className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary/80">Sensor Fusion v2.0</span>
+                    <div className="flex flex-col items-center gap-2 mb-4">
+                        <div className="flex items-center justify-center gap-2 bg-primary/5 w-fit mx-auto px-5 py-2 rounded-full border border-primary/10">
+                            <LocateFixed className="h-3.5 w-3.5 text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary/80">Sensor Fusion v2.0</span>
+                        </div>
+                        {location && (
+                            <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-md border border-primary/10 animate-in fade-in slide-in-from-top-1">
+                                GPS: {location.lat.toFixed(5)}°, {location.lng.toFixed(5)}°
+                            </span>
+                        )}
                     </div>
                     <CardTitle className="text-5xl font-serif font-black text-primary tracking-tighter">Kaaba Finder</CardTitle>
                     <CardDescription className="text-sm font-bold text-muted-foreground/60 max-w-[280px] mx-auto mt-2 leading-relaxed">
