@@ -75,18 +75,58 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Faith Journey",
-  "url": "https://faithjourney.pro",
-  "description": "Comprehensive Islamic platform featuring Quran, Hadith, and spiritual tools.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://faithjourney.pro/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Faith Journey",
+    "url": "https://faithjourney.pro",
+    "description": "Comprehensive Islamic platform featuring Quran, Hadith, and spiritual tools.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://faithjourney.pro/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Faith Journey really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Faith Journey is a labor of love produced for the sake of the Ummah. Core features will always be free and ad-free."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How accurate are the prayer times?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We use high-precision GPS coordinates and the latest astronomical algorithms from Aladhan for peak accuracy."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are the Hadiths verified?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We only source from primary authentic collections (Sahih Bukhari, Muslim, etc.) to ensure your knowledge is based on Truth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use it offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The mobile app (PWA) caches your recent readings and prayer times, allowing access even during limited connectivity."
+        }
+      }
+    ]
   }
-};
+];
 
 export default function RootLayout({
   children,

@@ -277,7 +277,7 @@ export function PrayerCard() {
             })
             .filter(Boolean) as (typeof prayers[0] & { timestamp: number })[];
 
-        let next = prayerList.find(p => p.timestamp > now);
+        const next = prayerList.find(p => p.timestamp > now);
 
         if (!next) {
             const first = prayerList[0];

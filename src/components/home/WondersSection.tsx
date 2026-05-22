@@ -11,15 +11,12 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function WondersSection() {
-    const [wonders, setWonders] = useState<Wonder[]>([]);
-    const [activeIndex, setActiveIndex] = useState(0);
-
-    // Load random wonders on mount
-    useEffect(() => {
+    const [wonders] = useState<Wonder[]>(() => {
         // Shuffle and pick 7 random wonders
         const shuffled = [...wondersData].sort(() => 0.5 - Math.random());
-        setWonders(shuffled.slice(0, 7) as Wonder[]);
-    }, []);
+        return shuffled.slice(0, 7) as Wonder[];
+    });
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const handleNext = () => {
         setActiveIndex((prev) => (prev + 1) % wonders.length);

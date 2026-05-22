@@ -45,3 +45,8 @@ next-env.d.ts
 # lint logs
 lint_*.log
 lint_*.txt
+
+# local caches
+.npm-cache/
+*.log
+

@@ -7,8 +7,10 @@ import { Toast } from '@capacitor/toast';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { dailyAyats } from '@/lib/data/daily-ayats';
 import { duasData } from '@/lib/data/duas';
+import { useWebMCP } from '@/hooks/useWebMCP';
 
 export default function AppFlowProvider({ children }: { children: React.ReactNode }) {
+    useWebMCP();
     const router = useRouter();
     const pathname = usePathname();
 
