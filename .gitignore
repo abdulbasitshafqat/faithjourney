@@ -50,3 +50,7 @@ lint_*.txt
 .npm-cache/
 *.log
 
+# android binaries & local properties
+app-debug.apk
+/android/local.properties
+

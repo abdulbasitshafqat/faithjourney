@@ -45,6 +45,8 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const audioDataRef = useRef<SurahAudioData | null>(null);
     const activeVerseKeyRef = useRef<string | null>(null);
+    const isPlayingRef = useRef(false);
+    isPlayingRef.current = isPlaying;
 
     useEffect(() => {
         audioDataRef.current = audioData;
@@ -183,15 +185,16 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         }
     };
 
-    // Re-trigger playback if reciter or language changes
+    // Re-trigger playback ONLY if reciter or language changes
     useEffect(() => {
-        if (currentSurahId && isPlaying) {
+        if (currentSurahId && isPlayingRef.current) {
             const timer = setTimeout(() => {
                 playSurah(currentSurahId, currentSurahName);
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [reciterId, audioLanguage, currentSurahId, isPlaying, currentSurahName]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reciterId, audioLanguage]);
 
     return (
         <AudioPlayerContext.Provider
