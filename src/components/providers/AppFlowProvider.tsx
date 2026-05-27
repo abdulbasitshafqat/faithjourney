@@ -8,6 +8,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { dailyAyats } from '@/lib/data/daily-ayats';
 import { duasData } from '@/lib/data/duas';
 import { useWebMCP } from '@/hooks/useWebMCP';
+import { supabase } from '@/lib/supabase';
 
 export default function AppFlowProvider({ children }: { children: React.ReactNode }) {
     useWebMCP();
@@ -21,6 +22,46 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
     useEffect(() => {
         let lastBackPress = 0;
+
+        const appUrlOpenListener = App.addListener('appUrlOpen', async (data: { url: string }) => {
+            try {
+                const urlStr = data.url;
+                if (!urlStr) return;
+
+                console.log("App opened with deep link URL:", urlStr);
+
+                // Replace scheme with a parseable URL scheme for URL parsing
+                // Since data.url could be com.faithjourney.pro://auth/callback?code=...
+                // we can convert it to https://faithjourney.pro/auth/callback?code=... for standard URL parsing
+                const normalizedUrl = new URL(urlStr.replace('com.faithjourney.pro://', 'https://faithjourney.pro/'));
+                
+                const code = normalizedUrl.searchParams.get('code');
+                if (code) {
+                    const { error } = await supabase.auth.exchangeCodeForSession(code);
+                    if (error) throw error;
+                    router.push('/');
+                    return;
+                }
+
+                // Handle hash parameters (implicit grant)
+                const hash = normalizedUrl.hash;
+                if (hash) {
+                    const params = new URLSearchParams(hash.substring(1));
+                    const access_token = params.get('access_token');
+                    const refresh_token = params.get('refresh_token');
+                    if (access_token && refresh_token) {
+                        const { error } = await supabase.auth.setSession({
+                            access_token,
+                            refresh_token
+                        });
+                        if (error) throw error;
+                        router.push('/');
+                    }
+                }
+            } catch (err: unknown) {
+                console.error("Deep link auth error:", err instanceof Error ? err.message : err);
+            }
+        });
 
         const backButtonListener = App.addListener('backButton', async () => {
             const now = Date.now();
@@ -45,15 +86,30 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
         const scheduleDailyAyat = async () => {
             try {
+                let isEnabled = true;
+                if (typeof window !== "undefined") {
+                    const saved = localStorage.getItem("fj_notification_preferences");
+                    if (saved) {
+                        isEnabled = JSON.parse(saved).dailyAyat !== false;
+                    }
+                }
+
+                const pending = await LocalNotifications.getPending();
+                const dailyNotification = pending.notifications.find(n => n.id === 88888);
+
+                if (!isEnabled) {
+                    if (dailyNotification) {
+                        await LocalNotifications.cancel({ notifications: [dailyNotification] });
+                    }
+                    return;
+                }
+
                 const perm = await LocalNotifications.checkPermissions();
                 if (perm.display !== 'granted') {
                     await LocalNotifications.requestPermissions();
                 }
 
-                const pending = await LocalNotifications.getPending();
-                const hasDaily = pending.notifications.some(n => n.id === 88888);
-
-                if (!hasDaily) {
+                if (!dailyNotification) {
                     const ayat = dailyAyats[Math.floor(Math.random() * dailyAyats.length)];
                     const scheduleDate = new Date();
                     scheduleDate.setHours(9);
@@ -76,10 +132,25 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
         const scheduleDailyDua = async () => {
             try {
-                const pending = await LocalNotifications.getPending();
-                const hasDailyDua = pending.notifications.some(n => n.id === 99999);
+                let isEnabled = true;
+                if (typeof window !== "undefined") {
+                    const saved = localStorage.getItem("fj_notification_preferences");
+                    if (saved) {
+                        isEnabled = JSON.parse(saved).dailyDua !== false;
+                    }
+                }
 
-                if (!hasDailyDua) {
+                const pending = await LocalNotifications.getPending();
+                const dailyDuaNotification = pending.notifications.find(n => n.id === 99999);
+
+                if (!isEnabled) {
+                    if (dailyDuaNotification) {
+                        await LocalNotifications.cancel({ notifications: [dailyDuaNotification] });
+                    }
+                    return;
+                }
+
+                if (!dailyDuaNotification) {
                     const today = new Date();
                     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
                     const dua = duasData[dayOfYear % duasData.length];
@@ -109,6 +180,7 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
         return () => {
             backButtonListener.then(listener => listener.remove());
+            appUrlOpenListener.then(listener => listener.remove());
         };
     }, [pathname, router]);
 

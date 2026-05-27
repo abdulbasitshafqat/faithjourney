@@ -144,7 +144,7 @@ export function SadaqahComponent({ className = "", compact = false }: { classNam
     );
 }
 
-function TransparencyItem({ icon: Icon, label, desc }: { icon: any, label: string, desc: string }) {
+function TransparencyItem({ icon: Icon, label, desc }: { icon: React.ElementType, label: string, desc: string }) {
     return (
         <TooltipProvider>
             <Tooltip delayDuration={0}>

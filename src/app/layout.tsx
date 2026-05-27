@@ -8,7 +8,11 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import AppFlowProvider from "@/components/providers/AppFlowProvider";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { AppSplash } from "@/components/layout/AppSplash";
+import { AudioPlayerProvider } from "@/components/providers/AudioPlayerContext";
+import { FloatingAudioPlayer } from "@/components/quran/FloatingAudioPlayer";
 import "./globals.css";
+// ... (rest remains unchanged)
+
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -155,10 +159,13 @@ export default function RootLayout({
           <AppFlowProvider>
             <ReactQueryProvider>
               <FontSizeProvider>
-                {children}
-                <BottomNav />
-                <ScrollToTop />
-                <Toaster />
+                <AudioPlayerProvider>
+                  {children}
+                  <BottomNav />
+                  <FloatingAudioPlayer />
+                  <ScrollToTop />
+                  <Toaster />
+                </AudioPlayerProvider>
               </FontSizeProvider>
             </ReactQueryProvider>
           </AppFlowProvider>

@@ -50,9 +50,9 @@ export function PrayerCard() {
                 }
                 const position = await Geolocation.getCurrentPosition();
                 setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Location error:", err);
-                setError(err.message || "Unable to retrieve location");
+                setError(err instanceof Error ? err.message : "Unable to retrieve location");
             }
         };
 
@@ -185,7 +185,7 @@ export function PrayerCard() {
                     const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
                     for (let i = 0; i < daysToSchedule; i++) {
                         const dayData = calendarQuery.data.data[todayIndex + i];
-                        const timeStr = (dayData.timings as any)[prayerName];
+                        const timeStr = (dayData.timings as Record<string, string>)[prayerName];
                         if (!timeStr) continue;
                         const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
                         const scheduleDate = new Date();
@@ -326,7 +326,7 @@ export function PrayerCard() {
                 const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
                 for (let i = 0; i < daysToSchedule; i++) {
                     const dayData = calendarQuery.data.data[todayIndex + i];
-                    const timeStr = (dayData.timings as any)[prayerName];
+                    const timeStr = (dayData.timings as Record<string, string>)[prayerName];
                     if (!timeStr) continue;
                     const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
                     const scheduleDate = new Date();

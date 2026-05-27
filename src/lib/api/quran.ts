@@ -192,3 +192,14 @@ export async function getVerseOfTheDay(): Promise<{
         surah_name: surahData.chapter.name_simple
     };
 }
+
+export async function getTafseer(ayahKey: string, tafseerId: number = 169): Promise<{ text: string, resource_name: string }> {
+    // 169: Tafsir Ibn Kathir (English)
+    const res = await fetch(`${BASE_URL}/tafsirs/${tafseerId}/by_ayah/${ayahKey}`);
+    if (!res.ok) throw new Error("Failed to fetch Tafseer");
+    const data = await res.json();
+    return {
+        text: data.tafsir.text,
+        resource_name: data.tafsir.resource_name || "Tafsir Ibn Kathir"
+    };
+}

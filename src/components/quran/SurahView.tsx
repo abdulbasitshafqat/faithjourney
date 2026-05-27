@@ -21,14 +21,17 @@ interface SurahViewProps {
 
 import { motion } from "framer-motion";
 import { useProgress } from "@/hooks/useProgress";
+import { TafseerDrawer } from "./TafseerDrawer";
+import { Ayah } from "@/lib/api/quran";
+
+import { useAudioPlayer } from "@/components/providers/AudioPlayerContext";
 
 export default function SurahView({ id }: SurahViewProps) {
     const { updateProgress } = useProgress();
-
     const router = useRouter();
 
-    const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [selectedAyahForTafseer, setSelectedAyahForTafseer] = useState<Ayah | null>(null);
+    const [isTafseerOpen, setIsTafseerOpen] = useState(false);
 
     const { data: surah, isLoading: isSurahLoading } = useQuery({
         queryKey: ["surah", id],
@@ -40,22 +43,17 @@ export default function SurahView({ id }: SurahViewProps) {
         queryFn: () => getAyahs(id),
     });
 
-    const [audioLanguage, setAudioLanguage] = useState<'ar' | 'ur'>('ar');
-
-    const { data: audioData } = useQuery({
-        queryKey: ["audio", id, audioLanguage],
-        queryFn: () => getSurahRecitation(id, 7, audioLanguage),
-    });
-
-    useEffect(() => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.play();
-            } else {
-                audioRef.current.pause();
-            }
-        }
-    }, [isPlaying]);
+    const {
+        isPlaying,
+        isLoading: isAudioLoading,
+        currentSurahId,
+        activeVerseKey,
+        activeWordPosition,
+        playSurah,
+        togglePlay,
+        audioLanguage,
+        setAudioLanguage
+    } = useAudioPlayer();
 
     const { fontSize } = useFontSize();
     const [jumpAyah, setJumpAyah] = useState("");
@@ -69,56 +67,15 @@ export default function SurahView({ id }: SurahViewProps) {
         }
     };
 
-    const togglePlay = () => {
-        setIsPlaying(!isPlaying);
-    };
-
-    const [activeVerseKey, setActiveVerseKey] = useState<string | null>(null);
-    const [activeWordPosition, setActiveWordPosition] = useState<number | null>(null);
-
     // Auto-scroll to active ayah
     useEffect(() => {
-        if (activeVerseKey) {
+        if (activeVerseKey && currentSurahId === id) {
             const element = document.getElementById(`ayah-${activeVerseKey.replace(":", "-")}`);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
-    }, [activeVerseKey]);
-
-    const handleAudioEnded = () => {
-        setIsPlaying(false);
-        setActiveVerseKey(null);
-        setActiveWordPosition(null);
-    };
-
-    const handleTimeUpdate = () => {
-        if (!audioRef.current || !audioData?.timestamps) return;
-
-        const currentTimeMs = audioRef.current.currentTime * 1000;
-
-        // Find active Verse
-        const activeVerse = audioData.timestamps.find(
-            (t: any) => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
-        );
-
-        if (activeVerse) {
-            if (activeVerse.verse_key !== activeVerseKey) {
-                setActiveVerseKey(activeVerse.verse_key);
-            }
-
-            // Find active Word in the verse segments
-            const activeSegment = activeVerse.segments.find(
-                (s: any) => currentTimeMs >= s[1] && currentTimeMs < s[2]
-            );
-
-            if (activeSegment) {
-                setActiveWordPosition(activeSegment[0]);
-            } else {
-                setActiveWordPosition(null);
-            }
-        }
-    };
+    }, [activeVerseKey, currentSurahId, id]);
 
     if (isSurahLoading || isAyahsLoading) {
         return (
@@ -181,48 +138,46 @@ export default function SurahView({ id }: SurahViewProps) {
                         />
                     </form>
 
-                    {audioData && (
-                        <div className="flex items-center space-x-3">
-                            {audioLanguage === 'ur' && (
-                                <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded hidden md:inline-block animate-pulse">
-                                    Sync unavailable for Urdu
-                                </span>
-                            )}
-                            <div className="flex bg-muted/50 rounded-lg p-0.5">
-                                <button
-                                    onClick={() => setAudioLanguage('ar')}
-                                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ar' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
-                                >
-                                    AR
-                                </button>
-                                <button
-                                    onClick={() => setAudioLanguage('ur')}
-                                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ur' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
-                                >
-                                    UR
-                                </button>
-                            </div>
-
-                            <audio
-                                ref={audioRef}
-                                src={audioData.audioUrl}
-                                onTimeUpdate={handleTimeUpdate}
-                                onEnded={handleAudioEnded}
-                                className="hidden"
-                            />
-                            <Button
-                                size="icon"
-                                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-                                onClick={togglePlay}
+                    <div className="flex items-center space-x-3">
+                        {audioLanguage === 'ur' && (
+                            <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded hidden md:inline-block animate-pulse">
+                                Sync unavailable for Urdu
+                            </span>
+                        )}
+                        <div className="flex bg-muted/50 rounded-lg p-0.5">
+                            <button
+                                onClick={() => setAudioLanguage('ar')}
+                                className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ar' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
                             >
-                                {isPlaying ? (
-                                    <Pause className="h-5 w-5" />
-                                ) : (
-                                    <Play className="h-5 w-5 ml-1" />
-                                )}
-                            </Button>
+                                AR
+                            </button>
+                            <button
+                                onClick={() => setAudioLanguage('ur')}
+                                className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ur' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                            >
+                                UR
+                            </button>
                         </div>
-                    )}
+
+                        <Button
+                            size="icon"
+                            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                            onClick={() => {
+                                if (currentSurahId === id) {
+                                    togglePlay();
+                                } else {
+                                    playSurah(id, surah.name_simple);
+                                }
+                            }}
+                            disabled={isAudioLoading}
+                        >
+                            {currentSurahId === id && isPlaying ? (
+                                <Pause className="h-5 w-5" />
+                            ) : (
+                                <Play className="h-5 w-5 ml-1" />
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -256,12 +211,12 @@ export default function SurahView({ id }: SurahViewProps) {
                                 <Card
                                     id={`ayah-${ayah.verse_key.replace(":", "-")}`}
                                     className={cn(
-                                        "border-none shadow-sm transition-all duration-500",
+                                        "border-none shadow-sm transition-all duration-500 cursor-pointer hover:shadow-md hover:scale-[1.005] active:scale-[0.995]",
                                         isAyahActive ? 'bg-primary/5 ring-1 ring-primary/50' : 'bg-card/50 hover:bg-card'
                                     )}
                                     onClick={() => {
-                                        // Calculate time to seek to if we want click-to-play
-                                        // For now just highlight
+                                        setSelectedAyahForTafseer(ayah);
+                                        setIsTafseerOpen(true);
                                     }}
                                 >
                                     <CardContent className="p-6">
@@ -362,6 +317,7 @@ export default function SurahView({ id }: SurahViewProps) {
             </main>
 
             <Footer />
+            <TafseerDrawer ayah={selectedAyahForTafseer} isOpen={isTafseerOpen} onClose={() => setIsTafseerOpen(false)} />
         </div>
     );
 }
