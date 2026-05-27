@@ -22,7 +22,7 @@ export function FloatingAudioPlayer() {
         reciterId,
         setReciterId,
         togglePlay,
-        pauseAudio,
+        stopAudio,
         playbackProgress,
         seekToPercent,
     } = useAudioPlayer();
@@ -112,7 +112,7 @@ export function FloatingAudioPlayer() {
                             size="icon"
                             variant="ghost"
                             className="w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
-                            onClick={pauseAudio} // Simply pauses the audio
+                            onClick={stopAudio} // Stop and dismiss the audio player
                         >
                             <X className="w-4 h-4" />
                         </Button>

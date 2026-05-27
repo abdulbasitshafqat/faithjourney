@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Compass as CompassIcon, Navigation2, Sparkles, LocateFixed, Info, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Geolocation } from '@capacitor/geolocation';
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface ExtendedWindow extends Window {
@@ -15,39 +16,90 @@ interface ExtendedWindow extends Window {
 }
 
 export function Compass() {
+    const { toast } = useToast();
     const [heading, setHeading] = useState<number>(0); // Magnetic North
     const [qiblaAngle, setQiblaAngle] = useState<number | null>(null); // Angle from North to Makkah
     const [error, setError] = useState<string | null>(null);
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
+    const [isManualRotation, setIsManualRotation] = useState(false);
 
     const fetchLocation = useCallback(async () => {
         try {
-            const perm = await Geolocation.checkPermissions();
-            if (perm.location !== 'granted') {
-                const req = await Geolocation.requestPermissions();
-                if (req.location !== 'granted') {
-                    throw new Error("Location permission denied. GPS is essential to calculate the correct bearing to Makkah.");
+            let latitude, longitude;
+            const isNative = typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform();
+            
+            if (isNative) {
+                const perm = await Geolocation.checkPermissions();
+                if (perm.location !== 'granted') {
+                    const req = await Geolocation.requestPermissions();
+                    if (req.location !== 'granted') {
+                        throw new Error("Location permission denied.");
+                    }
+                }
+
+                const position = await Geolocation.getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 10000
+                });
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+            } else {
+                // Browser Native Geolocation Fallback
+                if (typeof navigator !== 'undefined' && navigator.geolocation) {
+                    const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 8000
+                        });
+                    });
+                    latitude = pos.coords.latitude;
+                    longitude = pos.coords.longitude;
+                } else {
+                    // Default to Karachi, Pakistan coordinates if no geolocation is available
+                    latitude = 24.8607;
+                    longitude = 67.0011;
+                    toast({
+                        title: "Default Location Used",
+                        description: "Could not retrieve GPS. Calculating Qibla from Karachi, Pakistan."
+                    });
                 }
             }
 
-            const position = await Geolocation.getCurrentPosition({
-                enableHighAccuracy: true,
-                timeout: 10000
-            });
-
-            const { latitude, longitude } = position.coords;
             setLocation({ lat: latitude, lng: longitude });
             const qiblaDir = calculateQibla(latitude, longitude);
             setQiblaAngle(qiblaDir);
         } catch (err) {
             console.error("Location error:", err);
-            setError(err instanceof Error ? err.message : "Unable to retrieve GPS coordinates.");
+            // Default fallback instead of hard error screen
+            const fallbackLat = 24.8607;
+            const fallbackLng = 67.0011;
+            setLocation({ lat: fallbackLat, lng: fallbackLng });
+            const qiblaDir = calculateQibla(fallbackLat, fallbackLng);
+            setQiblaAngle(qiblaDir);
+            
+            toast({
+                title: "Default Location Set",
+                description: "GPS blocked or unavailable. Falling back to default coordinates."
+            });
         }
-    }, []);
+    }, [toast]);
 
     useEffect(() => {
         fetchLocation();
+
+        // Check if orientation sensors are available or if we are on a desktop platform
+        const checkSensorSupport = () => {
+            const hasSensor = typeof window !== 'undefined' && ('DeviceOrientationEvent' in window || 'DeviceMotionEvent' in window);
+            const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+            
+            // If orientation sensors are not fully available or it's a desktop browser, enable manual mode
+            if (!isTouch || !hasSensor) {
+                setIsManualRotation(true);
+                setPermissionGranted(true); // Bypass permission gating for manual mode
+            }
+        };
+        checkSensorSupport();
     }, [fetchLocation]);
 
     // Smoothing factor (0 = no smoothing, 1 = no change). Lower = smoother but slower.
@@ -295,6 +347,26 @@ export function Compass() {
                                     {isAligned ? "Aligned with Makkah" : "Turn towards Sparkle"}
                                 </p>
                             </div>
+                        </div>
+                    )}
+
+                    {isManualRotation && (
+                        <div className="w-full mt-6 bg-primary/5 rounded-[2rem] p-6 border border-primary/5 shadow-inner space-y-3">
+                            <div className="flex justify-between items-center text-xs font-black uppercase text-secondary tracking-widest">
+                                <span>Compass Rotation Dial</span>
+                                <span className="font-mono text-primary bg-primary/10 px-2 py-0.5 rounded">{Math.round(heading)}° N</span>
+                            </div>
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="359" 
+                                value={heading} 
+                                onChange={(e) => setHeading(parseInt(e.target.value))}
+                                className="w-full h-2 bg-primary/10 rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
+                            />
+                            <p className="text-[10px] font-bold text-muted-foreground/60 text-center leading-relaxed">
+                                Drag the slider to rotate the compass and find the correct Qibla bearing relative to your position!
+                            </p>
                         </div>
                     )}
                 </CardContent>

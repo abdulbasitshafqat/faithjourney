@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Toast } from '@capacitor/toast';
+import { useToast } from "@/hooks/use-toast";
 import {
     Select,
     SelectContent,
@@ -20,8 +21,23 @@ import {
 import { adhanOptions } from "@/lib/data/adhan";
 import { cn } from "@/lib/utils";
 
+const CITY_PRESETS = [
+    { name: "Karachi", lat: 24.8607, lng: 67.0011, country: "Pakistan" },
+    { name: "Islamabad", lat: 33.6844, lng: 73.0479, country: "Pakistan" },
+    { name: "London", lat: 51.5074, lng: -0.1278, country: "United Kingdom" },
+    { name: "New York", lat: 40.7128, lng: -74.0060, country: "United States" },
+    { name: "Makkah", lat: 21.3891, lng: 39.8579, country: "Saudi Arabia" },
+    { name: "Medina", lat: 24.5247, lng: 39.5692, country: "Saudi Arabia" },
+    { name: "Cairo", lat: 30.0444, lng: 31.2357, country: "Egypt" },
+    { name: "Kuala Lumpur", lat: 3.1390, lng: 101.6869, country: "Malaysia" },
+    { name: "Jakarta", lat: -6.2088, lng: 106.8456, country: "Indonesia" },
+    { name: "Istanbul", lat: 41.0082, lng: 28.9784, country: "Turkey" },
+];
+
 export function PrayerCard() {
+    const { toast } = useToast();
     const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+    const [activeCityName, setActiveCityName] = useState<string>("device");
     const [error, setError] = useState<string | null>(null);
     const [selectedAdhan, setSelectedAdhan] = useState(adhanOptions[0].id);
     const [scheduledPrayers, setScheduledPrayers] = useState<string[]>([]);
@@ -40,32 +56,82 @@ export function PrayerCard() {
         return () => clearInterval(timer);
     }, []);
 
-    useEffect(() => {
-        const fetchLocation = async () => {
-            try {
+    const isPluginAvailable = (name: string) => {
+        return typeof window !== 'undefined' && (window as any).Capacitor?.isPluginAvailable?.(name);
+    };
+
+    const handleLocationFallback = (cityName: string) => {
+        const city = CITY_PRESETS.find(c => c.name === cityName);
+        if (city) {
+            setCoords({ lat: city.lat, lng: city.lng });
+            setActiveCityName(city.name);
+            setError(null);
+            if (typeof window !== 'undefined') {
+                localStorage.setItem("fj_selected_city", city.name);
+            }
+        }
+    };
+
+    const triggerLocationSearch = async () => {
+        try {
+            let position;
+            const isNative = typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform();
+            if (isNative && isPluginAvailable('Geolocation')) {
                 const perm = await Geolocation.checkPermissions();
                 if (perm.location !== 'granted') {
                     const req = await Geolocation.requestPermissions();
                     if (req.location !== 'granted') throw new Error("Location permission denied");
                 }
-                const position = await Geolocation.getCurrentPosition();
+                position = await Geolocation.getCurrentPosition();
                 setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
-            } catch (err: unknown) {
-                console.error("Location error:", err);
-                setError(err instanceof Error ? err.message : "Unable to retrieve location");
+                setActiveCityName("device");
+                setError(null);
+                return;
             }
-        };
 
+            if (typeof navigator !== 'undefined' && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                        setActiveCityName("device");
+                        setError(null);
+                    },
+                    (err) => {
+                        console.warn("Web Geolocation error:", err);
+                        const savedCity = localStorage.getItem("fj_selected_city") || "Karachi";
+                        handleLocationFallback(savedCity);
+                    },
+                    { enableHighAccuracy: true, timeout: 8000 }
+                );
+            } else {
+                const savedCity = localStorage.getItem("fj_selected_city") || "Karachi";
+                handleLocationFallback(savedCity);
+            }
+        } catch (e) {
+            console.error("Geolocation trigger failed:", e);
+            const savedCity = localStorage.getItem("fj_selected_city") || "Karachi";
+            handleLocationFallback(savedCity);
+        }
+    };
+
+    useEffect(() => {
         if (typeof window !== 'undefined') {
             const savedMethod = localStorage.getItem("fj_method");
             const savedSchool = localStorage.getItem("fj_school");
             const savedAdhan = localStorage.getItem("fj_adhan");
+            const savedCity = localStorage.getItem("fj_selected_city");
             if (savedMethod) setMethod(parseInt(savedMethod));
             if (savedSchool) setSchool(parseInt(savedSchool));
             if (savedAdhan) setSelectedAdhan(savedAdhan);
+            
+            if (savedCity && savedCity !== "device") {
+                handleLocationFallback(savedCity);
+            } else {
+                triggerLocationSearch();
+            }
+        } else {
+            triggerLocationSearch();
         }
-
-        fetchLocation();
         checkScheduledNotifications();
     }, []);
 
@@ -117,6 +183,15 @@ export function PrayerCard() {
     }, [previewAudio]);
 
     const checkScheduledNotifications = async () => {
+        if (!isPluginAvailable('LocalNotifications')) {
+            if (typeof window !== 'undefined') {
+                const stored = localStorage.getItem("fj_web_scheduled_prayers");
+                if (stored) {
+                    setScheduledPrayers(JSON.parse(stored));
+                }
+            }
+            return;
+        }
         try {
             const pending = await LocalNotifications.getPending();
             const tags = Array.from(new Set(pending.notifications.map(n => n.extra?.prayerName).filter(Boolean)));
@@ -300,58 +375,92 @@ export function PrayerCard() {
     };
 
     const toggleNotification = async (prayerName: string) => {
+        const hasPlugin = isPluginAvailable('LocalNotifications');
         try {
             const isScheduled = scheduledPrayers.includes(prayerName);
             if (isScheduled) {
-                const pending = await LocalNotifications.getPending();
-                const toCancel = pending.notifications.filter(n => n.extra?.prayerName === prayerName);
-                if (toCancel.length > 0) await LocalNotifications.cancel({ notifications: toCancel });
-                setScheduledPrayers(prev => prev.filter(p => p !== prayerName));
-                await Toast.show({ text: `${prayerName} notification disabled` });
+                if (hasPlugin) {
+                    const pending = await LocalNotifications.getPending();
+                    const toCancel = pending.notifications.filter(n => n.extra?.prayerName === prayerName);
+                    if (toCancel.length > 0) await LocalNotifications.cancel({ notifications: toCancel });
+                }
+                setScheduledPrayers(prev => {
+                    const next = prev.filter(p => p !== prayerName);
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem("fj_web_scheduled_prayers", JSON.stringify(next));
+                    }
+                    return next;
+                });
+                toast({
+                    title: "Alert Disabled",
+                    description: `${prayerName} notification deactivated.`
+                });
             } else {
-                const perm = await LocalNotifications.checkPermissions();
-                if (perm.display !== 'granted') {
-                    const req = await LocalNotifications.requestPermissions();
-                    if (req.display !== 'granted') return;
+                if (hasPlugin) {
+                    const perm = await LocalNotifications.checkPermissions();
+                    if (perm.display !== 'granted') {
+                        const req = await LocalNotifications.requestPermissions();
+                        if (req.display !== 'granted') return;
+                    }
                 }
-                if (!calendarQuery.data) return;
+                
+                setScheduledPrayers(prev => {
+                    const next = [...prev, prayerName];
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem("fj_web_scheduled_prayers", JSON.stringify(next));
+                    }
+                    return next;
+                });
 
-                const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
-                const notifications = [];
-                const now = new Date();
-                const todayIndex = calendarQuery.data.data.findIndex(d => d.date.readable.startsWith(now.getDate().toString().padStart(2, '0')));
+                if (hasPlugin && calendarQuery.data) {
+                    const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
+                    const notifications = [];
+                    const now = new Date();
+                    const todayIndex = calendarQuery.data.data.findIndex(d => d.date.readable.startsWith(now.getDate().toString().padStart(2, '0')));
 
-                if (todayIndex === -1) return;
+                    if (todayIndex === -1) return;
 
-                const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
-                for (let i = 0; i < daysToSchedule; i++) {
-                    const dayData = calendarQuery.data.data[todayIndex + i];
-                    const timeStr = (dayData.timings as Record<string, string>)[prayerName];
-                    if (!timeStr) continue;
-                    const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
-                    const scheduleDate = new Date();
-                    scheduleDate.setDate(now.getDate() + i);
-                    scheduleDate.setHours(hours, minutes, 0, 0);
-                    if (i === 0 && scheduleDate < now) continue;
+                    const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
+                    for (let i = 0; i < daysToSchedule; i++) {
+                        const dayData = calendarQuery.data.data[todayIndex + i];
+                        const timeStr = (dayData.timings as Record<string, string>)[prayerName];
+                        if (!timeStr) continue;
+                        const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
+                        const scheduleDate = new Date();
+                        scheduleDate.setDate(now.getDate() + i);
+                        scheduleDate.setHours(hours, minutes, 0, 0);
+                        if (i === 0 && scheduleDate < now) continue;
 
-                    notifications.push({
-                        title: `Time for ${prayerName}`,
-                        body: `It is time for ${prayerName} prayer.`,
-                        id: Math.floor(Math.random() * 1000000),
-                        schedule: { at: scheduleDate },
-                        sound: adhanUrl || undefined,
-                        extra: { prayerName }
-                    });
+                        notifications.push({
+                            title: `Time for ${prayerName}`,
+                            body: `It is time for ${prayerName} prayer.`,
+                            id: Math.floor(Math.random() * 1000000),
+                            schedule: { at: scheduleDate },
+                            sound: adhanUrl || undefined,
+                            extra: { prayerName }
+                        });
+                    }
+
+                    if (notifications.length > 0) {
+                        await LocalNotifications.schedule({ notifications });
+                    }
                 }
 
-                if (notifications.length > 0) {
-                    await LocalNotifications.schedule({ notifications });
-                    setScheduledPrayers(prev => [...prev, prayerName]);
-                    await Toast.show({ text: `${prayerName} alert set for 7 days` });
-                }
+                toast({
+                    title: "Alert Enabled",
+                    description: hasPlugin 
+                        ? `${prayerName} notification scheduled for 7 days.` 
+                        : `${prayerName} audio alert active for current browser session.`
+                });
             }
         } catch (e) {
             console.error(e);
+            // Fallback toggle state
+            if (scheduledPrayers.includes(prayerName)) {
+                setScheduledPrayers(prev => prev.filter(p => p !== prayerName));
+            } else {
+                setScheduledPrayers(prev => [...prev, prayerName]);
+            }
         }
     };
 
@@ -387,9 +496,32 @@ export function PrayerCard() {
                 <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-2xl" />
 
                 <div className="relative z-10 pt-12 pb-14 px-8 text-white text-center">
-                    <div className="flex items-center justify-center gap-2 mb-8 bg-white/20 backdrop-blur-md w-fit mx-auto px-5 py-1.5 rounded-full border border-white/20 shadow-xl">
-                        <MapPin className="h-3 w-3 text-secondary" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Geo-Synchronized</span>
+                    <div className="flex flex-col items-center justify-center gap-2 mb-8">
+                        <Select 
+                            value={activeCityName} 
+                            onValueChange={(val) => {
+                                if (val === "device") {
+                                    triggerLocationSearch();
+                                } else {
+                                    handleLocationFallback(val);
+                                }
+                            }}
+                        >
+                            <SelectTrigger className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-md w-fit mx-auto px-5 py-1.5 h-auto rounded-full border border-white/20 shadow-xl text-white text-[10px] font-black uppercase tracking-[0.2em] outline-none ring-0 focus:ring-0 focus:border-white/30 cursor-pointer">
+                                <MapPin className="h-3 w-3 text-secondary shrink-0" />
+                                <span>{activeCityName === "device" ? "My Location" : activeCityName}</span>
+                            </SelectTrigger>
+                            <SelectContent className="rounded-2xl border-white/10 shadow-2xl p-2 max-h-[300px] bg-background/95 backdrop-blur-xl">
+                                <SelectItem value="device" className="text-xs font-bold py-2 px-3 rounded-lg focus:bg-primary/10 cursor-pointer">
+                                    📍 Use GPS Location
+                                </SelectItem>
+                                {CITY_PRESETS.map(city => (
+                                    <SelectItem key={city.name} value={city.name} className="text-xs font-bold py-2 px-3 rounded-lg focus:bg-primary/10 cursor-pointer">
+                                        🕌 {city.name}, {city.country}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div className="mb-8">

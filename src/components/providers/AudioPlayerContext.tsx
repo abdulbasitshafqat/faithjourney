@@ -17,6 +17,7 @@ interface AudioPlayerContextType {
     playSurah: (surahId: number, surahName: string) => void;
     pauseAudio: () => void;
     resumeAudio: () => void;
+    stopAudio: () => void;
     togglePlay: () => void;
     playbackProgress: number;
     seekToPercent: (percent: number) => void;
@@ -136,6 +137,22 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         if (!audioRef.current) return;
 
         try {
+            // Check if this Surah is already loaded in the audio element and we're just paused
+            if (currentSurahId === surahId && audioRef.current.src) {
+                if (audioRef.current.paused) {
+                    setIsLoading(true);
+                    audioRef.current.play().then(() => {
+                        setIsLoading(false);
+                        setIsPlaying(true);
+                    }).catch(e => {
+                        console.error("Playback resume error:", e);
+                        setIsLoading(false);
+                        setIsPlaying(false);
+                    });
+                }
+                return;
+            }
+
             setIsLoading(true);
             setCurrentSurahId(surahId);
             setCurrentSurahName(surahName);
@@ -168,6 +185,19 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         if (audioRef.current && audioRef.current.src) {
             audioRef.current.play().catch(e => console.error(e));
         }
+    };
+
+    const stopAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.src = "";
+        }
+        setCurrentSurahId(null);
+        setCurrentSurahName("");
+        setIsPlaying(false);
+        setActiveVerseKey(null);
+        setActiveWordPosition(null);
+        setPlaybackProgress(0);
     };
 
     const togglePlay = () => {
@@ -212,6 +242,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 playSurah,
                 pauseAudio,
                 resumeAudio,
+                stopAudio,
                 togglePlay,
                 playbackProgress,
                 seekToPercent
