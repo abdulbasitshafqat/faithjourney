@@ -43,6 +43,16 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     const [audioData, setAudioData] = useState<SurahAudioData | null>(null);
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const audioDataRef = useRef<SurahAudioData | null>(null);
+    const activeVerseKeyRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        audioDataRef.current = audioData;
+    }, [audioData]);
+
+    useEffect(() => {
+        activeVerseKeyRef.current = activeVerseKey;
+    }, [activeVerseKey]);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -62,16 +72,17 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 const duration = audioRef.current.duration || 1;
                 setPlaybackProgress((audioRef.current.currentTime / duration) * 100);
 
-                if (!audioData?.timestamps) return;
+                const currentAudioData = audioDataRef.current;
+                if (!currentAudioData?.timestamps) return;
                 const currentTimeMs = audioRef.current.currentTime * 1000;
 
                 // Find active Verse
-                const activeVerse = audioData.timestamps.find(
+                const activeVerse = currentAudioData.timestamps.find(
                     (t: AudioTimestamp) => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
                 );
 
                 if (activeVerse) {
-                    if (activeVerse.verse_key !== activeVerseKey) {
+                    if (activeVerse.verse_key !== activeVerseKeyRef.current) {
                         setActiveVerseKey(activeVerse.verse_key);
                     }
 
@@ -117,7 +128,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 audio.removeEventListener("waiting", onWaiting);
             };
         }
-    }, [audioData, activeVerseKey]);
+    }, []);
 
     const playSurah = async (surahId: number, surahName: string) => {
         if (!audioRef.current) return;
