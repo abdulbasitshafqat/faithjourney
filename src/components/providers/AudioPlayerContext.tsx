@@ -90,6 +90,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
             const onLoadStart = () => setIsLoading(true);
             const onCanPlay = () => setIsLoading(false);
+            const onPlaying = () => {
+                setIsLoading(false);
+                setIsPlaying(true);
+            };
+            const onWaiting = () => setIsLoading(true);
 
             audio.addEventListener("play", onPlay);
             audio.addEventListener("pause", onPause);
@@ -97,6 +102,8 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             audio.addEventListener("timeupdate", onTimeUpdate);
             audio.addEventListener("loadstart", onLoadStart);
             audio.addEventListener("canplay", onCanPlay);
+            audio.addEventListener("playing", onPlaying);
+            audio.addEventListener("waiting", onWaiting);
 
             return () => {
                 audio.pause();
@@ -106,6 +113,8 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 audio.removeEventListener("timeupdate", onTimeUpdate);
                 audio.removeEventListener("loadstart", onLoadStart);
                 audio.removeEventListener("canplay", onCanPlay);
+                audio.removeEventListener("playing", onPlaying);
+                audio.removeEventListener("waiting", onWaiting);
             };
         }
     }, [audioData, activeVerseKey]);
@@ -124,10 +133,15 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
             audioRef.current.src = data.audioUrl;
             audioRef.current.load();
-            audioRef.current.play().catch(e => console.error("Playback error:", e));
+            audioRef.current.play().catch(e => {
+                console.error("Playback error:", e);
+                setIsLoading(false);
+                setIsPlaying(false);
+            });
         } catch (error) {
             console.error("Failed to load surah recitation:", error);
             setIsLoading(false);
+            setIsPlaying(false);
         }
     };
 
