@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplets, User, BookOpen, Volume2, Sparkles, ChevronRight, Scale } from "lucide-react";
-import { wuduSteps, salahSteps, prayerStructures, recitationRules } from "@/lib/data/salah";
+import { wuduSteps, salahSteps, prayerStructures, recitationRules, shortSurahs } from "@/lib/data/salah";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -290,8 +290,41 @@ export default function SalahGuidePage() {
                                 ))}
                             </div>
 
-                            <div className="mt-16 text-center text-muted-foreground p-8 bg-muted/10 rounded-[2rem] border border-dashed border-primary/20 italic text-lg">
-                                Tip: Take your time with each posture to achieve tranquility in prayer.
+                            {/* Recitation Appendix: Short Surahs */}
+                            <div className="mt-16 bg-card/40 backdrop-blur-xl border border-primary/10 rounded-[2rem] p-6 md:p-8 shadow-xl">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                                        <BookOpen className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-serif font-bold text-foreground">Common Short Surahs</h3>
+                                        <p className="text-sm text-muted-foreground">Useful Quranic chapters to recite in the first and second Rakahs after Surah Al-Fatihah.</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-6">
+                                    {shortSurahs.map((surah, idx) => (
+                                        <Card key={idx} className="border-none bg-background/40 backdrop-blur-sm border border-primary/5 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                                            <CardContent className="p-6 md:p-8 space-y-6">
+                                                <div className="flex justify-between items-center border-b border-primary/5 pb-4">
+                                                    <h4 className="text-xl font-serif font-bold text-primary">{surah.name}</h4>
+                                                    <span className="text-xs uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full font-bold">Recitation Option</span>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <p className="font-arabic text-3xl text-right text-foreground leading-[2.5]" dir="rtl">{surah.arabic}</p>
+                                                    <div className="space-y-2 border-t border-primary/5 pt-4">
+                                                        <p className="text-md font-medium text-foreground/80">{surah.transliteration}</p>
+                                                        <p className="text-sm text-muted-foreground italic">"{surah.meaning}"</p>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="mt-12 text-center text-muted-foreground p-8 bg-muted/10 rounded-[2rem] border border-dashed border-primary/20 italic text-lg">
+                                Tip: Take your time with each posture to achieve tranquility (Khushu') in prayer.
                             </div>
                         </TabsContent>
                     </Tabs>
