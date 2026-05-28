@@ -31,6 +31,17 @@ export const reciterList = [
     { id: 12, name: "Maher Al Muaiqly" },
 ];
 
+const surahVersesCount = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
+
+function getGlobalAyahId(verseKey: string): number {
+    const [surahId, ayahNum] = verseKey.split(":").map(Number);
+    let count = 0;
+    for (let i = 0; i < surahId - 1; i++) {
+        count += surahVersesCount[i];
+    }
+    return count + ayahNum;
+}
+
 export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -42,12 +53,18 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     const [audioLanguage, setAudioLanguage] = useState<'ar' | 'ur'>('ar');
     const [playbackProgress, setPlaybackProgress] = useState(0);
     const [audioData, setAudioData] = useState<SurahAudioData | null>(null);
+    const [isPlayingUrdu, setIsPlayingUrdu] = useState(false);
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const urduAudioRef = useRef<HTMLAudioElement | null>(null);
     const audioDataRef = useRef<SurahAudioData | null>(null);
     const activeVerseKeyRef = useRef<string | null>(null);
     const isPlayingRef = useRef(false);
     isPlayingRef.current = isPlaying;
+
+    const audioLanguageRef = useRef(audioLanguage);
+    const isPlayingUrduRef = useRef(false);
+    const lastPlayedUrduVerseRef = useRef<string | null>(null);
 
     useEffect(() => {
         audioDataRef.current = audioData;
@@ -58,9 +75,52 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     }, [activeVerseKey]);
 
     useEffect(() => {
+        audioLanguageRef.current = audioLanguage;
+        if (audioLanguage === 'ar' && isPlayingUrduRef.current) {
+            if (urduAudioRef.current) {
+                urduAudioRef.current.pause();
+            }
+            isPlayingUrduRef.current = false;
+            setIsPlayingUrdu(false);
+            if (audioRef.current && isPlayingRef.current) {
+                audioRef.current.play().catch(console.error);
+            }
+        }
+    }, [audioLanguage]);
+
+    const playUrduTranslation = (verseKey: string) => {
+        if (!audioRef.current || !urduAudioRef.current) return;
+
+        audioRef.current.pause();
+        setIsPlayingUrdu(true);
+        isPlayingUrduRef.current = true;
+        lastPlayedUrduVerseRef.current = verseKey;
+
+        const globalAyahId = getGlobalAyahId(verseKey);
+        urduAudioRef.current.src = `https://cdn.islamic.network/quran/audio/64/ur.khan/${globalAyahId}.mp3`;
+        urduAudioRef.current.load();
+        
+        setIsLoading(true);
+        urduAudioRef.current.play()
+            .then(() => setIsLoading(false))
+            .catch(e => {
+                console.error("Failed to play Urdu voiceover:", e);
+                setIsLoading(false);
+                setIsPlayingUrdu(false);
+                isPlayingUrduRef.current = false;
+                if (audioRef.current && isPlayingRef.current) {
+                    audioRef.current.play().catch(console.error);
+                }
+            });
+    };
+
+    useEffect(() => {
         if (typeof window !== "undefined") {
             const audio = new Audio();
             audioRef.current = audio;
+
+            const urduAudio = new Audio();
+            urduAudioRef.current = urduAudio;
 
             const onPlay = () => setIsPlaying(true);
             const onPause = () => setIsPlaying(false);
@@ -72,6 +132,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             };
             const onTimeUpdate = () => {
                 if (!audioRef.current) return;
+                
+                if (isPlayingUrduRef.current) return;
+
                 const duration = audioRef.current.duration || 1;
                 setPlaybackProgress((audioRef.current.currentTime / duration) * 100);
 
@@ -79,17 +142,23 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 if (!currentAudioData?.timestamps) return;
                 const currentTimeMs = audioRef.current.currentTime * 1000;
 
-                // Find active Verse
                 const activeVerse = currentAudioData.timestamps.find(
                     (t: AudioTimestamp) => currentTimeMs >= t.timestamp_from && currentTimeMs < t.timestamp_to
                 );
 
                 if (activeVerse) {
-                    if (activeVerse.verse_key !== activeVerseKeyRef.current) {
+                    const prevVerseKey = activeVerseKeyRef.current;
+                    
+                    if (activeVerse.verse_key !== prevVerseKey) {
+                        if (audioLanguageRef.current === 'ur' && prevVerseKey && lastPlayedUrduVerseRef.current !== prevVerseKey) {
+                            audioRef.current.currentTime = activeVerse.timestamp_from / 1000;
+                            setActiveVerseKey(prevVerseKey);
+                            playUrduTranslation(prevVerseKey);
+                            return;
+                        }
                         setActiveVerseKey(activeVerse.verse_key);
                     }
 
-                    // Find active Word in the verse segments
                     const activeSegment = activeVerse.segments.find(
                         (s: number[]) => currentTimeMs >= s[1] && currentTimeMs < s[2]
                     );
@@ -98,6 +167,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                         setActiveWordPosition(activeSegment[0]);
                     } else {
                         setActiveWordPosition(null);
+                    }
+
+                    if (audioLanguageRef.current === 'ur') {
+                        const timeRemaining = activeVerse.timestamp_to - currentTimeMs;
+                        if (timeRemaining <= 300 && lastPlayedUrduVerseRef.current !== activeVerse.verse_key) {
+                            playUrduTranslation(activeVerse.verse_key);
+                        }
                     }
                 }
             };
@@ -119,6 +195,20 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             audio.addEventListener("playing", onPlaying);
             audio.addEventListener("waiting", onWaiting);
 
+            const onUrduEnded = () => {
+                setIsPlayingUrdu(false);
+                isPlayingUrduRef.current = false;
+                if (audioRef.current && isPlayingRef.current) {
+                    audioRef.current.play().catch(console.error);
+                }
+            };
+            const onUrduPlay = () => setIsPlaying(true);
+            const onUrduPause = () => setIsPlaying(false);
+
+            urduAudio.addEventListener("ended", onUrduEnded);
+            urduAudio.addEventListener("play", onUrduPlay);
+            urduAudio.addEventListener("pause", onUrduPause);
+
             return () => {
                 audio.pause();
                 audio.removeEventListener("play", onPlay);
@@ -129,6 +219,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 audio.removeEventListener("canplay", onCanPlay);
                 audio.removeEventListener("playing", onPlaying);
                 audio.removeEventListener("waiting", onWaiting);
+
+                urduAudio.pause();
+                urduAudio.removeEventListener("ended", onUrduEnded);
+                urduAudio.removeEventListener("play", onUrduPlay);
+                urduAudio.removeEventListener("pause", onUrduPause);
             };
         }
     }, []);
@@ -137,11 +232,14 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         if (!audioRef.current) return;
 
         try {
-            // Check if this Surah is already loaded in the audio element and we're just paused
             if (currentSurahId === surahId && audioRef.current.src) {
-                if (audioRef.current.paused) {
+                if (audioRef.current.paused && (!isPlayingUrduRef.current || !urduAudioRef.current || urduAudioRef.current.paused)) {
                     setIsLoading(true);
-                    audioRef.current.play().then(() => {
+                    const playerToResume = (audioLanguage === 'ur' && isPlayingUrduRef.current && urduAudioRef.current) 
+                        ? urduAudioRef.current 
+                        : audioRef.current;
+
+                    playerToResume.play().then(() => {
                         setIsLoading(false);
                         setIsPlaying(true);
                     }).catch(e => {
@@ -156,9 +254,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             setIsLoading(true);
             setCurrentSurahId(surahId);
             setCurrentSurahName(surahName);
+            lastPlayedUrduVerseRef.current = null;
+            setIsPlayingUrdu(false);
+            isPlayingUrduRef.current = false;
 
-            // Fetch high quality recitation endpoints
-            const data = await getSurahRecitation(surahId, reciterId, audioLanguage);
+            const data = await getSurahRecitation(surahId, reciterId, 'ar');
             setAudioData(data);
 
             audioRef.current.src = data.audioUrl;
@@ -179,11 +279,20 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         if (audioRef.current) {
             audioRef.current.pause();
         }
+        if (urduAudioRef.current) {
+            urduAudioRef.current.pause();
+        }
     };
 
     const resumeAudio = () => {
-        if (audioRef.current && audioRef.current.src) {
-            audioRef.current.play().catch(e => console.error(e));
+        if (audioLanguage === 'ur' && isPlayingUrduRef.current) {
+            if (urduAudioRef.current && urduAudioRef.current.src) {
+                urduAudioRef.current.play().catch(e => console.error(e));
+            }
+        } else {
+            if (audioRef.current && audioRef.current.src) {
+                audioRef.current.play().catch(e => console.error(e));
+            }
         }
     };
 
@@ -192,12 +301,19 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             audioRef.current.pause();
             audioRef.current.src = "";
         }
+        if (urduAudioRef.current) {
+            urduAudioRef.current.pause();
+            urduAudioRef.current.src = "";
+        }
         setCurrentSurahId(null);
         setCurrentSurahName("");
         setIsPlaying(false);
         setActiveVerseKey(null);
         setActiveWordPosition(null);
         setPlaybackProgress(0);
+        setIsPlayingUrdu(false);
+        isPlayingUrduRef.current = false;
+        lastPlayedUrduVerseRef.current = null;
     };
 
     const togglePlay = () => {
@@ -209,13 +325,22 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     };
 
     const seekToPercent = (percent: number) => {
+        if (isPlayingUrduRef.current && urduAudioRef.current) {
+            urduAudioRef.current.pause();
+            urduAudioRef.current.src = "";
+        }
+        setIsPlayingUrdu(false);
+        isPlayingUrduRef.current = false;
+
         if (audioRef.current && audioRef.current.duration) {
             const time = (percent / 100) * audioRef.current.duration;
             audioRef.current.currentTime = time;
+            if (isPlaying) {
+                audioRef.current.play().catch(console.error);
+            }
         }
     };
 
-    // Re-trigger playback ONLY if reciter or language changes
     useEffect(() => {
         if (currentSurahId && isPlayingRef.current) {
             const timer = setTimeout(() => {
@@ -224,7 +349,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             return () => clearTimeout(timer);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [reciterId, audioLanguage]);
+    }, [reciterId]);
 
     return (
         <AudioPlayerContext.Provider
