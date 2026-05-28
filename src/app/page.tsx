@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getVerseOfTheDay } from "@/lib/api/quran";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, getSurahSlug } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { getDuaOfTheDay } from "@/lib/api/daily-dua";
 import { WondersSection } from "@/components/home/WondersSection";
@@ -225,7 +225,7 @@ export default function Home() {
                             </span>
                           </div>
                           <Button variant="ghost" className="rounded-2xl h-12 px-6 font-bold hover:bg-primary/5" asChild>
-                            <Link href={`/quran/${verse.verse_key.split(':')[0]}`}>Read Full Surah</Link>
+                            <Link href={`/quran/${getSurahSlug(Number(verse.verse_key.split(':')[0]), verse.surah_name)}`}>Read Full Surah</Link>
                           </Button>
                         </div>
                       </div>

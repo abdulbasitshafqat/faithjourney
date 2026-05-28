@@ -7,6 +7,7 @@ import { getSurahs, Surah } from "@/lib/api/quran";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { getSurahSlug } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Search } from "lucide-react";
@@ -58,7 +59,7 @@ export default function QuranPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredSurahs?.map((surah) => (
-                            <Link key={surah.id} href={`/quran/${surah.id}`}>
+                            <Link key={surah.id} href={`/quran/${getSurahSlug(surah.id, surah.name_simple)}`}>
                                 <Card className="h-full hover:bg-primary/5 transition-colors border-primary/10 hover:border-primary/30 cursor-pointer group">
                                     <CardContent className="flex items-center justify-between p-6">
                                         <div className="flex items-center space-x-4">

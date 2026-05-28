@@ -6,6 +6,14 @@ import { ArrowLeft, BookOpen } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
 
+function parseBookId(slug: string): string {
+    const clean = slug.toLowerCase();
+    if (clean.includes("bukhari")) return "bukhari";
+    if (clean.includes("muslim")) return "muslim";
+    if (clean.includes("abudawud") || clean.includes("abu-dawud")) return "abudawud";
+    return slug;
+}
+
 export async function generateStaticParams() {
     const books = getSupportedBooks();
     return books.map((book) => ({
@@ -20,25 +28,27 @@ export interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-    const { book: bookId } = await params;
+    const { book: slug } = await params;
+    const bookId = parseBookId(slug);
     const book = getSupportedBooks().find(b => b.id === bookId);
     if (!book) return { title: 'Book Not Found' };
 
     return {
-        title: `${book.name} - Chapters | FaithJourney`,
-        description: `Browse chapters of ${book.name}.`,
+        title: `${book.name} - Chapters & Sections | FaithJourney`,
+        description: `Explore all chapters, books, and sections of the authentic ${book.name} compiled by ${book.author} on FaithJourney.`,
+        keywords: [book.name, book.author, "Hadith online", "authentic hadith chapters", "Faith Journey Hadith", "Sunnah of Prophet Muhammad"],
     };
 }
 
 export default async function BookChaptersPage({ params }: PageProps) {
-    const { book: bookId } = await params;
+    const { book: slug } = await params;
+    const bookId = parseBookId(slug);
     const bookData = getSupportedBooks().find(b => b.id === bookId);
 
     if (!bookData) {
         notFound();
     }
 
-    // By default use 'bukhari' key if somehow type check fails, but validation handles it
     const chapters = await getBookSections(bookId as any);
 
     return (

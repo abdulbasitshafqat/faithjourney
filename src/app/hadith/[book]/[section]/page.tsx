@@ -24,6 +24,14 @@ export async function generateStaticParams() {
     return paths;
 }
 
+function parseBookId(slug: string): string {
+    const clean = slug.toLowerCase();
+    if (clean.includes("bukhari")) return "bukhari";
+    if (clean.includes("muslim")) return "muslim";
+    if (clean.includes("abudawud") || clean.includes("abu-dawud")) return "abudawud";
+    return slug;
+}
+
 export interface PageProps {
     params: Promise<{
         book: string;
@@ -32,27 +40,28 @@ export interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-    const { book: bookId, section: sectionId } = await params;
+    const { book: slug, section: sectionId } = await params;
+    const bookId = parseBookId(slug);
     const book = getSupportedBooks().find(b => b.id === bookId);
     if (!book) return { title: 'Hadith Not Found' };
 
     return {
         title: `${book.name} - Chapter ${sectionId} | FaithJourney`,
-        description: `Read authentic Hadiths from ${book.name}, Chapter ${sectionId}.`,
+        description: `Read authentic Hadiths from ${book.name}, Chapter ${sectionId} with both English and Urdu translations on FaithJourney.`,
+        keywords: [book.name, `Hadith chapter ${sectionId}`, "Hadith reading", "Prophet sayings", "authentic hadith translation", "Faith Journey Hadith"],
     };
 }
 
 export default async function HadithReaderPage({ params }: PageProps) {
-    const { book: bookId, section: sectionId } = await params;
+    const { book: slug, section: sectionId } = await params;
+    const bookId = parseBookId(slug);
     const bookData = getSupportedBooks().find(b => b.id === bookId);
 
     if (!bookData) {
         notFound();
     }
 
-    // Fetch English (includes Arabic)
     const engData = await getHadithsForSection(bookId as any, sectionId, 'eng');
-    // Fetch Urdu
     const urdData = await getHadithsForSection(bookId as any, sectionId, 'urd');
 
     if (!engData || engData.arabic.length === 0) {
@@ -61,7 +70,7 @@ export default async function HadithReaderPage({ params }: PageProps) {
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-foreground mb-2">Chapter Not Found</h2>
                     <p className="text-muted-foreground mb-6">Could not load Hadiths for this chapter.</p>
-                    <Link href={`/hadith/${bookId}`} className="text-primary hover:underline">
+                    <Link href={`/hadith/${slug}`} className="text-primary hover:underline">
                         Return to Chapters
                     </Link>
                 </div>
@@ -94,7 +103,7 @@ export default async function HadithReaderPage({ params }: PageProps) {
                 {/* Header */}
                 <div className="mb-10">
                     <Link
-                        href={`/hadith/${bookId}`}
+                        href={`/hadith/${slug}`}
                         className="inline-flex items-center text-primary hover:text-primary/80 font-medium mb-6 transition-colors"
                     >
                         <ArrowLeft size={18} className="mr-2" />

@@ -1,6 +1,7 @@
 
 import Link from 'next/link';
 import { Book } from 'lucide-react';
+import { getBookSlug } from '@/lib/utils';
 
 interface BookCardProps {
     id: string;
@@ -13,7 +14,7 @@ interface BookCardProps {
 export default function BookCard({ id, name, author, total, description }: BookCardProps) {
     return (
         <Link
-            href={`/hadith/${id}`}
+            href={`/hadith/${getBookSlug(id)}`}
             className="group relative overflow-hidden rounded-2xl bg-card border border-primary/10 hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
         >
             {/* Primary Gradient Overlay on Hover */}
