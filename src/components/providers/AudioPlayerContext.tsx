@@ -123,7 +123,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             urduAudioRef.current = urduAudio;
 
             const onPlay = () => setIsPlaying(true);
-            const onPause = () => setIsPlaying(false);
+            const onPause = () => {
+                if (!isPlayingUrduRef.current) {
+                    setIsPlaying(false);
+                }
+            };
             const onEnded = () => {
                 setIsPlaying(false);
                 setActiveVerseKey(null);
@@ -276,6 +280,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     };
 
     const pauseAudio = () => {
+        setIsPlaying(false);
         if (audioRef.current) {
             audioRef.current.pause();
         }
