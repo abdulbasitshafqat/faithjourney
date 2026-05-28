@@ -54,14 +54,32 @@ export default function JanazahGuidePage() {
 
                     <div className="space-y-6">
                         {janazahGuide.janazahPrayerSteps.map((step, index) => (
-                            <Card key={index} className="transition-all hover:bg-muted/50">
+                            <Card key={index} className="transition-all hover:bg-muted/50 overflow-hidden border border-primary/10">
                                 <div className="flex flex-col md:flex-row">
-                                    <div className="w-full md:w-32 bg-primary/10 flex items-center justify-center p-4 md:p-0 font-bold text-2xl text-primary font-serif">
+                                    <div className="w-full md:w-32 bg-primary/10 flex items-center justify-center p-6 md:p-0 font-bold text-2xl text-primary font-serif">
                                         Takbir {index + 1}
                                     </div>
-                                    <CardContent className="p-6 flex-grow">
-                                        <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                                        <p className="text-muted-foreground text-lg">{step.description}</p>
+                                    <CardContent className="p-6 md:p-8 flex-grow">
+                                        <h3 className="text-xl font-bold mb-2 text-primary font-serif">{step.title}</h3>
+                                        <p className="text-muted-foreground text-base mb-6 leading-relaxed">{step.description}</p>
+                                        
+                                        {step.arabic && (
+                                            <div className="bg-primary/5 dark:bg-primary/10 p-6 rounded-2xl border border-primary/10 text-right mb-4 leading-loose font-arabic text-2xl md:text-3xl text-primary max-w-full overflow-x-auto" dir="rtl">
+                                                {step.arabic}
+                                            </div>
+                                        )}
+                                        {step.transliteration && (
+                                            <div className="text-left bg-muted/40 p-4 rounded-xl mb-3 text-sm md:text-base italic text-foreground/80 font-serif leading-relaxed border border-border/50">
+                                                <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mb-1 font-sans">Transliteration</p>
+                                                {step.transliteration}
+                                            </div>
+                                        )}
+                                        {step.meaning && (
+                                            <div className="text-left bg-muted/20 p-4 rounded-xl text-sm md:text-base text-muted-foreground font-serif leading-relaxed">
+                                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 font-sans font-black">Translation</p>
+                                                {step.meaning}
+                                            </div>
+                                        )}
                                     </CardContent>
                                 </div>
                             </Card>

@@ -169,34 +169,46 @@ export const zakatGuideContent = {
 };
 
 export const janazahGuide = {
-    title: "Janazah (Funeral)",
-    description: "Guide to the Islamic funeral prayer and burial rights.",
+    title: "Janazah (Funeral) Guide",
+    description: "A comprehensive guide to the Islamic funeral prayer and burial rites in accordance with authentic Quran & Sahih Hadith guidelines.",
     rights: [
-        "Washing the body (Ghusl)",
-        "Shrouding (Kafan)",
-        "Funeral Prayer (Salat al-Janazah)",
-        "Burial (Dafn)"
+        "Washing the body (Ghusl) - Preparing the deceased with purity.",
+        "Shrouding (Kafan) - Wrapping the body in clean, white sheets.",
+        "Funeral Prayer (Salat al-Janazah) - A collective obligation (Fard al-Kifayah).",
+        "Burial (Dafn) - Laying the body to rest facing the Qiblah."
     ],
     janazahPrayerSteps: [
         {
             step: 1,
-            title: "First Takbir",
-            description: "Raise hands, say 'Allahu Akbar', fold hands, recite Thana (or Al-Fatiha in some schools)."
+            title: "First Takbir: Surah Al-Fatihah",
+            description: "Raise your hands to your ears or shoulders, say 'Allahu Akbar' to enter the prayer, and fold your hands over your chest. Recite Surah Al-Fatihah silently. According to the authentic Sunnah (Sahih Bukhari 1335), reciting Al-Fatihah is obligatory in the funeral prayer.",
+            arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾",
+            transliteration: "Bismillahir-Rahmanir-Rahim. Alhamdu lillahi Rabbil-'Alamin. Ar-Rahmanir-Rahim. Maliki Yawmid-Din. Iyyaka na'budu wa iyyaka nasta'in. Ihdinas-Siratal-Mustaqim. Siratal-ladhina an'amta 'alayhim, ghayril-maghdubi 'alayhim wa lad-dallin.",
+            meaning: "In the name of Allah, the Entirely Merciful, the Especially Merciful. [All] praise is [due] to Allah, Lord of the worlds - The Entirely Merciful, the Especially Merciful, Sovereign of the Day of Recompense. It is You we worship and You we ask for help. Guide us to the straight path - The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray."
         },
         {
             step: 2,
-            title: "Second Takbir",
-            description: "Say 'Allahu Akbar' (hands lowered or raised depending on school), recite Durood-e-Ibrahim."
+            title: "Second Takbir: Durood-e-Ibrahim",
+            description: "Say 'Allahu Akbar' and recite Durood-e-Ibrahim silently, sending prayers of peace and blessings upon the Prophet Muhammad (ﷺ) just as in regular prayers.",
+            arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ. اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+            transliteration: "Allahumma salli 'ala Muhammadin wa 'ala aali Muhammadin kama sallayta 'ala Ibrahima wa 'ala aali Ibrahima innaka Hamidun Majid. Allahumma barik 'ala Muhammadin wa 'ala aali Muhammadin kama barakta 'ala Ibrahima wa 'ala aali Ibrahima innaka Hamidun Majid.",
+            meaning: "O Allah, send prayers upon Muhammad and upon the family of Muhammad, as You sent prayers upon Abraham and upon the family of Abraham, indeed You are Praiseworthy, Most Glorious. O Allah, bless Muhammad and the family of Muhammad, as You blessed Abraham and the family of Abraham, indeed You are Praiseworthy, Most Glorious."
         },
         {
             step: 3,
-            title: "Third Takbir",
-            description: "Say 'Allahu Akbar', make Dua for the deceased."
+            title: "Third Takbir: Sincere Supplication for the Deceased",
+            description: "Say 'Allahu Akbar' and make sincere, authentic dua for the deceased. Sourcing from primary collections (Sahih Muslim 963), the Prophet (ﷺ) taught us to pray for the forgiveness, purification, and high station of the deceased's soul.",
+            arabic: "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ وَنَقِّهِ مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الأَبْيَضَ مِنَ الدَّنَسِ. اللَّهُمَّ أَبْدِلْهُ دَارًا خَيْرًا مِنْ دَارِهِ وَأَهْلاً خَيْرًا مِنْ أَهْلِهِ وَزَوْجًا خَيْرًا مِنْ زَوْجِهِ وَأَدْخِلْهُ الْجَنَّةَ وَأَعِذْهُ مِنْ عَذَابِ الْقَبْرِ وَمِنْ عَذَابِ النَّارِ",
+            transliteration: "Allahum-maghfir lahu war-hamhu wa 'afihi wa'fu 'anhu, wa akrim nuzulahu, wa wassi' mudkhalahu, waghsilhu bil-ma'i wath-thalji wal-baradi, wa naqqihi minal-khataya kama naqqaytath-thawbal-abyada minad-danasi. Allahumma abdilhu daran khayran min darihi, wa ahlan khayran min ahlihi, wa zawjan khayran min zawjihi, wa adkhilhul-Jannata wa a'idh-hu min 'adhabail-qabri wa min 'adhabin-nar.",
+            meaning: "O Allah, forgive him and have mercy on him, keep him safe and sound, excuse him and honor his reception. Make his grave spacious and wash him with water, snow, and hail. Purify him from sins as a white garment is purified from dirt. O Allah, grant him a home better than his home, a family better than his family, and a spouse better than his spouse. Admit him into Paradise and protect him from the torment of the grave and the torment of Hellfire. (Note: If the deceased is a female, adapt pronouns accordingly, e.g. Allahum-maghfir laha war-hamha...)"
         },
         {
             step: 4,
-            title: "Fourth Takbir",
-            description: "Say 'Allahu Akbar', pause/make general dua, then perform Tasleem to end."
+            title: "Fourth Takbir & Tasleem (Salam)",
+            description: "Say 'Allahu Akbar', pause briefly to make general dua for yourself and the Ummah, and conclude the prayer by turning your head to the right and saying Salam. Reciting one Salam to the right is the established primary Sunnah, although saying two Salams is also acceptable.",
+            arabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+            transliteration: "Assalamu 'Alaikum wa Rahmatullah",
+            meaning: "Peace and mercy of Allah be upon you."
         }
     ]
 };
