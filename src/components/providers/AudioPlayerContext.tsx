@@ -209,7 +209,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
                 }
             };
             const onUrduPlay = () => setIsPlaying(true);
-            const onUrduPause = () => setIsPlaying(false);
+            const onUrduPause = () => {};
 
             urduAudio.addEventListener("ended", onUrduEnded);
             urduAudio.addEventListener("play", onUrduPlay);
