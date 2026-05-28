@@ -91,10 +91,12 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     const playUrduTranslation = (verseKey: string) => {
         if (!audioRef.current || !urduAudioRef.current) return;
 
-        audioRef.current.pause();
+        // Set Urdu state FIRST before pausing Arabic to prevent race condition in onPause listener
         setIsPlayingUrdu(true);
         isPlayingUrduRef.current = true;
         lastPlayedUrduVerseRef.current = verseKey;
+
+        audioRef.current.pause();
 
         const globalAyahId = getGlobalAyahId(verseKey);
         urduAudioRef.current.src = `https://cdn.islamic.network/quran/audio/64/ur.khan/${globalAyahId}.mp3`;
