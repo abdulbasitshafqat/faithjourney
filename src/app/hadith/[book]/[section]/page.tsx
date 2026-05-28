@@ -5,18 +5,21 @@ import HadithFeed from '@/components/hadith/HadithFeed';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
+import { getBookSlug } from '@/lib/utils';
 
 export async function generateStaticParams() {
     const books = getSupportedBooks();
     const paths = [];
 
     for (const book of books) {
-        // Validation: book.id must allow 'bukhari'|'muslim'|'abudawud' etc.
-        // getBookSections handles the string key safely or returns []
         const sections = await getBookSections(book.id as any);
         for (const section of sections) {
             paths.push({
                 book: book.id,
+                section: section.number
+            });
+            paths.push({
+                book: getBookSlug(book.id),
                 section: section.number
             });
         }

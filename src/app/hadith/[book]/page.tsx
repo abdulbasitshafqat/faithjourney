@@ -5,6 +5,7 @@ import { getBookSections, getSupportedBooks } from '@/lib/api/hadith';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
+import { getBookSlug } from '@/lib/utils';
 
 function parseBookId(slug: string): string {
     const clean = slug.toLowerCase();
@@ -16,9 +17,12 @@ function parseBookId(slug: string): string {
 
 export async function generateStaticParams() {
     const books = getSupportedBooks();
-    return books.map((book) => ({
-        book: book.id,
-    }));
+    const paths = [];
+    for (const book of books) {
+        paths.push({ book: book.id });
+        paths.push({ book: getBookSlug(book.id) });
+    }
+    return paths;
 }
 
 export interface PageProps {
