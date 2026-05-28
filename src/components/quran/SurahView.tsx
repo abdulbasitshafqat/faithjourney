@@ -191,9 +191,9 @@ export default function SurahView({ id }: SurahViewProps) {
 
                 <div className="space-y-6 max-w-4xl mx-auto">
                     {ayahs.map((ayah) => {
-                        // 20: English, 234: Urdu
+                        // 20: English, 54/234: Urdu
                         const englishTranslation = ayah.translations?.find(t => t.resource_id === 20)?.text;
-                        const urduTranslation = ayah.translations?.find(t => t.resource_id === 234)?.text;
+                        const urduTranslation = ayah.translations?.find(t => t.resource_id === 54 || t.resource_id === 234)?.text;
 
                         const isAyahActive = activeVerseKey === ayah.verse_key;
 

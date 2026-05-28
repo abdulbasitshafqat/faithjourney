@@ -75,8 +75,9 @@ export async function getSurahDetails(id: number): Promise<Surah> {
     return data.chapter;
 }
 
-export async function getAyahs(surahId: number, translations: string = "20,234,57"): Promise<Ayah[]> {
+export async function getAyahs(surahId: number, translations: string = "20,54,234,57"): Promise<Ayah[]> {
     // 20: Sahih International (English)
+    // 54: Maulana Muhammad Junagarhi (Urdu)
     // 234: Fatah Muhammad Jalandhari (Urdu)
 
     // First, verify how many verses we expect (optional, but good for progress or robust checks)
