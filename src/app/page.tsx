@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn, getSurahSlug } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { getDuaOfTheDay } from "@/lib/api/daily-dua";
+import { duasData } from "@/lib/data/duas";
 import { WondersSection } from "@/components/home/WondersSection";
 import { ResumeJourney } from "@/components/dashboard/ResumeJourney";
 import { SpiritualStreak } from "@/components/dashboard/SpiritualStreak";
@@ -23,11 +24,16 @@ import { ReadingGoals } from "@/components/dashboard/ReadingGoals";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [dailyDua, setDailyDua] = useState(duasData[0]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setDailyDua(getDuaOfTheDay());
   }, []);
 
   const { data: verse, isLoading } = useQuery({
@@ -256,26 +262,21 @@ export default function Home() {
                     <h3 className="text-xl font-serif font-black text-primary italic">Dua of the Day</h3>
                   </div>
 
-                  {(() => {
-                    const dua = getDuaOfTheDay();
-                    return (
-                      <div className="space-y-8">
-                        <p className="font-arabic text-4xl text-right text-primary leading-loose" dir="rtl">
-                          {dua.arabic_text}
-                        </p>
-                        <div className="space-y-4">
-                          <p className="text-xl font-serif font-black text-foreground italic leading-relaxed">
-                            "{dua.translations.en}"
-                          </p>
-                          <div className="h-px w-20 bg-primary/10" />
-                          <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                            <Sparkles className="h-4 w-4 text-secondary" />
-                            Daily Spiritual Nourishment
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })()}
+                  <div className="space-y-8">
+                    <p className="font-arabic text-4xl text-right text-primary leading-loose" dir="rtl">
+                      {dailyDua.arabic_text}
+                    </p>
+                    <div className="space-y-4">
+                      <p className="text-xl font-serif font-black text-foreground italic leading-relaxed">
+                        "{dailyDua.translations.en}"
+                      </p>
+                      <div className="h-px w-20 bg-primary/10" />
+                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-secondary" />
+                        Daily Spiritual Nourishment
+                      </p>
+                    </div>
+                  </div>
                 </Card>
               </div>
               <div className="flex-1 order-1 md:order-2 space-y-8 text-center md:text-left">

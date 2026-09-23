@@ -8,32 +8,9 @@ import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 
 export function ReadingGoals() {
-    // Persist goal in localStorage for now
-    const [goal, setGoal] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('daily_goal_text') || '';
-        }
-        return '';
-    });
-    const [isSet, setIsSet] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return !!localStorage.getItem('daily_goal_text');
-        }
-        return false;
-    });
-    const [isCompleted, setIsCompleted] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const storedDate = localStorage.getItem('daily_goal_date');
-            const storedCompleted = localStorage.getItem('daily_goal_completed');
-            const today = new Date().toISOString().split('T')[0];
-            if (storedDate === today && storedCompleted === 'true') {
-                return true;
-            } else if (storedDate !== today && storedDate !== null) {
-                localStorage.setItem('daily_goal_completed', 'false');
-            }
-        }
-        return false;
-    });
+    const [goal, setGoal] = useState('');
+    const [isSet, setIsSet] = useState(false);
+    const [isCompleted, setIsCompleted] = useState(false);
 
     // Live-sync external updates (e.g. from WebMCP AI tools or widgets)
     useEffect(() => {
@@ -55,9 +32,13 @@ export function ReadingGoals() {
                 setIsCompleted(true);
             } else {
                 setIsCompleted(false);
+                if (storedDate !== today && storedDate !== null) {
+                    localStorage.setItem('daily_goal_completed', 'false');
+                }
             }
         };
 
+        handleSync();
         window.addEventListener("fj_goals_updated", handleSync);
         return () => {
             window.removeEventListener("fj_goals_updated", handleSync);
