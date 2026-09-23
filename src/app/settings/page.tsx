@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Moon, Bell, Globe, Clock, Calculator, ShieldCheck } from "lucide-react";
+import { Moon, Bell, Globe, Clock, Calculator, ShieldCheck, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
     Select,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { CALCULATION_METHODS } from "@/lib/api/prayer-times";
 import { useMounted } from "@/hooks/use-mounted";
+import Link from "next/link";
 
 export default function SettingsPage() {
     const { setTheme, theme } = useTheme();
@@ -250,6 +251,24 @@ export default function SettingsPage() {
                                     </SelectContent>
                                 </Select>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/50 backdrop-blur-sm border-primary/10 overflow-hidden">
+                        <CardHeader className="bg-primary/5 border-b border-primary/5">
+                            <CardTitle className="font-serif text-xl flex items-center gap-2">
+                                <UserRound className="h-5 w-5 text-primary" />
+                                Account & Privacy
+                            </CardTitle>
+                            <CardDescription>Review privacy information or manage your account data.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-6 flex flex-wrap gap-3">
+                            <Button asChild variant="outline">
+                                <Link href="/privacy">Privacy Policy</Link>
+                            </Button>
+                            <Button asChild variant="destructive">
+                                <Link href="/account-deletion">Delete Account</Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>

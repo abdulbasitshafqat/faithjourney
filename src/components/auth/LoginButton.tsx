@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
 export default function LoginButton({ className }: { className?: string }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -11,13 +13,23 @@ export default function LoginButton({ className }: { className?: string }) {
     const handleLogin = async () => {
         try {
             setIsLoading(true);
-            const { error } = await supabase.auth.signInWithOAuth({
+            const isNative = Capacitor.isNativePlatform();
+            const redirectTo = isNative
+                ? 'com.faithjourney.pro://auth/callback'
+                : `${location.origin}/auth/callback`;
+
+            const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${location.origin}`, // Redirect to home to handle hash
+                    redirectTo,
+                    skipBrowserRedirect: isNative,
                 },
             });
             if (error) throw error;
+
+            if (isNative && data.url) {
+                await Browser.open({ url: data.url });
+            }
         } catch (error: any) {
             toast({
                 title: "Login Failed",

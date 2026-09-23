@@ -9,6 +9,7 @@ import { dailyAyats } from '@/lib/data/daily-ayats';
 import { duasData } from '@/lib/data/duas';
 import { useWebMCP } from '@/hooks/useWebMCP';
 import { supabase } from '@/lib/supabase';
+import { Browser } from '@capacitor/browser';
 
 export default function AppFlowProvider({ children }: { children: React.ReactNode }) {
     useWebMCP();
@@ -39,6 +40,7 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
                 if (code) {
                     const { error } = await supabase.auth.exchangeCodeForSession(code);
                     if (error) throw error;
+                    await Browser.close().catch(() => undefined);
                     router.push('/');
                     return;
                 }
@@ -55,6 +57,7 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
                             refresh_token
                         });
                         if (error) throw error;
+                        await Browser.close().catch(() => undefined);
                         router.push('/');
                     }
                 }
