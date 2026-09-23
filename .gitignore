@@ -19,6 +19,7 @@
 
 # production
 /build
+/public/data/hadith/
 
 # misc
 .DS_Store

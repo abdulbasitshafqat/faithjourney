@@ -90,7 +90,7 @@ export async function getBookSections(bookSlug: keyof typeof BOOK_EDITIONS = 'bu
     // The data.metadata.sections is a map: { "1": "Revelation", "2": "Belief" ... }
     return Object.entries(data.metadata.sections).map(([number, name]) => ({
         number,
-        name: name as string
+        name: (name as string).trim() || (number === '0' ? 'Introduction' : `Chapter ${number}`)
     })).sort((a, b) => Number(a.number) - Number(b.number));
 }
 

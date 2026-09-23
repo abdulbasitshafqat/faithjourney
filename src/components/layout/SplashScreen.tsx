@@ -13,8 +13,8 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
             setTimeout(() => {
                 setShouldRender(false);
                 onFinish();
-            }, 800); // Premium smooth dissolve
-        }, 3200); // Duration to fully appreciate the animation
+            }, 450);
+        }, 1600);
 
         return () => clearTimeout(timer);
     }, [onFinish]);
@@ -59,7 +59,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
                     className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b from-[#0b0c0c] via-[#091512] to-[#040505] overflow-hidden select-none"
                 >
                     {/* Atmospheric Cosmic Orbs */}

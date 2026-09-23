@@ -1,21 +1,15 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import { Wonder } from "@/components/wonders/WonderCard";
 import wondersData from "@/lib/data/wonders.json";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Share2, Info } from "lucide-react";
+import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 
 export function WondersSection() {
-    const [wonders] = useState<Wonder[]>(() => {
-        // Shuffle and pick 7 random wonders
-        const shuffled = [...wondersData].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, 7) as Wonder[];
-    });
+    const wonders = wondersData.slice(0, 7) as Wonder[];
     const [activeIndex, setActiveIndex] = useState(0);
 
     const handleNext = () => {
@@ -66,6 +60,7 @@ export function WondersSection() {
                                 size="icon"
                                 onClick={handlePrev}
                                 className="h-12 w-12 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white transition-all"
+                                aria-label="Show previous wonder"
                             >
                                 <ChevronLeft className="h-5 w-5" />
                             </Button>
@@ -74,6 +69,7 @@ export function WondersSection() {
                                 size="icon"
                                 onClick={handleNext}
                                 className="h-12 w-12 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white transition-all"
+                                aria-label="Show next wonder"
                             >
                                 <ChevronRight className="h-5 w-5" />
                             </Button>

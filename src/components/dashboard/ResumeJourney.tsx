@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getCanonicalSurahPath } from '@/lib/data/surah-names';
 
 interface Progress {
     last_surah_id: number;
@@ -70,7 +71,7 @@ export function ResumeJourney() {
                 </div>
 
                 <Button className="h-12 px-8 rounded-xl bg-white text-emerald-900 font-bold hover:bg-emerald-50 shadow-lg transition-all group-hover:scale-105" asChild>
-                    <Link href={`/quran/${progress?.last_surah_id}#ayah-${progress?.last_ayah_id}`}>
+                    <Link href={`${getCanonicalSurahPath(progress!.last_surah_id)}#ayah-${progress?.last_ayah_id}`}>
                         Resume Journey <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                 </Button>

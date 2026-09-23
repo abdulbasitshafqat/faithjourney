@@ -16,13 +16,9 @@ function parseBookId(slug: string): string {
 }
 
 export async function generateStaticParams() {
-    const books = getSupportedBooks();
-    const paths = [];
-    for (const book of books) {
-        paths.push({ book: book.id });
-        paths.push({ book: getBookSlug(book.id) });
-    }
-    return paths;
+    return getSupportedBooks().map((book) => ({
+        book: getBookSlug(book.id),
+    }));
 }
 
 export interface PageProps {
@@ -38,9 +34,12 @@ export async function generateMetadata({ params }: PageProps) {
     if (!book) return { title: 'Book Not Found' };
 
     return {
-        title: `${book.name} - Chapters & Sections | FaithJourney`,
+        title: `${book.name} - Chapters & Sections`,
         description: `Explore all chapters, books, and sections of the authentic ${book.name} compiled by ${book.author} on FaithJourney.`,
         keywords: [book.name, book.author, "Hadith online", "authentic hadith chapters", "Faith Journey Hadith", "Sunnah of Prophet Muhammad"],
+        alternates: {
+            canonical: `/hadith/${getBookSlug(bookId)}`,
+        },
     };
 }
 
@@ -85,7 +84,7 @@ export default async function BookChaptersPage({ params }: PageProps) {
                                 {chapters.map((chapter) => (
                                     <Link
                                         key={chapter.number}
-                                        href={`/hadith/${bookId}/${chapter.number}`}
+                                        href={`/hadith/${getBookSlug(bookId)}/${chapter.number}`}
                                         className="group flex items-center p-6 hover:bg-primary/5 transition-all duration-200"
                                     >
                                         <div className="flex-shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-lg mr-4 group-hover:bg-primary group-hover:text-primary-foreground transition-all">

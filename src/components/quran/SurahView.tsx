@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useFontSize } from "@/components/providers/FontSizeProvider";
 import { cn } from "@/lib/utils";
+import { getCanonicalSurahPath } from "@/lib/data/surah-names";
 
 interface SurahViewProps {
     id: number;
@@ -106,7 +107,7 @@ export default function SurahView({ id }: SurahViewProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => router.push(id > 1 ? `/quran/${id - 1}` : "/quran")}
+                            onClick={() => router.push(id > 1 ? getCanonicalSurahPath(id - 1) : "/quran")}
                             disabled={id <= 1}
                         >
                             <ChevronLeft className="h-5 w-5" />
@@ -118,7 +119,7 @@ export default function SurahView({ id }: SurahViewProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => router.push(id < 114 ? `/quran/${id + 1}` : "/quran")}
+                            onClick={() => router.push(id < 114 ? getCanonicalSurahPath(id + 1) : "/quran")}
                             disabled={id >= 114}
                         >
                             <ChevronRight className="h-5 w-5" />

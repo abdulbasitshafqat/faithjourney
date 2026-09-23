@@ -1,7 +1,7 @@
 
 import { notFound } from 'next/navigation';
 import { getSupportedBooks, getBookSections, getHadithsForSection } from '@/lib/api/hadith';
-import HadithFeed from '@/components/hadith/HadithFeed';
+import HadithSectionLoader from '@/components/hadith/HadithSectionLoader';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Header } from "@/components/layout/Header";
@@ -14,10 +14,6 @@ export async function generateStaticParams() {
     for (const book of books) {
         const sections = await getBookSections(book.id as any);
         for (const section of sections) {
-            paths.push({
-                book: book.id,
-                section: section.number
-            });
             paths.push({
                 book: getBookSlug(book.id),
                 section: section.number
@@ -49,9 +45,12 @@ export async function generateMetadata({ params }: PageProps) {
     if (!book) return { title: 'Hadith Not Found' };
 
     return {
-        title: `${book.name} - Chapter ${sectionId} | FaithJourney`,
+        title: `${book.name} - Chapter ${sectionId}`,
         description: `Read authentic Hadiths from ${book.name}, Chapter ${sectionId} with both English and Urdu translations on FaithJourney.`,
         keywords: [book.name, `Hadith chapter ${sectionId}`, "Hadith reading", "Prophet sayings", "authentic hadith translation", "Faith Journey Hadith"],
+        alternates: {
+            canonical: `/hadith/${getBookSlug(bookId)}/${sectionId}`,
+        },
     };
 }
 
@@ -82,7 +81,7 @@ export default async function HadithReaderPage({ params }: PageProps) {
     }
 
     // Combine Data
-    const combinedHadiths = engData.translation.map((engHadith, index) => {
+    const initialHadiths = engData.translation.slice(0, 12).map((engHadith, index) => {
         // Find matching Arabic (usually same index, but try matching number)
         const arabic = engData.arabic.find(h => h.hadithnumber === engHadith.hadithnumber) || engData.arabic[index];
         const urdu = urdData.translation.find(h => h.hadithnumber === engHadith.hadithnumber);
@@ -121,8 +120,10 @@ export default async function HadithReaderPage({ params }: PageProps) {
                     </p>
                 </div>
 
-                <HadithFeed
-                    hadiths={combinedHadiths}
+                <HadithSectionLoader
+                    bookId={bookId as 'bukhari' | 'muslim' | 'abudawud'}
+                    sectionId={sectionId}
+                    initialHadiths={initialHadiths}
                     bookName={bookData.name}
                     chapterName={chapterName}
                 />

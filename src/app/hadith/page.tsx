@@ -3,8 +3,11 @@ import BookCard from '@/components/hadith/BookCard';
 import { Header } from "@/components/layout/Header";
 
 export const metadata = {
-    title: 'Hadith Library | FaithJourney',
+    title: 'Hadith Library',
     description: 'Explore the authentic collections of the Prophet Muhammad (ﷺ).',
+    alternates: {
+        canonical: '/hadith',
+    },
 };
 
 export default function HadithDashboard() {
