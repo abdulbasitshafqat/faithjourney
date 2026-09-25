@@ -54,4 +54,7 @@ lint_*.txt
 # android binaries & local properties
 app-debug.apk
 /android/local.properties
+/android/keystore.properties
+/android/app/*.jks
+/android/app/*.keystore
 
