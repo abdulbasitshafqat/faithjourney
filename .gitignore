@@ -57,4 +57,5 @@ app-debug.apk
 /android/keystore.properties
 /android/app/*.jks
 /android/app/*.keystore
+/play-store-assets/reviewer-credentials.txt
 
