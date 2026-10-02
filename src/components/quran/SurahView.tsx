@@ -3,14 +3,13 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { getSurahDetails, getAyahs, getSurahRecitation, Word } from "@/lib/api/quran";
+import { getSurahDetails, getAyahs } from "@/lib/api/quran";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useFontSize } from "@/components/providers/FontSizeProvider";
 import { cn } from "@/lib/utils";
@@ -102,11 +101,12 @@ export default function SurahView({ id }: SurahViewProps) {
 
             {/* Sticky Header for Audio Player & Navigation */}
             <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-md border-b border-border/50 py-4">
-                <div className="container mx-auto px-4 flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
+                <div className="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div className="flex items-center justify-between md:justify-start md:space-x-4 w-full md:w-auto">
                         <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="Previous Surah"
                             onClick={() => router.push(id > 1 ? getCanonicalSurahPath(id - 1) : "/quran")}
                             disabled={id <= 1}
                         >
@@ -119,6 +119,7 @@ export default function SurahView({ id }: SurahViewProps) {
                         <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="Next Surah"
                             onClick={() => router.push(id < 114 ? getCanonicalSurahPath(id + 1) : "/quran")}
                             disabled={id >= 114}
                         >
@@ -127,7 +128,7 @@ export default function SurahView({ id }: SurahViewProps) {
                     </div>
 
                     {/* Fast Jump */}
-                    <form onSubmit={handleJump} className="flex items-center space-x-2">
+                    <form onSubmit={handleJump} className="hidden md:flex items-center space-x-2">
                         <span className="text-sm font-medium whitespace-nowrap hidden md:inline">Quick Jump:</span>
                         <Input
                             type="number"
@@ -139,7 +140,7 @@ export default function SurahView({ id }: SurahViewProps) {
                         />
                     </form>
 
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-end space-x-3 w-full md:w-auto">
                         {audioLanguage === 'ur' && (
                             <span className="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded hidden md:inline-block font-medium animate-pulse">
                                 Urdu Translation Sync Active
@@ -148,12 +149,16 @@ export default function SurahView({ id }: SurahViewProps) {
                         <div className="flex bg-muted/50 rounded-lg p-0.5">
                             <button
                                 onClick={() => setAudioLanguage('ar')}
+                                aria-label="Play Arabic recitation only"
+                                title="Arabic recitation only"
                                 className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ar' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
                             >
                                 AR
                             </button>
                             <button
                                 onClick={() => setAudioLanguage('ur')}
+                                aria-label="Play Arabic recitation followed by Urdu translation for each ayah"
+                                title="Arabic recitation with Urdu translation after each ayah"
                                 className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${audioLanguage === 'ur' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-primary'}`}
                             >
                                 UR
@@ -163,6 +168,7 @@ export default function SurahView({ id }: SurahViewProps) {
                         <Button
                             size="icon"
                             className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                            aria-label={currentSurahId === id && isPlaying ? "Pause current Surah" : "Play current Surah"}
                             onClick={() => {
                                 if (currentSurahId === id) {
                                     togglePlay();
@@ -232,7 +238,7 @@ export default function SurahView({ id }: SurahViewProps) {
                                                     className="text-right w-full pl-4 leading-[2.2] flex flex-wrap justify-end gap-x-1"
                                                     dir="rtl"
                                                 >
-                                                    {ayah.words?.map((word, wordIndex) => {
+                                                    {ayah.words?.map((word) => {
                                                         const isWordActive = isAyahActive && activeWordPosition === word.position;
 
                                                         // Handle end of verse marker

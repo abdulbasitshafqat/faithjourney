@@ -46,8 +46,7 @@ export const scheduleAdhan = async () => {
             sound: "adhan", // res/raw/adhan.mp3
             channelId: "adhan-channel",
             actionTypeId: "",
-            extra: null,
-            smallIcon: "ic_stat_moon" // Android resource if available
+            extra: { prayerName: p.name },
         };
     });
 

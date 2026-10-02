@@ -5,11 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getPrayerTimes, getPrayerCalendar, CALCULATION_METHODS } from "@/lib/api/prayer-times";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Sunrise, Sun, Sunset, Moon, Bell, BellOff, Volume2, Settings2, Info, ChevronDown, ChevronUp, Clock, Sparkles, PlayCircle, StopCircle } from "lucide-react";
+import { MapPin, Sunrise, Sun, Sunset, Moon, Bell, BellOff, Volume2, Settings2, Info, Clock, Sparkles, PlayCircle, StopCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { Toast } from '@capacitor/toast';
 import { useToast } from "@/hooks/use-toast";
 import {
     Select,
@@ -34,6 +33,13 @@ const CITY_PRESETS = [
     { name: "Istanbul", lat: 41.0082, lng: 28.9784, country: "Turkey" },
 ];
 
+const NATIVE_ADHAN_SOUNDS: Record<string, string> = {
+    makkah: "makkah",
+    madina: "madinah",
+    "al-afasy": "alafasay",
+    "abdul-basit": "adhan",
+};
+
 export function PrayerCard() {
     const { toast } = useToast();
     const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -57,7 +63,7 @@ export function PrayerCard() {
     }, []);
 
     const isPluginAvailable = (name: string) => {
-        return typeof window !== 'undefined' && (window as any).Capacitor?.isPluginAvailable?.(name);
+        return typeof window !== "undefined" && Boolean((window as Window & { Capacitor?: { isPluginAvailable?: (pluginName: string) => boolean } }).Capacitor?.isPluginAvailable?.(name));
     };
 
     const handleLocationFallback = (cityName: string) => {
@@ -75,7 +81,7 @@ export function PrayerCard() {
     const triggerLocationSearch = async () => {
         try {
             let position;
-            const isNative = typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform();
+            const isNative = typeof window !== "undefined" && Boolean((window as Window & { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.());
             if (isNative && isPluginAvailable('Geolocation')) {
                 const perm = await Geolocation.checkPermissions();
                 if (perm.location !== 'granted') {
@@ -133,6 +139,8 @@ export function PrayerCard() {
             triggerLocationSearch();
         }
         checkScheduledNotifications();
+        // Initial preferences and location are intentionally read only once.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const togglePreview = (adhanId: string) => {
@@ -187,7 +195,12 @@ export function PrayerCard() {
             if (typeof window !== 'undefined') {
                 const stored = localStorage.getItem("fj_web_scheduled_prayers");
                 if (stored) {
-                    setScheduledPrayers(JSON.parse(stored));
+                    try {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed)) setScheduledPrayers(parsed.filter((item): item is string => typeof item === "string"));
+                    } catch {
+                        localStorage.removeItem("fj_web_scheduled_prayers");
+                    }
                 }
             }
             return;
@@ -201,7 +214,7 @@ export function PrayerCard() {
         }
     };
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError, refetch } = useQuery({
         queryKey: ["prayerTimes", coords?.lat, coords?.lng, method, school],
         queryFn: () => getPrayerTimes(coords!.lat, coords!.lng, method, school),
         enabled: !!coords,
@@ -226,81 +239,6 @@ export function PrayerCard() {
         { name: "Isha", time: timings?.Isha, icon: Moon, color: "from-indigo-950 via-purple-900 to-indigo-900" },
     ], [timings]);
 
-    // Auto-enable notifications for 5 daily prayers on first launch
-    useEffect(() => {
-        const initNotifications = async () => {
-            if (!calendarQuery.data || isLoading) return;
-
-            const hasInitialized = localStorage.getItem('fj_notifications_init_v2');
-            if (hasInitialized) return;
-
-            // Check permissions first
-            const perm = await LocalNotifications.checkPermissions();
-            if (perm.display !== 'granted') {
-                const req = await LocalNotifications.requestPermissions();
-                if (req.display !== 'granted') return;
-            }
-
-            const prayersToSchedule = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-            const newlyScheduled: string[] = [];
-
-            for (const prayerName of prayersToSchedule) {
-                // Avoid re-scheduling if already done (though init check prevents this usually)
-                if (scheduledPrayers.includes(prayerName)) continue;
-
-                // Logic copied from toggleNotification but for "enable" only
-                try {
-                    const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
-                    const notifications = [];
-                    const now = new Date();
-                    const todayIndex = calendarQuery.data.data.findIndex(d => d.date.readable.startsWith(now.getDate().toString().padStart(2, '0')));
-
-                    if (todayIndex === -1) continue;
-
-                    const daysToSchedule = Math.min(7, calendarQuery.data.data.length - todayIndex);
-                    for (let i = 0; i < daysToSchedule; i++) {
-                        const dayData = calendarQuery.data.data[todayIndex + i];
-                        const timeStr = (dayData.timings as Record<string, string>)[prayerName];
-                        if (!timeStr) continue;
-                        const [hours, minutes] = timeStr.split(" ")[0].split(':').map(Number);
-                        const scheduleDate = new Date();
-                        scheduleDate.setDate(now.getDate() + i);
-                        scheduleDate.setHours(hours, minutes, 0, 0);
-                        if (i === 0 && scheduleDate < now) continue;
-
-                        notifications.push({
-                            title: `Time for ${prayerName}`,
-                            body: `It is time for ${prayerName} prayer.`,
-                            id: Math.floor(Math.random() * 1000000),
-                            schedule: { at: scheduleDate },
-                            sound: adhanUrl || undefined,
-                            extra: { prayerName }
-                        });
-                    }
-
-                    if (notifications.length > 0) {
-                        await LocalNotifications.schedule({ notifications });
-                        newlyScheduled.push(prayerName);
-                    }
-                } catch (e) {
-                    console.error(`Failed to auto-schedule ${prayerName}`, e);
-                }
-            }
-
-            if (newlyScheduled.length > 0) {
-                setScheduledPrayers(prev => [...prev, ...newlyScheduled]);
-                Toast.show({
-                    text: "Daily prayer notifications enabled automatically.",
-                    duration: 'long'
-                });
-            }
-
-            localStorage.setItem('fj_notifications_init_v2', 'true');
-        };
-
-        initNotifications();
-    }, [calendarQuery.data, isLoading, selectedAdhan]);
-
     // Check for prayer times and play audio
     useEffect(() => {
         if (!timings || !scheduledPrayers.length) return;
@@ -308,7 +246,6 @@ export function PrayerCard() {
         const now = new Date();
         const currentHours = now.getHours();
         const currentMinutes = now.getMinutes();
-        const currentSeconds = now.getSeconds(); // Check down to seconds to avoid miss? 
         const currentDateString = now.toDateString();
 
         prayers.forEach(prayer => {
@@ -325,10 +262,9 @@ export function PrayerCard() {
                         const audio = new Audio(adhanUrl);
                         audio.play().catch(e => console.error("Audio play failed:", e));
 
-                        // Show toast as backup visual feedback
-                        Toast.show({
-                            text: `It is time for ${prayer.name}`,
-                            duration: 'long'
+                        toast({
+                            title: `${prayer.name} prayer`,
+                            description: `It is time for ${prayer.name}.`,
                         });
                     }
 
@@ -336,7 +272,7 @@ export function PrayerCard() {
                 }
             }
         });
-    }, [currentTime, timings, scheduledPrayers, selectedAdhan, prayers, playedPrayers]);
+    }, [currentTime, timings, scheduledPrayers, selectedAdhan, prayers, playedPrayers, toast]);
 
     const getNextPrayer = useMemo(() => {
         if (!timings) return null;
@@ -351,6 +287,8 @@ export function PrayerCard() {
                 return { ...p, timestamp: d.getTime() };
             })
             .filter(Boolean) as (typeof prayers[0] & { timestamp: number })[];
+
+        if (prayerList.length === 0) return null;
 
         const next = prayerList.find(p => p.timestamp > now);
 
@@ -396,11 +334,26 @@ export function PrayerCard() {
                     description: `${prayerName} notification deactivated.`
                 });
             } else {
+                const nativeSound = NATIVE_ADHAN_SOUNDS[selectedAdhan] || "adhan";
+                const notificationChannelId = `fj-adhan-${selectedAdhan.replace(/[^a-z0-9-]/gi, "-")}`;
                 if (hasPlugin) {
                     const perm = await LocalNotifications.checkPermissions();
                     if (perm.display !== 'granted') {
                         const req = await LocalNotifications.requestPermissions();
                         if (req.display !== 'granted') return;
+                    }
+
+                    const platform = (window as Window & { Capacitor?: { getPlatform?: () => string } }).Capacitor?.getPlatform?.();
+                    if (platform === "android") {
+                        await LocalNotifications.createChannel({
+                            id: notificationChannelId,
+                            name: `${prayerName} prayer alerts`,
+                            description: `Prayer-time alerts using the selected ${selectedAdhan} tone.`,
+                            importance: 5,
+                            visibility: 1,
+                            sound: nativeSound,
+                            vibration: true,
+                        });
                     }
                 }
                 
@@ -413,7 +366,6 @@ export function PrayerCard() {
                 });
 
                 if (hasPlugin && calendarQuery.data) {
-                    const adhanUrl = adhanOptions.find(a => a.id === selectedAdhan)?.url;
                     const notifications = [];
                     const now = new Date();
                     const todayIndex = calendarQuery.data.data.findIndex(d => d.date.readable.startsWith(now.getDate().toString().padStart(2, '0')));
@@ -436,7 +388,8 @@ export function PrayerCard() {
                             body: `It is time for ${prayerName} prayer.`,
                             id: Math.floor(Math.random() * 1000000),
                             schedule: { at: scheduleDate },
-                            sound: adhanUrl || undefined,
+                            sound: nativeSound,
+                            channelId: notificationChannelId,
                             extra: { prayerName }
                         });
                     }
@@ -476,6 +429,14 @@ export function PrayerCard() {
             {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-20 rounded-2xl" />)}
         </div>
     </div>;
+
+    if (isError || !timings) return (
+        <Card className="max-w-md mx-auto mt-8 bg-destructive/5 border-destructive/20 p-8 text-center">
+            <p className="font-serif text-xl font-bold mb-3 text-destructive">Prayer times are temporarily unavailable</p>
+            <p className="mb-6 text-sm text-muted-foreground">Check your connection, or choose a saved city and try again.</p>
+            <Button onClick={() => void refetch()}>Try Again</Button>
+        </Card>
+    );
 
     const formatTime = (timeStr?: string) => {
         if (!timeStr) return "--:--";

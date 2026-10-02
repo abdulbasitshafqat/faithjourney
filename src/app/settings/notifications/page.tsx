@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bell, Volume2, PlayCircle, Settings, CheckCircle, Sunrise, Sun, Sunset, Moon, Sparkles } from "lucide-react";
+import { Bell, Volume2, PlayCircle, Settings, CheckCircle, Sun, Sunset, Moon, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { scheduleAdhan, createAdhanChannel } from "@/lib/adhan-scheduler";
 import { toast } from "@/hooks/use-toast";
@@ -17,14 +17,17 @@ export default function NotificationSettingsPage() {
 
     // Individual notification states
     const [preferences, setPreferences] = useState({
-        Fajr: true,
-        Dhuhr: true,
-        Asr: true,
-        Maghrib: true,
-        Isha: true,
-        dailyAyat: true,
-        dailyDua: true,
+        Fajr: false,
+        Dhuhr: false,
+        Asr: false,
+        Maghrib: false,
+        Isha: false,
+        dailyAyat: false,
+        dailyDua: false,
     });
+
+    const isNotificationsPluginAvailable = () =>
+        typeof window !== "undefined" && Boolean((window as Window & { Capacitor?: { isPluginAvailable?: (name: string) => boolean } }).Capacitor?.isPluginAvailable?.("LocalNotifications"));
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -47,6 +50,10 @@ export default function NotificationSettingsPage() {
         // If toggling off, cancel matching notifications
         if (!value) {
             try {
+                if (!isNotificationsPluginAvailable()) {
+                    toast({ title: "Preference Saved", description: "This reminder is disabled." });
+                    return;
+                }
                 const pending = await LocalNotifications.getPending();
                 const toCancel = pending.notifications.filter(
                     n => n.extra?.prayerName === key || (key === 'dailyAyat' && n.id === 88888) || (key === 'dailyDua' && n.id === 99999)
@@ -58,12 +65,19 @@ export default function NotificationSettingsPage() {
                     title: "Alert Disabled",
                     description: `Notifications for ${key === 'dailyAyat' ? 'Daily Ayat' : key === 'dailyDua' ? 'Daily Dua' : key} turned off.`,
                 });
-            } catch (e: any) {
-                console.error("Failed to cancel notification", e);
+            } catch (error: unknown) {
+                console.error("Failed to cancel notification", error);
             }
         } else {
             // Toggling on, request permission & let user know it will schedule on next refresh/load
             try {
+                if (!isNotificationsPluginAvailable()) {
+                    toast({
+                        title: "Available in the Android app",
+                        description: "System prayer reminders require the installed mobile app.",
+                    });
+                    return;
+                }
                 const perm = await LocalNotifications.requestPermissions();
                 if (perm.display === 'granted') {
                     toast({
@@ -71,24 +85,25 @@ export default function NotificationSettingsPage() {
                         description: `Notifications for ${key === 'dailyAyat' ? 'Daily Ayat' : key === 'dailyDua' ? 'Daily Dua' : key} will sync shortly.`,
                     });
                 }
-            } catch (e: any) {
-                console.error(e);
+            } catch (error: unknown) {
+                console.error(error);
             }
         }
     };
 
     const handleSetup = async () => {
         try {
+            if (!isNotificationsPluginAvailable()) throw new Error("Android notification controls are available in the installed app.");
             await createAdhanChannel();
             setChannelCreated(true);
             toast({
                 title: "Android Channel Created",
                 description: "High priority Adhan channel registered.",
             });
-        } catch (e: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Error",
-                description: e.message || "Failed to create channel",
+                description: error instanceof Error ? error.message : "Failed to create channel",
                 variant: 'destructive',
             });
         }
@@ -97,15 +112,16 @@ export default function NotificationSettingsPage() {
     const handleTest = async () => {
         setIsScheduling(true);
         try {
+            if (!isNotificationsPluginAvailable()) throw new Error("Test notifications require the installed Android app.");
             await scheduleAdhan();
             toast({
                 title: "Adhan Scheduled",
                 description: "Test notification in 10 seconds. Minimize the app!",
             });
-        } catch (e: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Scheduling Failed",
-                description: e.message,
+                description: error instanceof Error ? error.message : "Could not schedule the test notification.",
                 variant: 'destructive',
             });
         } finally {
@@ -227,7 +243,7 @@ export default function NotificationSettingsPage() {
                                 Hardware & Testing
                             </CardTitle>
                             <CardDescription className="text-sm font-medium text-muted-foreground mt-1">
-                                Technical setup for Capacitor mobile devices.
+                                Optional Android setup and notification test controls.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">

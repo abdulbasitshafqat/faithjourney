@@ -1,9 +1,8 @@
 "use client";
 
 import { useAudioPlayer, reciterList } from "@/components/providers/AudioPlayerContext";
-import { Play, Pause, Music, X, Volume2, UserCheck, Loader2 } from "lucide-react";
+import { Play, Pause, Music, X, UserCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
     Select,
     SelectContent,
@@ -16,10 +15,12 @@ export function FloatingAudioPlayer() {
     const {
         isPlaying,
         isLoading,
+        audioError,
         currentSurahId,
         currentSurahName,
         activeVerseKey,
         reciterId,
+        audioLanguage,
         setReciterId,
         togglePlay,
         stopAudio,
@@ -53,7 +54,7 @@ export function FloatingAudioPlayer() {
                     />
                 </div>
 
-                <div className="flex items-center justify-between gap-4 mt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-1">
                     {/* Active Surah Meta Info */}
                     <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -64,18 +65,19 @@ export function FloatingAudioPlayer() {
                                 {currentSurahName}
                             </h4>
                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mt-0.5">
-                                {activeVerseKey ? `Reciting Ayah ${activeVerseKey}` : "Streaming Recitation"}
+                                {activeVerseKey ? `Ayah ${activeVerseKey}` : "Preparing recitation"}
+                                {audioLanguage === "ur" ? " · Arabic + Urdu" : " · Arabic"}
                             </p>
                         </div>
                     </div>
 
                     {/* Central Playback Controls */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <Select 
                             value={reciterId.toString()} 
                             onValueChange={(val) => setReciterId(parseInt(val))}
                         >
-                            <SelectTrigger className="w-[140px] h-9 border-none bg-primary/5 rounded-xl text-xs font-bold ring-0 focus:ring-0 shadow-none px-3 gap-1">
+                            <SelectTrigger aria-label="Choose Arabic reciter" className="flex-1 sm:flex-none sm:w-[170px] h-9 border-none bg-primary/5 rounded-xl text-xs font-bold ring-0 focus:ring-0 shadow-none px-3 gap-1">
                                 <UserCheck className="w-3.5 h-3.5 mr-1 text-primary/60" />
                                 <SelectValue />
                             </SelectTrigger>
@@ -98,6 +100,7 @@ export function FloatingAudioPlayer() {
                             className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:scale-105 active:scale-95 transition-all shrink-0"
                             onClick={togglePlay}
                             disabled={isLoading}
+                            aria-label={isPlaying ? "Pause recitation" : "Play recitation"}
                         >
                             {isLoading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -113,11 +116,17 @@ export function FloatingAudioPlayer() {
                             variant="ghost"
                             className="w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
                             onClick={stopAudio} // Stop and dismiss the audio player
+                            aria-label="Close recitation player"
                         >
                             <X className="w-4 h-4" />
                         </Button>
                     </div>
                 </div>
+                {audioError && (
+                    <p role="alert" className="text-xs font-medium text-destructive px-1">
+                        {audioError}
+                    </p>
+                )}
             </div>
         </div>
     );

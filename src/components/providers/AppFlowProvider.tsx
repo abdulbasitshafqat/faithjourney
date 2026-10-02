@@ -23,8 +23,19 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
     useEffect(() => {
         let lastBackPress = 0;
+        const isPluginAvailable = (name: string) =>
+            typeof window !== "undefined" && Boolean((window as Window & { Capacitor?: { isPluginAvailable?: (pluginName: string) => boolean } }).Capacitor?.isPluginAvailable?.(name));
 
-        const appUrlOpenListener = App.addListener('appUrlOpen', async (data: { url: string }) => {
+        const capacitor = (window as Window & { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+        if (capacitor?.isNativePlatform?.() && "serviceWorker" in navigator) {
+            // Clean up service workers left by older Android builds so they cannot
+            // serve an outdated HTML shell with missing JavaScript chunks.
+            navigator.serviceWorker.getRegistrations()
+                .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+                .catch((error) => console.warn("Could not clear legacy app cache.", error));
+        }
+
+        const appUrlOpenListener = isPluginAvailable("App") ? App.addListener('appUrlOpen', async (data: { url: string }) => {
             try {
                 const urlStr = data.url;
                 if (!urlStr) return;
@@ -64,9 +75,9 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
             } catch (err: unknown) {
                 console.error("Deep link auth error:", err instanceof Error ? err.message : err);
             }
-        });
+        }) : null;
 
-        const backButtonListener = App.addListener('backButton', async () => {
+        const backButtonListener = isPluginAvailable("App") ? App.addListener('backButton', async () => {
             const now = Date.now();
 
             // If on homepage, handle exit confirmation
@@ -75,27 +86,37 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
                     App.exitApp();
                 } else {
                     lastBackPress = now;
-                    await Toast.show({
-                        text: 'Press back again to exit',
-                        duration: 'short',
-                        position: 'bottom'
-                    });
+                    if (isPluginAvailable("Toast")) {
+                        await Toast.show({
+                            text: 'Press back again to exit',
+                            duration: 'short',
+                            position: 'bottom'
+                        });
+                    }
                 }
             } else {
                 // Otherwise navigate back
                 router.back();
             }
-        });
+        }) : null;
 
         const scheduleDailyAyat = async () => {
             try {
-                let isEnabled = true;
+                if (!isPluginAvailable("LocalNotifications")) return;
+                let isEnabled = false;
                 if (typeof window !== "undefined") {
                     const saved = localStorage.getItem("fj_notification_preferences");
                     if (saved) {
-                        isEnabled = JSON.parse(saved).dailyAyat !== false;
+                        try {
+                            isEnabled = JSON.parse(saved).dailyAyat === true;
+                        } catch {
+                            localStorage.removeItem("fj_notification_preferences");
+                        }
                     }
                 }
+
+                const permission = await LocalNotifications.checkPermissions();
+                if (permission.display !== "granted") return;
 
                 const pending = await LocalNotifications.getPending();
                 const dailyNotification = pending.notifications.find(n => n.id === 88888);
@@ -105,11 +126,6 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
                         await LocalNotifications.cancel({ notifications: [dailyNotification] });
                     }
                     return;
-                }
-
-                const perm = await LocalNotifications.checkPermissions();
-                if (perm.display !== 'granted') {
-                    await LocalNotifications.requestPermissions();
                 }
 
                 if (!dailyNotification) {
@@ -135,13 +151,21 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
 
         const scheduleDailyDua = async () => {
             try {
-                let isEnabled = true;
+                if (!isPluginAvailable("LocalNotifications")) return;
+                let isEnabled = false;
                 if (typeof window !== "undefined") {
                     const saved = localStorage.getItem("fj_notification_preferences");
                     if (saved) {
-                        isEnabled = JSON.parse(saved).dailyDua !== false;
+                        try {
+                            isEnabled = JSON.parse(saved).dailyDua === true;
+                        } catch {
+                            localStorage.removeItem("fj_notification_preferences");
+                        }
                     }
                 }
+
+                const permission = await LocalNotifications.checkPermissions();
+                if (permission.display !== "granted") return;
 
                 const pending = await LocalNotifications.getPending();
                 const dailyDuaNotification = pending.notifications.find(n => n.id === 99999);
@@ -182,8 +206,8 @@ export default function AppFlowProvider({ children }: { children: React.ReactNod
         scheduleDailyDua();
 
         return () => {
-            backButtonListener.then(listener => listener.remove());
-            appUrlOpenListener.then(listener => listener.remove());
+            backButtonListener?.then(listener => listener.remove()).catch(() => undefined);
+            appUrlOpenListener?.then(listener => listener.remove()).catch(() => undefined);
         };
     }, [pathname, router]);
 
