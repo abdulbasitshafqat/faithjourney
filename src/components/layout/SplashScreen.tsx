@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 export function SplashScreen({ onFinish }: { onFinish: () => void }) {
     const [isVisible, setIsVisible] = useState(true);
     const [shouldRender, setShouldRender] = useState(true);
 
     useEffect(() => {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const timer = setTimeout(() => {
             setIsVisible(false);
             setTimeout(() => {
                 setShouldRender(false);
                 onFinish();
-            }, 450);
-        }, 1600);
+            }, prefersReducedMotion ? 0 : 220);
+        }, prefersReducedMotion ? 0 : 700);
 
         return () => clearTimeout(timer);
     }, [onFinish]);
@@ -23,15 +24,15 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
     const letters = Array.from("Faith Journey");
 
-    const textContainerVariants = {
+    const textContainerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
             transition: { staggerChildren: 0.06, delayChildren: 0.4 }
         }
-    } as any;
+    };
 
-    const letterVariants = {
+    const letterVariants: Variants = {
         hidden: { opacity: 0, y: 15, scale: 0.9 },
         visible: {
             opacity: 1,
@@ -39,9 +40,9 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
             scale: 1,
             transition: { type: "spring" as const, damping: 12, stiffness: 100 }
         }
-    } as any;
+    };
 
-    const haloVariants = {
+    const haloVariants: Variants = {
         animate: {
             scale: [1, 2.2],
             opacity: [0.35, 0],
@@ -51,7 +52,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
                 ease: "easeOut" as const
             }
         }
-    } as any;
+    };
 
     return (
         <AnimatePresence>
@@ -59,8 +60,10 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    transition={{ duration: 0.22, ease: "easeInOut" }}
                     className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b from-[#0b0c0c] via-[#091512] to-[#040505] overflow-hidden select-none"
+                    role="status"
+                    aria-label="Opening Faith Journey"
                 >
                     {/* Atmospheric Cosmic Orbs */}
                     <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse duration-[8000ms]" />

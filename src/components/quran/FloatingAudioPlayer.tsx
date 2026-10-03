@@ -39,19 +39,40 @@ export function FloatingAudioPlayer() {
         seekToPercent(percent);
     };
 
+    const handleProgressKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+        e.preventDefault();
+        if (e.key === "Home") seekToPercent(0);
+        else if (e.key === "End") seekToPercent(99.9);
+        else {
+            const direction = e.key === "ArrowRight" || e.key === "ArrowUp" ? 1 : -1;
+            seekToPercent(Math.max(0, Math.min(99.9, playbackProgress + direction * 5)));
+        }
+    };
+
     return (
-        <div className="fixed bottom-[76px] md:bottom-6 left-0 right-0 z-50 px-4 pointer-events-none">
-            <div className="bg-background/90 dark:bg-background/95 backdrop-blur-2xl border border-primary/10 shadow-2xl rounded-3xl max-w-xl mx-auto p-4 pointer-events-auto flex flex-col gap-3 relative overflow-hidden group">
+        <div className="pointer-events-none fixed bottom-[72px] left-0 right-0 z-[60] px-3 md:bottom-6 md:px-4">
+            <div className="group relative mx-auto flex max-w-xl flex-col gap-2 overflow-hidden rounded-2xl border border-primary/10 bg-background/95 p-3 pt-4 shadow-2xl backdrop-blur-2xl pointer-events-auto dark:bg-background/95 sm:gap-3 sm:rounded-3xl sm:p-4">
                 
                 {/* Visual Progress Bar (Clickable) */}
-                <div 
-                    className="absolute top-0 left-0 right-0 h-1 bg-primary/5 cursor-pointer group-hover:h-1.5 transition-all duration-300"
+                <div
+                    className="absolute left-0 right-0 top-0 flex h-5 cursor-pointer items-start bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
                     onClick={handleProgressBarClick}
+                    onKeyDown={handleProgressKeyDown}
+                    role="slider"
+                    tabIndex={0}
+                    aria-label="Recitation progress"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(playbackProgress)}
+                    aria-valuetext={`${Math.round(playbackProgress)} percent`}
                 >
-                    <div 
-                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-r-full transition-all duration-150"
-                        style={{ width: `${playbackProgress}%` }}
-                    />
+                    <div className="h-1 w-full bg-primary/5 transition-all duration-300 group-hover:h-1.5">
+                        <div
+                            className="h-full rounded-r-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-150"
+                            style={{ width: `${playbackProgress}%` }}
+                        />
+                    </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-1">
@@ -77,7 +98,7 @@ export function FloatingAudioPlayer() {
                             value={reciterId.toString()} 
                             onValueChange={(val) => setReciterId(parseInt(val))}
                         >
-                            <SelectTrigger aria-label="Choose Arabic reciter" className="flex-1 sm:flex-none sm:w-[170px] h-9 border-none bg-primary/5 rounded-xl text-xs font-bold ring-0 focus:ring-0 shadow-none px-3 gap-1">
+                            <SelectTrigger aria-label="Choose Arabic reciter" className="min-h-11 flex-1 gap-1 rounded-xl border-none bg-primary/5 px-3 text-xs font-bold shadow-none ring-0 focus:ring-0 sm:w-[170px] sm:flex-none">
                                 <UserCheck className="w-3.5 h-3.5 mr-1 text-primary/60" />
                                 <SelectValue />
                             </SelectTrigger>
@@ -97,7 +118,7 @@ export function FloatingAudioPlayer() {
                         <Button
                             size="icon"
                             variant="default"
-                            className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:scale-105 active:scale-95 transition-all shrink-0"
+                            className="h-11 w-11 shrink-0 rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-105 hover:bg-primary/90 active:scale-95"
                             onClick={togglePlay}
                             disabled={isLoading}
                             aria-label={isPlaying ? "Pause recitation" : "Play recitation"}
@@ -114,7 +135,7 @@ export function FloatingAudioPlayer() {
                         <Button
                             size="icon"
                             variant="ghost"
-                            className="w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
+                            className="h-11 w-11 shrink-0 rounded-full transition-colors hover:bg-destructive/10 hover:text-destructive"
                             onClick={stopAudio} // Stop and dismiss the audio player
                             aria-label="Close recitation player"
                         >

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -16,7 +17,6 @@ import { usePathname } from "next/navigation";
 import { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { GlobalSettings } from "@/components/ui/global-settings";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import { cn } from "@/lib/utils";
 // Force HMR update
 
@@ -79,7 +79,7 @@ export function Header() {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center space-x-8">
+                <nav aria-label="Primary navigation" className="hidden md:flex items-center space-x-8">
                     {[
                         { name: "Quran", href: "/quran" },
                         { name: "Hadith", href: "/hadith" },
@@ -92,6 +92,7 @@ export function Header() {
                         <Link
                             key={link.href}
                             href={link.href}
+                            aria-current={pathname.startsWith(link.href) ? "page" : undefined}
                             className={cn(
                                 "text-sm font-medium transition-all duration-200 relative py-1",
                                 pathname.startsWith(link.href)
@@ -111,8 +112,8 @@ export function Header() {
                 <div className="hidden md:flex items-center space-x-4">
                     {user ? (
                         <>
-                            <Link href="/bookmarks" title="My Bookmarks">
-                                <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80">
+                            <Link href="/bookmarks" title="My Bookmarks" aria-label="My Bookmarks">
+                                <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80" aria-label="My Bookmarks">
                                     <Bookmark className="h-5 w-5" />
                                 </Button>
                             </Link>
@@ -127,7 +128,6 @@ export function Header() {
                             </Button>
                         </Link>
                     )}
-                    <ModeToggle />
                     <GlobalSettings />
                     <Link href="/settings">
                         <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
@@ -140,7 +140,12 @@ export function Header() {
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-12 w-12 hover:bg-primary/5">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-12 w-12 hover:bg-primary/5"
+                                aria-label="Open navigation menu"
+                            >
                                 <Menu className="h-8 w-8 text-primary" />
                             </Button>
                         </SheetTrigger>
@@ -151,6 +156,9 @@ export function Header() {
                                         <Moon className="h-6 w-6 text-primary rotate-[-15deg]" />
                                     </div>
                                     <SheetTitle className="font-serif text-2xl text-primary tracking-tight">Faith Journey Pro</SheetTitle>
+                                    <SheetDescription className="sr-only">
+                                        Browse Faith Journey features and account settings.
+                                    </SheetDescription>
                                 </Link>
                             </SheetHeader>
 
@@ -169,6 +177,7 @@ export function Header() {
                                         <Link
                                             key={link.href}
                                             href={link.href}
+                                            aria-current={pathname.startsWith(link.href) ? "page" : undefined}
                                             className={cn(
                                                 "flex items-center justify-between p-3 rounded-xl transition-all duration-200 group",
                                                 pathname.startsWith(link.href)

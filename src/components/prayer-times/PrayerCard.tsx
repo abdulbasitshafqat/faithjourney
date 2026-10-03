@@ -66,13 +66,13 @@ export function PrayerCard() {
         return typeof window !== "undefined" && Boolean((window as Window & { Capacitor?: { isPluginAvailable?: (pluginName: string) => boolean } }).Capacitor?.isPluginAvailable?.(name));
     };
 
-    const handleLocationFallback = (cityName: string) => {
+    const handleLocationFallback = (cityName: string, persist = true) => {
         const city = CITY_PRESETS.find(c => c.name === cityName);
         if (city) {
             setCoords({ lat: city.lat, lng: city.lng });
             setActiveCityName(city.name);
             setError(null);
-            if (typeof window !== 'undefined') {
+            if (persist && typeof window !== 'undefined') {
                 localStorage.setItem("fj_selected_city", city.name);
             }
         }
@@ -92,6 +92,7 @@ export function PrayerCard() {
                 setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
                 setActiveCityName("device");
                 setError(null);
+                localStorage.setItem("fj_selected_city", "device");
                 return;
             }
 
@@ -101,6 +102,7 @@ export function PrayerCard() {
                         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
                         setActiveCityName("device");
                         setError(null);
+                        localStorage.setItem("fj_selected_city", "device");
                     },
                     (err) => {
                         console.warn("Web Geolocation error:", err);
@@ -130,11 +132,10 @@ export function PrayerCard() {
             if (savedSchool) setSchool(parseInt(savedSchool));
             if (savedAdhan) setSelectedAdhan(savedAdhan);
             
-            if (savedCity && savedCity !== "device") {
-                handleLocationFallback(savedCity);
-            } else {
-                triggerLocationSearch();
-            }
+            // Show useful timings immediately instead of leaving first-time users
+            // behind a geolocation timeout. GPS remains available as an explicit choice.
+            handleLocationFallback(savedCity && savedCity !== "device" ? savedCity : "Karachi", savedCity !== "device");
+            if (savedCity === "device") void triggerLocationSearch();
         } else {
             triggerLocationSearch();
         }
@@ -423,8 +424,12 @@ export function PrayerCard() {
         <Button onClick={() => window.location.reload()}>Retry</Button>
     </Card>;
 
-    if (isLoading || !coords) return <div className="max-w-md mx-auto mt-8 space-y-4">
-        <Skeleton className="h-64 rounded-3xl" />
+    if (isLoading || !coords) return <div className="max-w-md mx-auto mt-8 space-y-4" role="status" aria-live="polite">
+        <div className="rounded-3xl border border-primary/10 bg-primary/5 px-6 py-5 text-center">
+            <p className="font-serif text-lg font-bold text-primary">Preparing today&apos;s prayer times</p>
+            <p className="mt-1 text-sm text-muted-foreground">Using your saved city while accurate timings load.</p>
+        </div>
+        <Skeleton className="h-56 rounded-3xl" />
         <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-20 rounded-2xl" />)}
         </div>
@@ -449,15 +454,15 @@ export function PrayerCard() {
         <div className="max-w-md mx-auto space-y-6 pb-20">
             {/* NEXT PRAYER HERO */}
             <div className={cn(
-                "relative overflow-hidden rounded-[3rem] shadow-2xl transition-all duration-1000 ease-in-out",
+                "relative overflow-hidden rounded-[2.5rem] shadow-2xl transition-all duration-1000 ease-in-out sm:rounded-[3rem]",
                 getNextPrayer ? `bg-gradient-to-br ${getNextPrayer.color}` : "bg-primary"
             )}>
                 {/* Visual Decorative Circles */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
                 <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-2xl" />
 
-                <div className="relative z-10 pt-12 pb-14 px-8 text-white text-center">
-                    <div className="flex flex-col items-center justify-center gap-2 mb-8">
+                <div className="relative z-10 px-6 pb-10 pt-8 text-center text-white sm:px-8 sm:pb-14 sm:pt-12">
+                    <div className="mb-6 flex flex-col items-center justify-center gap-2 sm:mb-8">
                         <Select 
                             value={activeCityName} 
                             onValueChange={(val) => {
@@ -468,7 +473,7 @@ export function PrayerCard() {
                                 }
                             }}
                         >
-                            <SelectTrigger className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-md w-fit mx-auto px-5 py-1.5 h-auto rounded-full border border-white/20 shadow-xl text-white text-[10px] font-black uppercase tracking-[0.2em] outline-none ring-0 focus:ring-0 focus:border-white/30 cursor-pointer">
+                            <SelectTrigger aria-label="Prayer location" className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-md w-fit mx-auto px-5 py-1.5 h-auto rounded-full border border-white/20 shadow-xl text-white text-[10px] font-black uppercase tracking-[0.2em] outline-none ring-0 focus:ring-0 focus:border-white/30 cursor-pointer">
                                 <MapPin className="h-3 w-3 text-secondary shrink-0" />
                                 <span>{activeCityName === "device" ? "My Location" : activeCityName}</span>
                             </SelectTrigger>
@@ -485,29 +490,29 @@ export function PrayerCard() {
                         </Select>
                     </div>
 
-                    <div className="mb-8">
+                    <div className="mb-6 sm:mb-8">
                         <div className="flex items-center justify-center gap-3 text-white/70 mb-2">
                             {getNextPrayer?.icon && <getNextPrayer.icon className="h-5 w-5" />}
                             <span className="font-serif text-xl tracking-tight uppercase opacity-80">Next Prayer</span>
                         </div>
-                        <h2 className="text-7xl font-serif font-black tracking-tighter shadow-sm mb-4">
+                        <h2 className="mb-3 font-serif text-6xl font-black tracking-tighter shadow-sm sm:mb-4 sm:text-7xl">
                             {getNextPrayer?.name || "--"}
                         </h2>
                     </div>
 
-                    <div className="bg-white/10 backdrop-blur-2xl rounded-[2rem] py-8 px-8 border border-white/20 shadow-2xl group transition-all hover:bg-white/15">
+                    <div className="group rounded-[2rem] border border-white/20 bg-white/10 px-6 py-6 shadow-2xl backdrop-blur-2xl transition-all hover:bg-white/15 sm:px-8 sm:py-8">
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center justify-center gap-2 text-white/50 mb-1">
                                 <Clock className="h-4 w-4" />
                                 <span className="text-xs uppercase font-black tracking-widest">Starts In</span>
                             </div>
-                            <div className="text-6xl font-mono font-bold tracking-tighter text-white">
+                            <div className="font-mono text-5xl font-bold tracking-tighter text-white sm:text-6xl">
                                 {getNextPrayer ? formatCountdown(getNextPrayer.timestamp - currentTime.getTime()) : "00:00:00"}
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-10 flex items-center justify-center gap-8 text-white/90 text-sm">
+                    <div className="mt-8 flex items-center justify-center gap-6 text-sm text-white/90 sm:mt-10 sm:gap-8">
                         <div className="flex flex-col items-center">
                             <span className="text-[9px] uppercase font-black opacity-40 mb-1 tracking-widest">Gregorian</span>
                             <span className="font-serif font-bold text-base">{date}</span>
@@ -538,6 +543,7 @@ export function PrayerCard() {
                                 e.stopPropagation();
                                 togglePreview(selectedAdhan);
                             }}
+                            aria-label={isPlayingPreview ? "Stop notification tone preview" : "Preview selected notification tone"}
                         >
                             {isPlayingPreview ? (
                                 <BellOff className="h-3 w-3 text-red-500 animate-pulse" />
@@ -552,7 +558,7 @@ export function PrayerCard() {
                             setSelectedAdhan(val);
                             localStorage.setItem("fj_adhan", val);
                         }}>
-                            <SelectTrigger className="flex-1 border-none bg-primary/5 h-12 rounded-xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4">
+                            <SelectTrigger aria-label="Notification tone" className="flex-1 border-none bg-primary/5 h-12 rounded-xl font-bold text-sm ring-0 focus:ring-0 shadow-none px-4">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-2xl border-primary/10 shadow-2xl p-2 max-h-[300px]">
@@ -590,6 +596,8 @@ export function PrayerCard() {
                         showSettings ? "bg-primary text-white shadow-2xl rotate-90" : "bg-primary/5 text-primary hover:bg-primary/10"
                     )}
                     onClick={() => setShowSettings(!showSettings)}
+                    aria-label={showSettings ? "Close prayer calculation settings" : "Open prayer calculation settings"}
+                    aria-expanded={showSettings}
                 >
                     <Settings2 className="h-8 w-8" />
                 </Button>
@@ -608,8 +616,11 @@ export function PrayerCard() {
                     <CardContent className="p-8 space-y-6">
                         <div className="space-y-3">
                             <label className="text-[11px] font-black uppercase text-secondary tracking-widest ml-1">Calculation Method</label>
-                            <Select value={method.toString()} onValueChange={v => setMethod(parseInt(v))}>
-                                <SelectTrigger className="rounded-2xl border-primary/10 py-7 px-5 font-bold shadow-none bg-primary/5">
+                            <Select value={method.toString()} onValueChange={v => {
+                                setMethod(parseInt(v));
+                                localStorage.setItem("fj_method", v);
+                            }}>
+                                <SelectTrigger aria-label="Prayer time calculation method" className="rounded-2xl border-primary/10 py-7 px-5 font-bold shadow-none bg-primary/5">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[400px] rounded-2xl p-2">
@@ -619,8 +630,11 @@ export function PrayerCard() {
                         </div>
                         <div className="space-y-3">
                             <label className="text-[11px] font-black uppercase text-secondary tracking-widest ml-1">Asr School</label>
-                            <Select value={school.toString()} onValueChange={v => setSchool(parseInt(v))}>
-                                <SelectTrigger className="rounded-2xl border-primary/10 py-7 px-5 font-bold shadow-none bg-primary/5">
+                            <Select value={school.toString()} onValueChange={v => {
+                                setSchool(parseInt(v));
+                                localStorage.setItem("fj_school", v);
+                            }}>
+                                <SelectTrigger aria-label="Asr calculation school" className="rounded-2xl border-primary/10 py-7 px-5 font-bold shadow-none bg-primary/5">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-2xl p-2">
@@ -699,6 +713,8 @@ export function PrayerCard() {
                                     )}
                                     onClick={() => prayer.time && toggleNotification(prayer.name)}
                                     disabled={!prayer.time}
+                                    aria-label={`${isScheduled ? "Disable" : "Enable"} ${prayer.name} alert`}
+                                    aria-pressed={isScheduled}
                                 >
                                     {isScheduled ? <Bell className="h-6 w-6 sm:h-7 sm:w-7 fill-current" /> : <BellOff className="h-6 w-6 sm:h-7 sm:w-7" />}
                                 </Button>
